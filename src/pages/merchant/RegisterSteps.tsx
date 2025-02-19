@@ -4,6 +4,9 @@ import { ArrowLeft, ArrowRight, Store } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input, FileUpload } from '@/components/forms'
 
+import { addDoc, collection, getFirestore } from 'firebase/firestore'
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+
 const steps = [
   {
     id: 'business',
@@ -45,6 +48,60 @@ const RegisterSteps = () => {
     },
   })
 
+  const handleSubmitRegister = async () => {
+    // e.preventDefault();
+
+    const db = getFirestore();
+    const storage = getStorage();
+
+    try {
+      // Uploader le logo
+      let logoURL: string | null = null;
+      if (formData.media.logo) {
+        const logoRef = ref(storage, `logos/${formData.media.logo.name}`);
+        await uploadBytes(logoRef, formData.media.logo);
+        logoURL = await getDownloadURL(logoRef);
+      }
+
+      // Uploader la photo de couverture
+      let coverPhotoURL: string | null = null;
+      if (formData.media.cover_photo) {
+        const coverPhotoRef = ref(storage, `cover_photos/${formData.media.cover_photo.name}`);
+        await uploadBytes(coverPhotoRef, formData.media.cover_photo);
+        coverPhotoURL = await getDownloadURL(coverPhotoRef);
+      }
+
+      // Uploader les photos du commerce
+      let storePhotoURLs: string[] = [];
+      for (const photo of formData.media.store_photos) {
+        const storePhotoRef = ref(storage, `store_photos/${photo.name}`);
+        await uploadBytes(storePhotoRef, photo);
+        const photoURL = await getDownloadURL(storePhotoRef);
+        storePhotoURLs.push(photoURL);
+      }
+
+      const docRef = await addDoc(collection(db, "merchant"), {
+        company_name: formData.company_name,
+        business_type: formData.business_type,
+        owner_name: formData.owner_name,
+        owner_birthdate: formData.owner_birthdate,
+        address: formData.address,
+        city: formData.city,
+        postal_code: formData.postal_code,
+        logo: logoURL,
+        cover_photo: coverPhotoURL,
+        store_photos: storePhotoURLs
+      })
+
+      console.log("Données du commerçant enregistrées avec ID : ", docRef.id);
+
+      navigate('/dashboard')
+      
+    } catch (error) {
+      console.log("Erreur lors de l'enregistrement des données : ", error)
+    }
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -65,7 +122,7 @@ const RegisterSteps = () => {
   const nextStep = () => {
     if (currentStep === steps.length - 1) {
       // Submit form and redirect to dashboard
-      navigate('/dashboard')
+      handleSubmitRegister()
     } else {
       setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
     }

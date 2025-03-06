@@ -18,7 +18,15 @@ export default {
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
-        }
+        },
+        forestGreen: '#396F04',
+        appleGreen: '#7DBD07',
+        darkOliveGreen: '#589507',
+        veryDarkGreen: '#0A2004',
+        limeGreen: '#B7DB25',
+        goldenYellow: '#FFCD29',
+        offWhite: '#F7F9FB',
+        black: '#000000'
       }
     },
   },

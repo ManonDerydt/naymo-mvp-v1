@@ -1,15 +1,28 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Store } from 'lucide-react'
 import { Button } from '@/components/ui'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/components/firebase/firebaseConfig'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // TODO: Implement login logic
+
+    setError('')
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      navigate('/dashboard')
+    } catch (err) {
+      setError('Email ou mot de passe incorrect.')
+    }
   }
 
   return (
@@ -24,6 +37,7 @@ const Login = () => {
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             <div>
               <label htmlFor="email" className="sr-only">
                 Adresse email

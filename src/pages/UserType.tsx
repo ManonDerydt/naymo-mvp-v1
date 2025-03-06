@@ -32,6 +32,14 @@ const UserType = () => {
             </Button>
           </Link>
         </div>
+        <Link to="/login">
+          <Button 
+            variant="outline" 
+            className="w-full justify-center space-x-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
+          >
+            <span>Connexion</span>
+          </Button>
+        </Link>
       </div>
     </div>
   )

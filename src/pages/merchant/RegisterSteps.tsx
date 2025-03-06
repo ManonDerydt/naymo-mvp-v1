@@ -4,14 +4,16 @@ import { ArrowLeft, ArrowRight, Store } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input, FileUpload } from '@/components/forms'
 
-import { addDoc, collection, getFirestore } from 'firebase/firestore'
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage'
+import { doc, setDoc } from 'firebase/firestore'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth, db, storage } from '@/components/firebase/firebaseConfig'
 
 const steps = [
   {
     id: 'business',
     title: 'Information entreprise',
-    fields: ['company_name', 'business_type'],
+    fields: ['email', 'password', 'company_name', 'business_type'],
   },
   {
     id: 'owner',
@@ -34,6 +36,8 @@ const RegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState({
+    email: '',
+    password: '',
     company_name: '',
     business_type: '',
     owner_name: '',
@@ -49,12 +53,14 @@ const RegisterSteps = () => {
   })
 
   const handleSubmitRegister = async () => {
-    // e.preventDefault();
-
-    const db = getFirestore();
-    const storage = getStorage();
 
     try {
+      // Créer l'utilisateur dans Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+      const user = userCredential.user;
+
+      console.log("Utilisateur créé avec UID :", user.uid);
+
       // Uploader le logo
       let logoURL: string | null = null;
       if (formData.media.logo) {
@@ -80,7 +86,9 @@ const RegisterSteps = () => {
         storePhotoURLs.push(photoURL);
       }
 
-      const docRef = await addDoc(collection(db, "merchant"), {
+      // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
+      await setDoc(doc(db, "merchant", user.uid), {
+        email: formData.email,
         company_name: formData.company_name,
         business_type: formData.business_type,
         owner_name: formData.owner_name,
@@ -93,7 +101,7 @@ const RegisterSteps = () => {
         store_photos: storePhotoURLs
       })
 
-      console.log("Données du commerçant enregistrées avec ID : ", docRef.id);
+      console.log("Données du commerçant enregistrées sous l'UID : ", user.uid);
 
       navigate('/dashboard')
       
@@ -189,6 +197,20 @@ const RegisterSteps = () => {
 
 const BusinessInfoStep = ({ formData, onChange }: StepProps) => (
   <div className="space-y-6">
+    <Input 
+      label="Email"
+      name="email"
+      value={formData.email}
+      onChange={onChange}
+      placeholder="Ex: yourname@mail.com"
+    />
+    <Input
+      label="Mot de passe"
+      name="password"
+      value={formData.password}
+      onChange={onChange}
+      placeholder="Ex: mypassword1234"
+    />
     <Input
       label="Nom de l'entreprise"
       name="company_name"

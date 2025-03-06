@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { LogOut, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import DeleteAccount from './DeleteAccount'
+import { useAuth } from '@/components/firebase/useAuth'
 
 const AccountTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  const { merchant, merchantData } = useAuth()
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -13,7 +16,9 @@ const AccountTab = () => {
         <h2 className="text-lg font-medium text-gray-900">Email</h2>
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
           <div>
-            <p className="font-medium">contact@moncommerce.com</p>
+            <p className="font-medium">
+              {merchant && merchantData ? merchant.email : "contact@moncommerce.com"}
+            </p>
             <p className="text-sm text-gray-500">Email principal</p>
           </div>
           <Button variant="outline" size="sm">Modifier</Button>

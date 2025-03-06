@@ -3,6 +3,7 @@ import { Building2, MapPin, Tags, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui'
 import ImageGallery from '@/components/merchant/store/ImageGallery'
 import EditStoreModal from '@/components/merchant/store/EditStoreModal'
+import { useAuth } from '@/components/firebase/useAuth'
 
 const storeImages = [
   {
@@ -22,6 +23,8 @@ const storeImages = [
 const Store = () => {
   const [showEditModal, setShowEditModal] = useState(false)
 
+  const { merchant, merchantData } = useAuth()
+
   const initialStoreData = {
     name: "Ma Boutique",
     description: "Notre boutique est spécialisée dans la vente de produits locaux et artisanaux. Nous travaillons directement avec les producteurs de la région pour vous offrir les meilleurs produits.",
@@ -35,7 +38,7 @@ const Store = () => {
     <div className="space-y-8">
       <div className="relative h-64 rounded-xl overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1441986300917-64674bd600d8"
+          src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
           alt="Store cover"
           className="w-full h-full object-cover"
         />
@@ -73,11 +76,11 @@ const Store = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Building2 className="w-5 h-5 text-gray-400" />
-                <span>{initialStoreData.type}</span>
+                <span>{merchant && merchantData ? merchantData.business_type : initialStoreData.type}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-gray-400" />
-                <span>{initialStoreData.address}</span>
+                <span>{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Tags className="w-5 h-5 text-gray-400" />

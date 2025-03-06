@@ -5,25 +5,31 @@ import ImageGallery from '@/components/merchant/store/ImageGallery'
 import EditStoreModal from '@/components/merchant/store/EditStoreModal'
 import { useAuth } from '@/components/firebase/useAuth'
 
-const storeImages = [
-  {
-    src: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d",
-    alt: "Store interior"
-  },
-  {
-    src: "https://images.unsplash.com/photo-1534723452862-4c874018d66d",
-    alt: "Products display"
-  },
-  {
-    src: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a",
-    alt: "Store front"
-  }
-]
 
 const Store = () => {
   const [showEditModal, setShowEditModal] = useState(false)
-
+  
   const { merchant, merchantData } = useAuth()
+  
+  const storeImages = merchant && merchantData && merchantData.store_photos 
+    ? merchantData.store_photos.map((photo: string | undefined, index: number) => ({
+        src: photo || null, // Affiche null si la photo est absente
+        alt: `Store image ${index + 1}`
+      })) 
+    : [
+        {
+          src: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d",
+          alt: "Store interior"
+        },
+        {
+          src: "https://images.unsplash.com/photo-1534723452862-4c874018d66d",
+          alt: "Products display"
+        },
+        {
+          src: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a",
+          alt: "Store front"
+        }
+      ]
 
   const initialStoreData = {
     name: "Ma Boutique",

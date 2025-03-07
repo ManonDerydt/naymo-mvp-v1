@@ -13,7 +13,7 @@ const steps = [
   {
     id: 'business',
     title: 'Information entreprise',
-    fields: ['email', 'password', 'company_name', 'business_type'],
+    fields: ['email', 'password', 'company_name', 'business_type', 'keywords', 'commitments'],
   },
   {
     id: 'owner',
@@ -40,6 +40,8 @@ const RegisterSteps = () => {
     password: '',
     company_name: '',
     business_type: '',
+    keywords: [],
+    commitments: [],
     owner_name: '',
     owner_birthdate: '',
     address: '',
@@ -91,6 +93,8 @@ const RegisterSteps = () => {
         email: formData.email,
         company_name: formData.company_name,
         business_type: formData.business_type,
+        keywords: formData.keywords,
+        commitments: formData.commitments,
         owner_name: formData.owner_name,
         owner_birthdate: formData.owner_birthdate,
         address: formData.address,
@@ -195,38 +199,114 @@ const RegisterSteps = () => {
   )
 }
 
-const BusinessInfoStep = ({ formData, onChange }: StepProps) => (
-  <div className="space-y-6">
-    <Input 
-      label="Email"
-      name="email"
-      value={formData.email}
-      onChange={onChange}
-      placeholder="Ex: yourname@mail.com"
-    />
-    <Input
-      label="Mot de passe"
-      name="password"
-      value={formData.password}
-      onChange={onChange}
-      placeholder="Ex: mypassword1234"
-    />
-    <Input
-      label="Nom de l'entreprise"
-      name="company_name"
-      value={formData.company_name}
-      onChange={onChange}
-      placeholder="Ex: Ma Boutique"
-    />
-    <Input
-      label="Type d'activité"
-      name="business_type"
-      value={formData.business_type}
-      onChange={onChange}
-      placeholder="Ex: Restaurant, Boutique, Service..."
-    />
-  </div>
-)
+const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
+  const [newKeyword, setNewKeyword] = useState('')
+  const [newCommitment, setNewCommitment] = useState('')
+
+  const handleAddKeyword = () => {
+    if (newKeyword && !formData.keywords.includes(newKeyword)) {
+      onChange({
+        target: {
+          name: 'keywords',
+          value: [...formData.keywords, newKeyword],
+        },
+      })
+      setNewKeyword('') // Réinitialiser le champ de texte
+    }
+  }
+
+  const handleAddCommitment = () => {
+    if (newCommitment && !formData.keywords.includes(newCommitment)) {
+      onChange({
+        target: {
+          name: 'commitments',
+          value: [...formData.commitments, newCommitment],
+        },
+      })
+      setNewCommitment('') // Réinitialiser le champ de texte
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <Input 
+        label="Email"
+        name="email"
+        value={formData.email}
+        onChange={onChange}
+        placeholder="Ex: yourname@mail.com"
+      />
+      <Input
+        label="Mot de passe"
+        name="password"
+        value={formData.password}
+        onChange={onChange}
+        placeholder="Ex: mypassword1234"
+      />
+      <Input
+        label="Nom de l'entreprise"
+        name="company_name"
+        value={formData.company_name}
+        onChange={onChange}
+        placeholder="Ex: Ma Boutique"
+      />
+      <Input
+        label="Type d'activité"
+        name="business_type"
+        value={formData.business_type}
+        onChange={onChange}
+        placeholder="Ex: Restaurant, Boutique, Service..."
+      />
+      {/* Ajout des mots clés */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Mots-clés</label>
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Ajoutez un mot-clé"
+            value={newKeyword}
+            onChange={(e) => setNewKeyword(e.target.value)}
+          />
+          <Button type="button" onClick={handleAddKeyword} disabled={!newKeyword}>
+            Ajouter
+          </Button>
+        </div>
+        <ul className="mt-2 space-y-1">
+          {formData.keywords.map((keyword, index) => (
+            <li key={index} className="flex justify-between items-center">
+              <span>{keyword}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Ajout des pictogrammes d'engagements */}
+      <div>
+      <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
+        <div className="flex items-center space-x-2">
+          <input
+            type="text"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            placeholder="Ajoutez un engagement"
+            value={newCommitment}
+            onChange={(e) => setNewCommitment(e.target.value)}
+          />
+          <Button type="button" onClick={handleAddCommitment} disabled={!newCommitment}>
+            Ajouter
+          </Button>
+        </div>
+        <ul className="mt-2 space-y-1">
+          {formData.commitments.map((commitment, index) => (
+            <li key={index} className="flex justify-between items-center">
+              <span>{commitment}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
+
 
 const OwnerInfoStep = ({ formData, onChange }: StepProps) => (
   <div className="space-y-6">

@@ -45,7 +45,7 @@ const Store = () => {
       <div className="relative h-64 rounded-xl overflow-hidden">
         <img
           src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
-          alt="Store cover"
+          alt={merchant && merchantData ? "" : "Store cover"}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -91,9 +91,17 @@ const Store = () => {
               <div className="flex items-center space-x-3">
                 <Tags className="w-5 h-5 text-gray-400" />
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Bio</span>
-                  <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Local</span>
-                  <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Artisanal</span>
+                {merchant && merchantData && merchantData.keywords 
+                  ? merchantData.keywords.map((keyword: string | undefined, index: number) => (
+                      <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{keyword}</span>
+                    )) 
+                  : (
+                    <>
+                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Bio</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Local</span>
+                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Artisanal</span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -102,12 +110,17 @@ const Store = () => {
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-4">Engagements</h2>
             <div className="space-y-3">
-              {initialStoreData.commitments.map((commitment, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-green-500 rounded-full" />
-                  <span>{commitment}</span>
-                </div>
-              ))}
+              {merchant && merchantData && merchantData.commitments 
+                  ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
+                      <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{commitment}</span>
+                    )) 
+                  : (
+                    initialStoreData.commitments.map((commitment, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <span className="w-2 h-2 bg-green-500 rounded-full" />
+                        <span>{commitment}</span>
+                      </div>
+              )))}
             </div>
           </section>
         </div>

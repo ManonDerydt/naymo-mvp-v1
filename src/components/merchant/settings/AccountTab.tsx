@@ -3,12 +3,14 @@ import { LogOut, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import DeleteAccount from './DeleteAccount'
 import { useAuth } from '@/components/firebase/useAuth'
+import ChangePasswordModal from './ChangePasswordModal'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/components/firebase/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 
 const AccountTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   const { merchant, merchantData } = useAuth()
   
@@ -45,7 +47,7 @@ const AccountTab = () => {
       <section className="space-y-4">
         <h2 className="text-lg font-medium text-gray-900">Mot de passe</h2>
         <div className="p-4 bg-gray-50 rounded-lg">
-          <Button variant="outline" size="sm">Changer le mot de passe</Button>
+          <Button variant="outline" size="sm" onClick={() => setShowPasswordModal(true)}>Changer le mot de passe</Button>
         </div>
       </section>
 
@@ -86,6 +88,7 @@ const AccountTab = () => {
         </div>
       </section>
 
+      {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
       {showDeleteConfirm && (
         <DeleteAccount onClose={() => setShowDeleteConfirm(false)} />
       )}

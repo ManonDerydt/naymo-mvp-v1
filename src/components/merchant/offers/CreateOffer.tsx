@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
+import { auth, db } from '@/components/firebase/firebaseConfig'
+import { addDoc, collection } from 'firebase/firestore'
 
 type Step = 'form' | 'summary' | 'success'
 
@@ -13,14 +15,37 @@ const CreateOffer = () => {
     description: '',
   })
 
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setStep('summary')
   }
 
-  const handleConfirm = () => {
-    // TODO: Submit to backend
-    setStep('success')
+  const handleConfirm = async () => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const user = auth.currentUser
+      if (!user) {
+        throw new Error("Vous devez être connecté pour créer une offre")
+      }
+
+      const offerRef = collection(db, "offer")
+      await addDoc(offerRef, {
+        ...formData
+      })
+
+      console.log("Offre enregistrée avec succès !")
+      setStep('success')
+    } catch (err: any) {
+      console.error("Erreur lors de l'enregistrement :", err);
+      setError("Une erreur est survenue lors de la création de l'offre.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (step === 'success') {
@@ -67,6 +92,7 @@ const CreateOffer = () => {
             <p className="mt-1">{formData.description}</p>
           </div>
         </div>
+        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
         <div className="mt-6 flex justify-end space-x-4">
           <Button
             variant="outline"
@@ -74,8 +100,8 @@ const CreateOffer = () => {
           >
             Modifier
           </Button>
-          <Button onClick={handleConfirm}>
-            Confirmer
+          <Button onClick={handleConfirm} disabled={loading}>
+            {loading ? "Enregistrement..." : "Confirmer"}
           </Button>
         </div>
       </div>

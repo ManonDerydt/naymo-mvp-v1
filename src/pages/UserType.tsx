@@ -1,13 +1,15 @@
 import { Link } from 'react-router-dom'
 import { Store, Users } from 'lucide-react'
 import { Button } from '@/components/ui'
+import logo from '../assets/Logo.png'
 
 const UserType = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
         <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-primary-500" />
+          <img src={logo} alt='logo' />
+          {/* <Store className="mx-auto h-12 w-12 text-primary-500" /> */}
           <h2 className="mt-6 text-3xl font-bold text-gray-900">Bienvenue sur Naymo</h2>
           <p className="mt-2 text-sm text-gray-600">
             Choisissez votre type de compte pour continuer

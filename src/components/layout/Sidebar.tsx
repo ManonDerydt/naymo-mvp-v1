@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Store, LayoutDashboard, Tag, Users, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '../firebase/useAuth'
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -13,11 +14,16 @@ const navigation = [
 const Sidebar = () => {
   const location = useLocation()
 
+  const { merchant, merchantData } = useAuth()
+
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
       <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
         <div className="flex items-center h-16 flex-shrink-0 px-4 border-b border-gray-200">
-          <Store className="h-8 w-8 text-primary-500" />
+          {merchant && merchantData ? 
+            <img className='w-1/3' src={merchantData.logo} alt={merchantData.logo}/>
+            : <Store className="h-8 w-8 text-primary-500" />
+          }
           <span className="ml-2 text-xl font-bold text-gray-900">Naymo</span>
         </div>
         <div className="flex-grow flex flex-col p-4">

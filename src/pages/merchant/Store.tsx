@@ -66,7 +66,7 @@ const Store = () => {
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-4">À propos</h2>
             <p className="text-gray-600">
-              {initialStoreData.description}
+              {merchant && merchantData ? merchantData.shortDescription : initialStoreData.shortDescription}
             </p>
           </section>
 
@@ -110,17 +110,18 @@ const Store = () => {
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-4">Engagements</h2>
             <div className="space-y-3">
-              {merchant && merchantData && merchantData.commitments 
-                  ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
-                      <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{commitment}</span>
-                    )) 
-                  : (
-                    initialStoreData.commitments.map((commitment, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <span className="w-2 h-2 bg-green-500 rounded-full" />
-                        <span>{commitment}</span>
-                      </div>
-              )))}
+            {Array.isArray(merchantData?.commitments) && merchantData.commitments.length > 0
+              ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
+                  <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{commitment}</span>
+                ))
+              : (
+                initialStoreData.commitments.map((commitment, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span>{commitment}</span>
+                  </div>
+                ))
+              )}
             </div>
           </section>
         </div>

@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import FileUpload from '@/components/forms/FileUpload'
+import { db, storage } from '@/components/firebase/firebaseConfig'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
+import { useAuth } from '@/components/firebase/useAuth'
 
 interface EditStoreModalProps {
   onClose: () => void
@@ -12,7 +16,10 @@ interface EditStoreModalProps {
     shortDescription: string
     address: string
     type: string
-    commitments: string[]
+    commitments: string[];
+    logo?: string;
+    cover_photo?: string;
+    store_photos?: string;
   }
 }
 
@@ -24,14 +31,99 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
     cover: [] as File[],
     gallery: [] as File[]
   })
+  
+  const { merchant, merchantData } = useAuth();
 
-  const handleSubmit = () => {
-    // TODO: Handle form submission with both formData and mediaFiles
-    // Here we would typically send the data to an API
-    setStep('success')
+  // Initialise formData avec merchantData si disponible
+  useEffect(() => {
+    if (merchantData) {
+      setFormData({
+        name: merchantData.name || "",
+        description: merchantData.description || "",
+        shortDescription: merchantData.shortDescription || "",
+        address: merchantData.address || "",
+        type: merchantData.type || "",
+        commitments: merchantData.commitments || [],
+        logo: merchantData.logo || "",
+        cover_photo: merchantData.cover_photo || "",
+        store_photos: merchantData.store_photos || "",
+      });
+    }
+  }, [merchantData]); // Ce useEffect s'exécute lorsque merchantData change
+
+  const handleSubmit = async () => {
+    try {
+      // Uploader le logo
+      let logoURL: string | null = null;
+      if (mediaFiles.logo.length > 0) {
+        const logoRef = ref(storage, `logos/${mediaFiles.logo[0].name}`);
+        await uploadBytes(logoRef, mediaFiles.logo[0]);
+        logoURL = await getDownloadURL(logoRef);
+      }
+
+      // Uploader la photo de couverture
+      let coverPhotoURL: string | null = null;
+      if (mediaFiles.cover.length > 0) {
+        const coverPhotoRef = ref(storage, `cover_photos/${mediaFiles.cover[0].name}`);
+        await uploadBytes(coverPhotoRef, mediaFiles.cover[0]);
+        coverPhotoURL = await getDownloadURL(coverPhotoRef);
+      }
+
+      // Uploader les photos du commerce
+      let storePhotoURLs: string[] = [];
+      for (const photo of mediaFiles.gallery) {
+        const storePhotoRef = ref(storage, `store_photos/${photo.name}`);
+        await uploadBytes(storePhotoRef, photo);
+        const photoURL = await getDownloadURL(storePhotoRef);
+        storePhotoURLs.push(photoURL);
+      }
+
+      const updatedData: any = {
+        name: formData.name,
+        longDescription: formData.description,
+        shortDescription: formData.shortDescription,
+        address: formData.address,
+        business_type: formData.type,
+        commitments: formData.commitments,
+      };
+
+      // Ajoute uniquement si une nouvelle image a été uploadée
+      if (logoURL) updatedData.logo = logoURL;
+      if (coverPhotoURL) updatedData.cover_photo = coverPhotoURL;
+      if (storePhotoURLs.length > 0) updatedData.store_photos = storePhotoURLs;
+
+      // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
+      if (merchant) {
+        // console.log("Données envoyées à Firestore:", {
+        //   name: formData.name,
+        //   longDescription: formData.description,
+        //   shortDescription: formData.shortDescription,
+        //   address: formData.address,
+        //   business_type: formData.type,
+        //   commitments: formData.commitments,
+        //   logo: logoURL || initialData.logo,
+        //   cover_photo: coverPhotoURL || initialData.cover_photo,
+        //   store_photos: storePhotoURLs.length > 0 ? storePhotoURLs : initialData.store_photos
+        // });
+
+        await updateDoc(doc(db, "merchant", merchant.uid), updatedData)
+        
+        console.log("Données du commerçant mises à jour sous l'UID : ", merchant.uid);
+
+        setFormData((prev) => ({
+          ...prev,
+          ...updatedData,
+        }));
+      }
+      
+      setStep('success')
+    } catch (error) {
+      console.log("Erreur lors de la mise à jour des données : ", error)
+    }
   }
 
   const handleFileChange = (type: 'logo' | 'cover' | 'gallery', files: File[]) => {
+    console.log(`Fichiers ajoutés pour ${type}:`, files);
     setMediaFiles(prev => ({
       ...prev,
       [type]: files
@@ -118,6 +210,12 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
                 label="Type de commerce"
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              />
+
+              <Input
+                label="Pictogrammes d'engagements"
+                value={formData.commitments.join(', ')}
+                onChange={(e) => setFormData({ ...formData, commitments: e.target.value.split(',').map(item => item.trim()) })}
               />
 
               <div className="pt-4 flex justify-end space-x-4">

@@ -3,11 +3,27 @@ import { LogOut, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import DeleteAccount from './DeleteAccount'
 import { useAuth } from '@/components/firebase/useAuth'
+import { signOut } from 'firebase/auth'
+import { auth } from '@/components/firebase/firebaseConfig'
+import { useNavigate } from 'react-router-dom'
 
 const AccountTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const { merchant, merchantData } = useAuth()
+  
+  const navigate = useNavigate()
+
+  // Fonction pour gérer la déconnexion
+  const handleLogout = async () => {
+    try {
+      await signOut(auth) // Déconnexion de Firebase
+      console.log('Déconnexion réussie')
+      navigate("/")
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion : ', error)
+    }
+  }
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -43,7 +59,7 @@ const AccountTab = () => {
                 <h3 className="font-medium text-gray-900">Déconnexion</h3>
                 <p className="text-sm text-gray-500">Se déconnecter de tous les appareils</p>
               </div>
-              <Button variant="outline" size="sm" className="space-x-2">
+              <Button variant="outline" size="sm" className="space-x-2" onClick={handleLogout}>
                 <LogOut className="w-4 h-4" />
                 <span>Déconnexion</span>
               </Button>

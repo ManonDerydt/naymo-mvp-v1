@@ -34,8 +34,14 @@ const CreateOffer = () => {
       }
 
       const offerRef = collection(db, "offer")
-      await addDoc(offerRef, {
+      const offerDoc = await addDoc(offerRef, {
         ...formData
+      })
+
+      const merchantHasOfferRef = collection(db, "merchant_has_offer")
+      await addDoc(merchantHasOfferRef, {
+        merchant_id: user.uid,
+        offer_id: offerDoc.id
       })
 
       console.log("Offre enregistrée avec succès !")
@@ -61,7 +67,10 @@ const CreateOffer = () => {
           Votre offre est maintenant visible par vos clients.
         </p>
         <Button
-          onClick={() => setStep('form')}
+          onClick={() => {
+            setFormData({ name: '', duration: '', target: '', description: '' })
+            setStep('form')
+          }}
           className="mt-6"
         >
           Créer une nouvelle offre

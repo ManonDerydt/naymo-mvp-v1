@@ -1,28 +1,73 @@
+import { useEffect, useState } from 'react'
 import { Eye, ShoppingBag, TrendingUp } from 'lucide-react'
+import { collection, query, where, getDocs } from 'firebase/firestore'
+import { auth, db } from '@/components/firebase/firebaseConfig'
 
-const mockOffers = [
-  {
-    id: 1,
-    name: "Réduction de printemps",
-    views: 245,
-    revenue: "1,230 €",
-    purchases: 52,
-    description: "20% de réduction sur tous les produits de saison",
-  },
-  {
-    id: 2,
-    name: "Happy Hour",
-    views: 189,
-    revenue: "890 €",
-    purchases: 37,
-    description: "2 produits achetés = 1 offert entre 17h et 19h",
-  },
-]
+type Offer = {
+  id: string
+  name: string
+  description: string
+  views: number
+  revenue: string
+  purchases: number
+}
 
 const CurrentOffers = () => {
+  const [offers, setOffers] = useState<Offer[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const user = auth.currentUser
+
+      if (!user) return
+
+      try {
+        const merchantOfferQuery = query(
+          collection(db, 'merchant_has_offer'),
+          where('merchant_id', '==', user.uid)
+        )
+        const merchantOfferSnapshot = await getDocs(merchantOfferQuery)
+
+        const offerIds = merchantOfferSnapshot.docs
+          .map(doc => doc.data().offer_id)
+          .filter(Boolean)
+
+        if (offerIds.length === 0) {
+          setOffers([])
+          return
+        }
+
+        const offersQuery = query(collection(db, 'offer'), where('__name__', 'in', offerIds))
+        const offersSnapshot = await getDocs(offersQuery)
+
+        const fetchedOffers = offersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Offer[]
+
+        setOffers(fetchedOffers)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des offres :", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOffers()
+  }, [])
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Chargement des offres...</p>
+  }
+
+  if (offers.length === 0) {
+    return <p className="text-center text-gray-500">Aucune offre disponible.</p>
+  }
+
   return (
     <div className="space-y-6">
-      {mockOffers.map((offer) => (
+      {offers.map((offer) => (
         <div
           key={offer.id}
           className="bg-white border border-gray-200 rounded-lg p-6 space-y-4"
@@ -41,7 +86,7 @@ const CurrentOffers = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Vues</p>
-                <p className="text-lg font-semibold">{offer.views}</p>
+                <p className="text-lg font-semibold">{offer.views || 0}</p>
               </div>
             </div>
 
@@ -51,7 +96,7 @@ const CurrentOffers = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">CA généré</p>
-                <p className="text-lg font-semibold">{offer.revenue}</p>
+                <p className="text-lg font-semibold">{offer.revenue || "0 €"}</p>
               </div>
             </div>
 
@@ -61,7 +106,7 @@ const CurrentOffers = () => {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Achats</p>
-                <p className="text-lg font-semibold">{offer.purchases}</p>
+                <p className="text-lg font-semibold">{offer.purchases || 0}</p>
               </div>
             </div>
           </div>

@@ -1,16 +1,63 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui'
+import { auth, db } from '@/components/firebase/firebaseConfig'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 
 type Step = 'select' | 'payment' | 'success'
 
-const mockOffers = [
-  { id: 1, name: "Réduction de printemps" },
-  { id: 2, name: "Happy Hour" },
-]
+interface Offer {
+  id: string
+  name: string
+}
 
 const BoostOffer = () => {
   const [step, setStep] = useState<Step>('select')
-  const [selectedOffer, setSelectedOffer] = useState<number | null>(null)
+  const [selectedOffer, setSelectedOffer] = useState<string | null>(null)
+  const [offers, setOffers] = useState<Offer[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const user = auth.currentUser
+
+      if (!user) return
+
+      try {
+        // Requête pour récupérer les IDs des offres liées au commerçant
+        const merchantOfferQuery = query(
+          collection(db, 'merchant_has_offer'),
+          where('merchant_id', '==', user.uid)
+        )
+        const merchantOfferSnapshot = await getDocs(merchantOfferQuery)
+
+        const offerIds = merchantOfferSnapshot.docs
+          .map(doc => doc.data().offer_id)
+          .filter(Boolean)
+
+        if (offerIds.length === 0) {
+          setOffers([])
+          return
+        }
+
+        // Requête pour récupérer les offres en fonction des IDs récupérés
+        const offersQuery = query(collection(db, 'offer'), where('__name__', 'in', offerIds))
+        const offersSnapshot = await getDocs(offersQuery)
+
+        const fetchedOffers = offersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Offer[]
+
+        setOffers(fetchedOffers)
+      } catch (error) {
+        console.error('Erreur lors de la récupération des offres :', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchOffers()
+  }, [])
 
   const handlePayment = () => {
     // TODO: Implement payment logic
@@ -40,7 +87,7 @@ const BoostOffer = () => {
   }
 
   if (step === 'payment') {
-    const offer = mockOffers.find(o => o.id === selectedOffer)
+    const offer = offers.find(o => o.id === selectedOffer)
     return (
       <div className="max-w-2xl mx-auto">
         <h3 className="text-lg font-medium text-gray-900 mb-6">Paiement</h3>
@@ -107,27 +154,31 @@ const BoostOffer = () => {
       </h3>
       
       <div className="space-y-4">
-        {mockOffers.map((offer) => (
-          <div
-            key={offer.id}
-            className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-              selectedOffer === offer.id
-                ? 'border-primary-500 bg-primary-50'
-                : 'border-gray-200 hover:border-primary-500'
-            }`}
-            onClick={() => setSelectedOffer(offer.id)}
-          >
-            <div className="flex items-center space-x-3">
-              <input
-                type="radio"
-                checked={selectedOffer === offer.id}
-                onChange={() => setSelectedOffer(offer.id)}
-                className="text-primary-500 focus:ring-primary-500"
-              />
-              <span className="font-medium">{offer.name}</span>
+        {loading ? (
+          <p>Chargement des offres...</p>
+        ) : (
+          offers.map((offer) => (
+            <div
+              key={offer.id}
+              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                selectedOffer === offer.id
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-gray-200 hover:border-primary-500'
+              }`}
+              onClick={() => setSelectedOffer(offer.id)}
+            >
+              <div className="flex items-center space-x-3">
+                <input
+                  type="radio"
+                  checked={selectedOffer === offer.id}
+                  onChange={() => setSelectedOffer(offer.id)}
+                  className="text-primary-500 focus:ring-primary-500"
+                />
+                <span className="font-medium">{offer.name}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="mt-6 flex justify-end">

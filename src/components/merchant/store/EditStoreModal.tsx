@@ -5,17 +5,18 @@ import { Input } from '@/components/forms'
 import FileUpload from '@/components/forms/FileUpload'
 import { db, storage } from '@/components/firebase/firebaseConfig'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import { useAuth } from '@/components/firebase/useAuth'
 
 interface EditStoreModalProps {
   onClose: () => void
   initialData: {
-    name: string
-    description: string
+    company_name: string
+    longDescription: string
     shortDescription: string
     address: string
-    type: string
+    business_type: string
+    keywords: string[];
     commitments: string[];
     logo?: string;
     cover_photo?: string;
@@ -38,11 +39,12 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
   useEffect(() => {
     if (merchantData) {
       setFormData({
-        name: merchantData.name || "",
-        description: merchantData.description || "",
+        company_name: merchantData.company_name || "",
+        longDescription: merchantData.longDescription || "",
         shortDescription: merchantData.shortDescription || "",
         address: merchantData.address || "",
-        type: merchantData.type || "",
+        business_type: merchantData.business_type || "",
+        keywords: merchantData.keywords || [],
         commitments: merchantData.commitments || [],
         logo: merchantData.logo || "",
         cover_photo: merchantData.cover_photo || "",
@@ -79,12 +81,13 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
       }
 
       const updatedData: any = {
-        name: formData.name,
-        longDescription: formData.description,
+        company_name: formData.company_name,
+        longDescription: formData.longDescription,
         shortDescription: formData.shortDescription,
         address: formData.address,
-        business_type: formData.type,
-        commitments: formData.commitments,
+        business_type: formData.business_type,
+        keywords: formData.keywords,
+        commitments: formData.commitments
       };
 
       // Ajoute uniquement si une nouvelle image a été uploadée
@@ -101,6 +104,7 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
         //   address: formData.address,
         //   business_type: formData.type,
         //   commitments: formData.commitments,
+        //   keywords: formData.keywords,
         //   logo: logoURL || initialData.logo,
         //   cover_photo: coverPhotoURL || initialData.cover_photo,
         //   store_photos: storePhotoURLs.length > 0 ? storePhotoURLs : initialData.store_photos
@@ -172,8 +176,8 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
             <div className="space-y-6">
               <Input
                 label="Nom du commerce"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.company_name}
+                onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
               />
 
               <div className="space-y-2">
@@ -193,8 +197,8 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
                   Description complète
                 </label>
                 <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  value={formData.longDescription}
+                  onChange={(e) => setFormData({ ...formData, longDescription: e.target.value })}
                   rows={4}
                   className="block w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
@@ -208,8 +212,14 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
 
               <Input
                 label="Type de commerce"
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                value={formData.business_type}
+                onChange={(e) => setFormData({ ...formData, business_type: e.target.value })}
+              />
+
+              <Input
+                label="Mots-clés"
+                value={formData.keywords.join(', ')}
+                onChange={(e) => setFormData({ ...formData, keywords: e.target.value.split(',').map(item => item.trim()) })}
               />
 
               <Input

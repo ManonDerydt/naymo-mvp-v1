@@ -32,11 +32,13 @@ const Store = () => {
       ]
 
   const initialStoreData = {
-    name: "Ma Boutique",
-    description: "Notre boutique est spécialisée dans la vente de produits locaux et artisanaux. Nous travaillons directement avec les producteurs de la région pour vous offrir les meilleurs produits.",
+    company_name: "Mon entreprise",
+    business_type: "Mon type d'entreprise",
+    longDescription: "Notre boutique est spécialisée dans la vente de produits locaux et artisanaux. Nous travaillons directement avec les producteurs de la région pour vous offrir les meilleurs produits.",
     shortDescription: "Boutique de produits locaux et artisanaux",
     address: "123 Rue du Commerce, 75001 Paris",
     type: "Épicerie fine",
+    keywords: ["Bio", "Local", "Artisanal"],
     commitments: ["Produits 100% locaux", "Emballages recyclables", "Circuit court"]
   }
 
@@ -82,7 +84,7 @@ const Store = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Building2 className="w-5 h-5 text-gray-400" />
-                <span>{merchant && merchantData ? merchantData.business_type : initialStoreData.type}</span>
+                <span>{merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-gray-400" />
@@ -96,11 +98,12 @@ const Store = () => {
                       <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{keyword}</span>
                     )) 
                   : (
-                    <>
-                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Bio</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Local</span>
-                      <span className="px-2 py-1 bg-gray-100 rounded-full text-sm">Artisanal</span>
-                    </>
+                    initialStoreData.keywords.map((keyword, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <span className="w-2 h-2 bg-green-500 rounded-full" />
+                        <span>{keyword}</span>
+                      </div>
+                    ))
                   )}
                 </div>
               </div>
@@ -110,7 +113,7 @@ const Store = () => {
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-4">Engagements</h2>
             <div className="space-y-3">
-            {Array.isArray(merchantData?.commitments) && merchantData.commitments.length > 0
+            {merchant && merchantData && merchantData.commitments
               ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
                   <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{commitment}</span>
                 ))

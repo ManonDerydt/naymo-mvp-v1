@@ -24,7 +24,7 @@ const Sidebar = () => {
             <img className='w-1/3' src={merchantData.logo} alt={merchantData.logo}/>
             : <Store className="h-8 w-8 text-primary-500" />
           }
-          <span className="ml-2 text-xl font-bold text-gray-900">Naymo</span>
+          <span className="ml-2 text-xl font-bold text-gray-900">{merchantData && merchantData ? merchantData.company_name : "Naymo"}</span>
         </div>
         <div className="flex-grow flex flex-col p-4">
           <nav className="flex-1 space-y-1">

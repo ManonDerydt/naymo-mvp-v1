@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth, db } from "./firebaseConfig";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 export function useAuth() {
   const [merchant, setMerchant] = useState<User | null>(null);
@@ -18,12 +18,11 @@ export function useAuth() {
         const userDocRef = doc(db, "merchant", currentUser.uid);
 
         try {
-          // 🔹 Option 2 : Mise à jour en temps réel (décommente si besoin)
           const unsubscribeSnapshot = onSnapshot(userDocRef, (docSnap) => {
             setMerchantData(docSnap.exists() ? docSnap.data() : null);
           });
 
-          return () => unsubscribeSnapshot(); // Si on utilise onSnapshot
+          return () => unsubscribeSnapshot();
         } catch (err) {
           console.error("Erreur lors de la récupération des données :", err);
           setError("Impossible de charger les données");

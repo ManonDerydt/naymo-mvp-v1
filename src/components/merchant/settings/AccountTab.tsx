@@ -4,6 +4,7 @@ import { Button } from '@/components/ui'
 import DeleteAccount from './DeleteAccount'
 import { useAuth } from '@/components/firebase/useAuth'
 import ChangePasswordModal from './ChangePasswordModal'
+import ChangeEmailModal from './ChangeEmailModal'
 import { signOut } from 'firebase/auth'
 import { auth } from '@/components/firebase/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
@@ -11,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 const AccountTab = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [showEmailModal, setShowEmailModal] = useState(false)
 
   const { merchant, merchantData } = useAuth()
   
@@ -39,7 +41,7 @@ const AccountTab = () => {
             </p>
             <p className="text-sm text-gray-500">Email principal</p>
           </div>
-          <Button variant="outline" size="sm">Modifier</Button>
+          <Button variant="outline" size="sm" onClick={() => setShowEmailModal(true)}>Modifier</Button>
         </div>
       </section>
 
@@ -88,6 +90,12 @@ const AccountTab = () => {
         </div>
       </section>
 
+      {showEmailModal && (
+        <ChangeEmailModal
+          userId={merchant?.uid ?? ""}
+          onClose={() => setShowEmailModal(false)}
+          />
+      )}
       {showPasswordModal && <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />}
       {showDeleteConfirm && (
         <DeleteAccount onClose={() => setShowDeleteConfirm(false)} />

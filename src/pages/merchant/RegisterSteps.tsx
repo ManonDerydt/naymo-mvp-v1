@@ -9,6 +9,36 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth, db, storage } from '@/components/firebase/firebaseConfig'
 
+// Définition d'une interface pour le formulaire
+interface FormData {
+  email: string
+  password: string
+  company_name: string
+  business_type: string
+  keywords: string[]
+  commitments: string[]
+  owner_name: string
+  owner_birthdate: string
+  address: string
+  city: string
+  postal_code: string
+  media: {
+    logo: File | null
+    cover_photo: File | null
+    store_photos: File[]
+  }
+}
+
+// Définition d'un type pour l'événement de changement
+type FieldChangeEvent =
+  | React.ChangeEvent<HTMLInputElement>
+  | { target: { name: keyof FormData | 'keywords' | 'commitments'; value: any } }
+
+interface StepProps {
+  formData: FormData
+  onChange: (e: FieldChangeEvent) => void
+}
+
 const steps = [
   {
     id: 'business',
@@ -35,7 +65,7 @@ const steps = [
 const RegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     company_name: '',
@@ -55,37 +85,36 @@ const RegisterSteps = () => {
   })
 
   const handleSubmitRegister = async () => {
-
     try {
       // Créer l'utilisateur dans Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-      const user = userCredential.user;
+      const user = userCredential.user
 
-      console.log("Utilisateur créé avec UID :", user.uid);
+      console.log("Utilisateur créé avec UID :", user.uid)
 
       // Uploader le logo
-      let logoURL: string | null = null;
+      let logoURL: string | null = null
       if (formData.media.logo) {
-        const logoRef = ref(storage, `logos/${formData.media.logo.name}`);
-        await uploadBytes(logoRef, formData.media.logo);
-        logoURL = await getDownloadURL(logoRef);
+        const logoRef = ref(storage, `logos/${formData.media.logo.name}`)
+        await uploadBytes(logoRef, formData.media.logo)
+        logoURL = await getDownloadURL(logoRef)
       }
 
       // Uploader la photo de couverture
-      let coverPhotoURL: string | null = null;
+      let coverPhotoURL: string | null = null
       if (formData.media.cover_photo) {
-        const coverPhotoRef = ref(storage, `cover_photos/${formData.media.cover_photo.name}`);
-        await uploadBytes(coverPhotoRef, formData.media.cover_photo);
-        coverPhotoURL = await getDownloadURL(coverPhotoRef);
+        const coverPhotoRef = ref(storage, `cover_photos/${formData.media.cover_photo.name}`)
+        await uploadBytes(coverPhotoRef, formData.media.cover_photo)
+        coverPhotoURL = await getDownloadURL(coverPhotoRef)
       }
 
       // Uploader les photos du commerce
-      let storePhotoURLs: string[] = [];
+      let storePhotoURLs: string[] = []
       for (const photo of formData.media.store_photos) {
-        const storePhotoRef = ref(storage, `store_photos/${photo.name}`);
-        await uploadBytes(storePhotoRef, photo);
-        const photoURL = await getDownloadURL(storePhotoRef);
-        storePhotoURLs.push(photoURL);
+        const storePhotoRef = ref(storage, `store_photos/${photo.name}`)
+        await uploadBytes(storePhotoRef, photo)
+        const photoURL = await getDownloadURL(storePhotoRef)
+        storePhotoURLs.push(photoURL)
       }
 
       // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
@@ -105,7 +134,7 @@ const RegisterSteps = () => {
         store_photos: storePhotoURLs
       })
 
-      console.log("Données du commerçant enregistrées sous l'UID : ", user.uid);
+      console.log("Données du commerçant enregistrées sous l'UID : ", user.uid)
 
       navigate('/dashboard')
       
@@ -114,7 +143,7 @@ const RegisterSteps = () => {
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: FieldChangeEvent) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -216,7 +245,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
   }
 
   const handleAddCommitment = () => {
-    if (newCommitment && !formData.keywords.includes(newCommitment)) {
+    if (newCommitment && !formData.commitments.includes(newCommitment)) {
       onChange({
         target: {
           name: 'commitments',
@@ -257,7 +286,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         onChange={onChange}
         placeholder="Ex: Restaurant, Boutique, Service..."
       />
-      {/* Ajout des mots clés */}
+      {/* Ajout des mots-clés */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Mots-clés</label>
         <div className="flex items-center space-x-2">
@@ -282,7 +311,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
       </div>
       {/* Ajout des pictogrammes d'engagements */}
       <div>
-      <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
+        <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
         <div className="flex items-center space-x-2">
           <input
             type="text"
@@ -306,7 +335,6 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
     </div>
   )
 }
-
 
 const OwnerInfoStep = ({ formData, onChange }: StepProps) => (
   <div className="space-y-6">
@@ -371,10 +399,5 @@ const MediaStep = ({ onFileChange }: { onFileChange: (type: 'logo' | 'cover_phot
     />
   </div>
 )
-
-interface StepProps {
-  formData: any
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
 
 export default RegisterSteps

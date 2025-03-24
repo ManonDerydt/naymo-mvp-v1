@@ -10,6 +10,7 @@ type Offer = {
   views: number
   revenue: string
   purchases: number
+  isBoosted: boolean
 }
 
 const CurrentOffers = () => {
@@ -74,6 +75,11 @@ const CurrentOffers = () => {
         >
           <div className="flex justify-between items-start">
             <div>
+              {offer.isBoosted && (
+                <h6 className="text-sm font-medium text-white bg-yellow-500 inline-block px-2 py-1 rounded-full mb-2">
+                  Offre boostée
+                </h6>
+              )}
               <h3 className="text-lg font-semibold text-gray-900">{offer.name}</h3>
               <p className="mt-1 text-sm text-gray-500">{offer.description}</p>
             </div>

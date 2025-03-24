@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui'
 import { auth, db } from '@/components/firebase/firebaseConfig'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore'
 
 type Step = 'select' | 'payment' | 'success'
 
@@ -59,9 +59,25 @@ const BoostOffer = () => {
     fetchOffers()
   }, [])
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     // TODO: Implement payment logic
-    setStep('success')
+    const user = auth.currentUser
+    if (!user || !selectedOffer) return
+
+    try {
+      // Mise à jour du document de l'offre sélectionnée dans la colelction 'offer'
+      const offerRef = doc(db, 'offer', selectedOffer)
+
+      // Mettre à jour le champ isBoosted à true
+      await updateDoc(offerRef, {
+        isBoosted: true
+      })
+
+      // Passe à l'étape de succès
+      setStep('success') 
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de l\'offre :', error)
+    }
   }
 
   if (step === 'success') {

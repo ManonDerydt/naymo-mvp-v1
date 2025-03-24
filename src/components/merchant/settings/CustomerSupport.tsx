@@ -25,9 +25,11 @@ const CustomerSupport = () => {
           </div>
 
           <div className="pt-6 border-t border-gray-200">
-            <Button className="w-full justify-center">
-              Contacter le support
-            </Button>
+            <a href="mailto:support@naymo.com">
+              <Button className="w-full justify-center">
+                Contacter le support
+              </Button>
+            </a>
           </div>
         </div>
       </div>

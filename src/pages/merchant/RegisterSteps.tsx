@@ -14,6 +14,7 @@ interface FormData {
   email: string
   password: string
   company_name: string
+  shortDescription: string
   business_type: string
   keywords: string[]
   commitments: string[]
@@ -43,7 +44,7 @@ const steps = [
   {
     id: 'business',
     title: 'Information entreprise',
-    fields: ['email', 'password', 'company_name', 'business_type', 'keywords', 'commitments'],
+    fields: ['email', 'password', 'company_name', 'shortDescription', 'business_type', 'keywords', 'commitments'],
   },
   {
     id: 'owner',
@@ -69,6 +70,7 @@ const RegisterSteps = () => {
     email: '',
     password: '',
     company_name: '',
+    shortDescription: '',
     business_type: '',
     keywords: [],
     commitments: [],
@@ -121,6 +123,7 @@ const RegisterSteps = () => {
       await setDoc(doc(db, "merchant", user.uid), {
         email: formData.email,
         company_name: formData.company_name,
+        shortDescription: formData.shortDescription,
         business_type: formData.business_type,
         keywords: formData.keywords,
         commitments: formData.commitments,
@@ -278,6 +281,13 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.company_name}
         onChange={onChange}
         placeholder="Ex: Ma Boutique"
+      />
+      <Input
+        label="Description courte"
+        name="shortDescription"
+        value={formData.shortDescription}
+        onChange={onChange}
+        placeholder="Ex: Voici l'entreprise XXX..."
       />
       <Input
         label="Type d'activité"

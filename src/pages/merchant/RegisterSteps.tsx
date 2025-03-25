@@ -233,7 +233,8 @@ const RegisterSteps = () => {
 
 const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
   const [newKeyword, setNewKeyword] = useState('')
-  const [newCommitment, setNewCommitment] = useState('')
+  // const [newCommitment, setNewCommitment] = useState('')
+  const [selectedCommitments, setSelectedCommitments] = useState<string[]>(formData.commitments || [])
 
   const handleAddKeyword = () => {
     if (newKeyword && !formData.keywords.includes(newKeyword)) {
@@ -247,17 +248,24 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
     }
   }
 
-  const handleAddCommitment = () => {
-    if (newCommitment && !formData.commitments.includes(newCommitment)) {
+  const handleSelectCommitment = (commitment: string) => {
+    if (!selectedCommitments.includes(commitment)) {
+      const newCommitments = [...selectedCommitments, commitment]
+      setSelectedCommitments(newCommitments)
       onChange({
-        target: {
-          name: 'commitments',
-          value: [...formData.commitments, newCommitment],
-        },
+        target: { name: 'commitments', value: newCommitments },
       })
-      setNewCommitment('') // Réinitialiser le champ de texte
     }
   }
+
+  const pictograms = [
+    { name: 'Accueil', imageUrl: '/src/assets/engagements/Accueil@1x.png' },
+    { name: 'Client', imageUrl: '/src/assets/engagements/Client@1x.png' },
+    { name: 'Humain', imageUrl: '/src/assets/engagements/Humain@1x.png' },
+    { name: 'Magasin', imageUrl: '/src/assets/engagements/Mon magasin@1x.png' },
+    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect environnement@1x.png' },
+    // Ajoute d'autres pictogrammes selon tes besoins
+  ]
 
   return (
     <div className="space-y-6">
@@ -322,25 +330,36 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
       {/* Ajout des pictogrammes d'engagements */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Ajoutez un engagement"
-            value={newCommitment}
-            onChange={(e) => setNewCommitment(e.target.value)}
-          />
-          <Button type="button" onClick={handleAddCommitment} disabled={!newCommitment}>
-            Ajouter
-          </Button>
-        </div>
-        <ul className="mt-2 space-y-1">
-          {formData.commitments.map((commitment, index) => (
-            <li key={index} className="flex justify-between items-center">
-              <span>{commitment}</span>
-            </li>
+        <div className="flex flex-wrap gap-4 mt-2">
+          {pictograms.map((pictogram, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleSelectCommitment(pictogram.name)}
+              className={`border p-2 rounded-md ${selectedCommitments.includes(pictogram.name) ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+            >
+              <img src={pictogram.imageUrl} alt={pictogram.name} className="w-12 h-12" />
+              <p className="mt-1 text-xs text-center">{pictogram.name}</p>
+            </button>
           ))}
-        </ul>
+        </div>
+        <div className="mt-4">
+          <p className="text-sm font-medium text-gray-700">Engagements sélectionnés :</p>
+          <ul className="mt-2 space-y-1">
+            {selectedCommitments.map((commitment, index) => (
+              <li key={index} className="flex justify-between items-center">
+                <span>{commitment}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCommitments(selectedCommitments.filter(c => c !== commitment))}
+                  className="text-red-500"
+                >
+                  Supprimer
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

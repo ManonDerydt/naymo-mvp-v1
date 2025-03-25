@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Eye, ShoppingBag, TrendingUp } from 'lucide-react'
-import { collection, query, where, getDocs } from 'firebase/firestore'
-import { auth, db } from '@/components/firebase/firebaseConfig'
+import { Eye, Pencil, ShoppingBag, Trash, TrendingUp } from 'lucide-react'
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore'
+import { db } from '@/components/firebase/firebaseConfig'
+import { Button } from '@/components/ui'
+import EditOfferModal from './EditOfferModal'
+import { useAuth } from '@/components/firebase/useAuth'
 
 type Offer = {
   id: string
   name: string
+  duration: string
+  target: string,
   description: string
   views: number
   revenue: string
@@ -16,17 +21,20 @@ type Offer = {
 const CurrentOffers = () => {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null)
+
+  const { merchant } = useAuth()
 
   useEffect(() => {
     const fetchOffers = async () => {
-      const user = auth.currentUser
 
-      if (!user) return
+      if (!merchant) return
 
       try {
         const merchantOfferQuery = query(
           collection(db, 'merchant_has_offer'),
-          where('merchant_id', '==', user.uid)
+          where('merchant_id', '==', merchant.uid)
         )
         const merchantOfferSnapshot = await getDocs(merchantOfferQuery)
 
@@ -56,7 +64,43 @@ const CurrentOffers = () => {
     }
 
     fetchOffers()
-  }, [])
+  }, [merchant])
+
+  const handleDeleteOffer = async (offerId: string) => {
+    try {
+      if (!merchant) {
+        console.error("Utilisateur non connecté !");
+        return;
+      }
+  
+      // Étape 1 : Récupérer le document dans "merchant_has_offer"
+      const merchantOffersRef = collection(db, "merchant_has_offer");
+      const q = query(merchantOffersRef, where("offer_id", "==", offerId));
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        // Suppression des documents correspondants dans "merchant_has_offer"
+        await Promise.all(querySnapshot.docs.map(doc => deleteDoc(doc.ref)));
+      }
+  
+      // Étape 2 : Suppression du document dans "offer"
+      await deleteDoc(doc(db, "offer", offerId));
+
+      // Mise à jour de l'état pour enlever l'offre supprimée
+      setOffers(prevOffers => prevOffers.filter(offer => offer.id !== offerId));
+  
+      console.log("Offre supprimée avec succès :", offerId);
+  
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'offre :", error);
+    }
+  }
+
+  const handleDeleteConfirm = (offerId: string) => {
+    if (window.confirm("Voulez-vous vraiment supprimer cette offre ? Cette action est irréversible.")) {
+      handleDeleteOffer(offerId);
+    }
+  };
 
   if (loading) {
     return <p className="text-center text-gray-500">Chargement des offres...</p>
@@ -73,13 +117,36 @@ const CurrentOffers = () => {
           key={offer.id}
           className="bg-white border border-gray-200 rounded-lg p-6 space-y-4"
         >
-          <div className="flex justify-between items-start">
+          <div className="flex justify-between items-center">
             <div>
               {offer.isBoosted && (
                 <h6 className="text-sm font-medium text-white bg-yellow-500 inline-block px-2 py-1 rounded-full mb-2">
                   Offre boostée
                 </h6>
               )}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={() => {
+                  setSelectedOffer(offer)  // Définir l'offre sélectionnée
+                  setShowEditModal(true)
+                }}
+                className="flex items-center space-x-2"
+              >
+                <Pencil className="w-4 h-4" />
+                <span>Modifier</span>
+              </Button>
+              <Button 
+                onClick={() => handleDeleteConfirm(offer.id)}  // Suppression de l'offre
+                className="flex items-center space-x-2 text-red-600 hover:text-red-800"
+              >
+                <Trash className="w-4 h-4" />  {/* Icône de suppression */}
+                <span>Supprimer</span>
+              </Button>
+            </div>
+          </div>
+          <div className="flex justify-between items-start">
+            <div>
               <h3 className="text-lg font-semibold text-gray-900">{offer.name}</h3>
               <p className="mt-1 text-sm text-gray-500">{offer.description}</p>
             </div>
@@ -118,6 +185,13 @@ const CurrentOffers = () => {
           </div>
         </div>
       ))}
+
+      {showEditModal && selectedOffer && (
+        <EditOfferModal
+          onClose={() => setShowEditModal(false)}
+          initialData={selectedOffer}  // Passer les données de l'offre sélectionnée
+        />
+      )}
     </div>
   )
 }

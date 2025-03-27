@@ -3,6 +3,27 @@ import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import SuccessMessage from './shared/SuccessMessage'
 
+interface ConfirmModalProps {
+  onClose: () => void
+  onConfirm: () => void
+  message: string
+}
+
+const ConfirmModal = ({ onClose, onConfirm, message }: ConfirmModalProps) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg max-w-md w-full p-6 text-center" role="dialog" aria-labelledby="confirmationTitle" aria-describedby="confirmationMessage">
+        <h3 id="confirmationTitle" className="text-lg font-medium text-gray-900">Confirmation</h3>
+        <p id="confirmationMessage" className="mt-2 text-sm text-gray-500">{message}</p>
+        <div className="pt-4 flex justify-center space-x-4">
+          <Button variant="outline" onClick={onClose}>Non</Button>
+          <Button onClick={onConfirm}>Oui</Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 type Step = 'overview' | 'form' | 'success'
 
 const VipProgram = () => {
@@ -12,6 +33,16 @@ const VipProgram = () => {
     reward: '',
     value: '',
   })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleConfirmModal = () => {
+    setIsModalOpen(true) // Ouvrir le modal au clic sur "Enregistrer"
+  }
+
+  const confirmProgram = () => {
+    setIsModalOpen(false)
+    setStep('success') // Passer à l'étape de succès après confirmation
+  }
 
   if (step === 'form') {
     return (
@@ -42,16 +73,22 @@ const VipProgram = () => {
         />
 
         <div className="flex justify-end space-x-4">
-          <Button
-            variant="outline"
-            onClick={() => setStep('overview')}
-          >
+          <Button variant="outline" onClick={() => setStep('overview')}>
             Annuler
           </Button>
-          <Button onClick={() => setStep('success')}>
+          <Button onClick={handleConfirmModal}>
             Enregistrer
           </Button>
         </div>
+
+        {/* Modal de confirmation */}
+        {isModalOpen && (
+          <ConfirmModal 
+            onClose={() => setIsModalOpen(false)} 
+            onConfirm={confirmProgram} 
+            message="Êtes-vous sûr de vouloir modifier ces informations ?" 
+          />
+        )}
       </div>
     )
   }
@@ -76,23 +113,28 @@ const VipProgram = () => {
             Configuration de votre programme VIP
           </p>
         </div>
-        <Button onClick={() => setStep('form')}>
-          Modifier
-        </Button>
+        <div className="flex space-x-4">
+          <Button>
+            Ajouter
+          </Button>
+          <Button onClick={() => setStep('form')}>
+            Modifier
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4">
         <div>
           <p className="text-sm font-medium text-gray-500">Fréquence</p>
-          <p className="mt-1">Une fois par mois</p>
+          <p className="mt-1"></p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">Récompense</p>
-          <p className="mt-1">Accès prioritaire aux ventes privées</p>
+          <p className="mt-1"></p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-500">Valeur minimum</p>
-          <p className="mt-1">1000€ d'achats cumulés</p>
+          <p className="mt-1"></p>
         </div>
       </div>
     </div>

@@ -36,9 +36,10 @@ interface LoyaltyFormProps {
   onSubmit: () => void
   onCancel: () => void
   onChange: (field: string, value: string) => void
+  mode: 'create' | 'edit' | 'delete'
 }
 
-const LoyaltyForm = ({ formData, onSubmit, onCancel, onChange }: LoyaltyFormProps) => {
+const LoyaltyForm = ({ formData, onSubmit, onCancel, onChange, mode }: LoyaltyFormProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleSave = () => {
@@ -95,7 +96,11 @@ const LoyaltyForm = ({ formData, onSubmit, onCancel, onChange }: LoyaltyFormProp
         <ConfirmModal
           onClose={handleCancel}
           onConfirm={handleConfirm}
-          message="Êtes-vous sûr de vouloir modifier ces informations ?"
+          message={
+            mode === 'create' ? "Êtes-vous sûr de vouloir créer ce programme ?" : 
+            mode === 'edit' ? "Êtes-vous sûr de vouloir modifier ces informations ?" : 
+            "Etes-vous sûr de vouloir supprimer ces informations ? Cette action est irréversible."
+          }
         />
       )}
     </div>

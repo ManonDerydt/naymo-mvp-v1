@@ -8,25 +8,25 @@ const Dashboard = () => {
     {
       icon: <Users className="w-6 h-6 text-blue-500" />,
       title: "Clients fidèles",
-      value: "124",
-      trend: "+12%"
+      value: "0",
+      trend: "+0%"
     },
     {
       icon: <Activity className="w-6 h-6 text-green-500" />,
       title: "Chiffre d'affaires",
-      value: "3,250 €",
-      trend: "+8%"
+      value: "0 €",
+      trend: "+0%"
     },
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
-      value: "4.8/5",
-      trend: "+0.2"
+      value: "0.0/5",
+      trend: "+0"
     },
     {
       icon: <Gift className="w-6 h-6 text-purple-500" />,
       title: "Points distribués",
-      value: "1,250",
+      value: "0,000",
       trend: "+24%"
     }
   ]
@@ -41,10 +41,9 @@ const Dashboard = () => {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        Pas de données pour le moment
-        {/* {stats.map((stat, index) => (
+        {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
-        ))} */}
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

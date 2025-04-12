@@ -10,7 +10,7 @@ const CreateOffer = () => {
   const [step, setStep] = useState<Step>('form')
   const [formData, setFormData] = useState({
     name: '',
-    duration: '',
+    duration: 0,
     target: '',
     description: '',
   })
@@ -68,7 +68,7 @@ const CreateOffer = () => {
         </p>
         <Button
           onClick={() => {
-            setFormData({ name: '', duration: '', target: '', description: '' })
+            setFormData({ name: '', duration: 0, target: '', description: '' })
             setStep('form')
           }}
           className="mt-6"
@@ -89,7 +89,7 @@ const CreateOffer = () => {
             <p className="mt-1">{formData.name}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Durée</p>
+            <p className="text-sm font-medium text-gray-500">Durée (en mois)</p>
             <p className="mt-1">{formData.duration}</p>
           </div>
           <div>
@@ -128,10 +128,24 @@ const CreateOffer = () => {
       />
       
       <Input
-        label="Durée"
+        label="Durée (en mois)"
+        type="number"
         value={formData.duration}
-        onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-        placeholder="Ex: 1 semaine"
+        onChange={(e) => {
+          // On récupère la valeur
+          const value = e.target.value;
+
+          // Si la valeur est vide, on la garde vide, sinon on parse
+          const parsedValue = value === "" ? NaN : Number(value);
+
+          // On met à jour uniquement si la valeur est comprise entre 1 et 12
+          if (parsedValue >= 1 && parsedValue <= 12) {
+            setFormData({ ...formData, duration: parsedValue });
+          }
+        }}
+        placeholder="Ex: 1"
+        min={1}
+        max={12}
         required
       />
       

@@ -24,7 +24,7 @@ const UserType = () => {
             </Button>
           </Link>
           
-          <Link to="/client/register">
+          <Link to="/customer/register">
             <Button 
               variant="outline" 
               className="w-full justify-center space-x-2"
@@ -39,7 +39,15 @@ const UserType = () => {
             variant="outline" 
             className="w-full justify-center space-x-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
           >
-            <span>Connexion</span>
+            <span>Connexion commerçant</span>
+          </Button>
+        </Link>
+        <Link to="/customer/login">
+          <Button 
+            variant="outline" 
+            className="w-full justify-center space-x-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white"
+          >
+            <span>Connexion client</span>
           </Button>
         </Link>
       </div>

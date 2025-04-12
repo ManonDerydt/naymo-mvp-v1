@@ -6,6 +6,10 @@ import { doc, onSnapshot } from "firebase/firestore";
 export function useAuth() {
   const [merchant, setMerchant] = useState<User | null>(null);
   const [merchantData, setMerchantData] = useState<any>(null);
+
+  const [customer, setCustomer] = useState<User | null>(null);
+  const [customerData, setCustomerData] = useState<any>(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,22 +18,42 @@ export function useAuth() {
       setLoading(true);
 
       if (currentUser) {
-        setMerchant(currentUser);
-        const userDocRef = doc(db, "merchant", currentUser.uid);
+        // On écoute les deux documents : merchant et customer
+        const merchantDocRef = doc(db, "merchant", currentUser.uid);
+        const customerDocRef = doc(db, "customer", currentUser.uid);
 
-        try {
-          const unsubscribeSnapshot = onSnapshot(userDocRef, (docSnap) => {
-            setMerchantData(docSnap.exists() ? docSnap.data() : null);
-          });
+        // Écoute du document merchant
+        const unsubscribeMerchant = onSnapshot(merchantDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setMerchant(currentUser);
+            setMerchantData(docSnap.data());
+          } else {
+            setMerchant(null);
+            setMerchantData(null);
+          }
+        });
 
-          return () => unsubscribeSnapshot();
-        } catch (err) {
-          console.error("Erreur lors de la récupération des données :", err);
-          setError("Impossible de charger les données");
-        }
+        // Écoute du document customer
+        const unsubscribeCustomer = onSnapshot(customerDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            setCustomer(currentUser);
+            setCustomerData(docSnap.data());
+          } else {
+            setCustomer(null);
+            setCustomerData(null);
+          }
+        });
+
+        return () => {
+          unsubscribeMerchant();
+          unsubscribeCustomer();
+        };
       } else {
+        // Utilisateur non connecté
         setMerchant(null);
         setMerchantData(null);
+        setCustomer(null);
+        setCustomerData(null);
       }
 
       setLoading(false);
@@ -38,5 +62,12 @@ export function useAuth() {
     return () => unsubscribeAuth();
   }, []);
 
-  return { merchant, merchantData, loading, error };
+  return {
+    merchant,
+    merchantData,
+    customer,
+    customerData,
+    loading,
+    error,
+  };
 }

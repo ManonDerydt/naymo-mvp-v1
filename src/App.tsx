@@ -11,6 +11,11 @@ import Settings from './pages/merchant/Settings'
 import CustomerRegisterSteps from './pages/customer/CustomerRegisterSteps'
 import CustomerDashboard from './pages/customer/CustomerDashboard'
 import CustomerLogin from './pages/auth/CustomerLogin'
+import CustomerLayout from './components/layout/CustomerLayout'
+import CustomerUser from './pages/customer/CustomerUser'
+import CustomerSearch from './pages/customer/CustomerSearch'
+import CustomerCart from './pages/customer/CustomerCart'
+import CustomerSettings from './pages/customer/CustomerSettings'
 
 const App = () => {
   return (
@@ -25,11 +30,19 @@ const App = () => {
         {/* Protected routes - will need authentication later */}
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
           <Route path="/store" element={<Store />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/settings" element={<Settings />} />
+        </Route>
+
+        {/* Partie client */}
+        <Route element={<CustomerLayout />}>
+          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+          <Route path="/customer/user" element={<CustomerUser />} />
+          <Route path="/customer/search" element={<CustomerSearch />} />
+          <Route path="/customer/cart" element={<CustomerCart />} />
+          <Route path="/customer/settings" element={<CustomerSettings />} />
         </Route>
       </Routes>
     </BrowserRouter>

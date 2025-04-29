@@ -49,8 +49,8 @@ const CustomerDashboard = () => {
       <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-50 flex justify-between items-center px-4 py-3">
         <img src="" alt="carte Grenoble" className="h-6" />
         <img src={logo} alt="Naymo" className="h-10" />
-        <div style={{borderRadius: '50%', border: ' 2px solid grey', padding: 2}}>
-        <Bell size={50} color="green"/>
+        <div className="rounded-full border-2 border-gray-300 p-2">
+          <Bell size={24} className="text-green-500"/>
 
         </div>
       </div>
@@ -77,8 +77,6 @@ const CustomerDashboard = () => {
               <h3 className="text-lg font-bold text-primary-700">{boostedOffer.name}</h3>
               <p>{boostedOffer.description}</p>
               <p className="text-sm text-gray-600">Durée : {boostedOffer.duration} mois</p>
-
-              <hr />
             </div>
             
           ) : (
@@ -122,6 +120,10 @@ const CustomerDashboard = () => {
             <div className="flex space-x-4 pb-2">
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
               <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
               <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
             </div>
           </div>

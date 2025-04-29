@@ -3,7 +3,7 @@
 // import TopBar from './TopBar'
 
 // import CustomerDashboard from "@/pages/customer/CustomerDashboard"
-import { Home, Search, Settings, ShoppingCart, User } from "lucide-react"
+import { Home, Search, Settings, User } from "lucide-react"
 import { Link, Outlet, useLocation } from "react-router-dom"
 
 const CustomerLayout = () => {
@@ -11,9 +11,8 @@ const CustomerLayout = () => {
 
     const navItems = [
         { path: '/customer/dashboard', icon: <Home size={50} />},
-        { path: '/customer/user', icon: <User size={50} />},
+        { path: '/customer/myNaymo', icon: <User size={50} />},
         { path: '/customer/search', icon: <Search size={50} />},
-        { path: '/customer/cart', icon: <ShoppingCart size={50} />},
         { path: '/customer/settings', icon: <Settings size={50} /> }
     ]
   return (

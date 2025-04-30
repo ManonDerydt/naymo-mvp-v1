@@ -45,17 +45,16 @@ const CustomerDashboard = () => {
 
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50 pb-28">
       <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-50 flex justify-between items-center px-4 py-3">
-        <img src="" alt="carte Grenoble" className="h-6" />
+        <img src="" alt="Carte Grenoble" className="h-6" />
         <img src={logo} alt="Naymo" className="h-10" />
         <div className="rounded-full border-2 border-gray-300 p-2">
-          <Bell size={24} className="text-green-500"/>
-
+          <Bell size={24} className="text-green-500 fill-current"/>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-24 px-6">
         {customer && customerData ? (
           <span>
             Bienvenue <strong>{customerData.first_name} {customerData.last_name}</strong>

@@ -5,13 +5,13 @@ import BarChartEngagements from "@/components/charts/BarChartEngagements"
 
 const CustomerMyNaymo = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-28">
       {/* Barre du haut */}
       <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-50 flex justify-between items-center px-4 py-3">
         <img src="" alt="Carte Grenoble" className="h-6" />
         <img src={logo} alt="Naymo" className="h-10" />
         <div className="rounded-full border-2 border-gray-300 p-2">
-          <Bell size={24} className="text-green-500" />
+          <Bell size={24} className="text-green-500 fill-current" />
         </div>
       </div>
 

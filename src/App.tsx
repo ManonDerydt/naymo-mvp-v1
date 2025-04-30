@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import UserType from './pages/UserType'
-import Login from './pages/auth/Login'
+import MerchantLogin from './pages/auth/MerchantLogin'
 import RegisterSteps from './pages/merchant/RegisterSteps'
 import Dashboard from './pages/merchant/Dashboard'
 import Store from './pages/merchant/Store'
@@ -21,7 +21,7 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<UserType />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/merchant/login" element={<MerchantLogin />} />
         <Route path="/customer/login" element={<CustomerLogin />} />
         <Route path="/merchant/register" element={<RegisterSteps />} />
         <Route path="/customer/register" element={<CustomerRegisterSteps />} />

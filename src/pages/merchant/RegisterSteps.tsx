@@ -259,11 +259,11 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
   }
 
   const pictograms = [
-    { name: 'Accueil', imageUrl: '/src/assets/engagements/Accueil@1x.png' },
-    { name: 'Client', imageUrl: '/src/assets/engagements/Client@1x.png' },
-    { name: 'Humain', imageUrl: '/src/assets/engagements/Humain@1x.png' },
-    { name: 'Magasin', imageUrl: '/src/assets/engagements/Mon magasin@1x.png' },
-    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect environnement@1x.png' },
+    { name: 'Accueil', imageUrl: '/src/assets/engagements/Accueil_icon.png' },
+    { name: 'Client', imageUrl: '/src/assets/engagements/Client_icon.png' },
+    { name: 'Humain', imageUrl: '/src/assets/engagements/Humain_icon.png' },
+    { name: 'Magasin', imageUrl: '/src/assets/engagements/Mon_Magasin_icon.png' },
+    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect_Environnement_icon.png' },
     // Ajoute d'autres pictogrammes selon tes besoins
   ]
 

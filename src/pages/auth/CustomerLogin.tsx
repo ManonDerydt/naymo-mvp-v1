@@ -80,8 +80,8 @@ const CustomerLogin = () => {
         <div className="text-center">
           <p className="text-sm text-gray-600">
             Pas encore de compte ?{' '}
-            <Link to="/merchant/register" className="font-medium text-primary-500 hover:text-primary-600">
-              Créer un compte
+            <Link to="/customer/register" className="font-medium text-primary-500 hover:text-primary-600">
+              Créer un compte client
             </Link>
           </p>
         </div>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/components/firebase/firebaseConfig'
 
-const Login = () => {
+const MerchantLogin = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -81,7 +81,7 @@ const Login = () => {
           <p className="text-sm text-gray-600">
             Pas encore de compte ?{' '}
             <Link to="/merchant/register" className="font-medium text-primary-500 hover:text-primary-600">
-              Créer un compte
+              Créer un compte commerçant
             </Link>
           </p>
         </div>
@@ -90,4 +90,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default MerchantLogin

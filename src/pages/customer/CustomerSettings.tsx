@@ -9,14 +9,16 @@ const CustomerSettings = () => {
   const [showDeleteStep, setShowDeleteStep] = useState(false);
   const [showReasonForm, setShowReasonForm] = useState(false);
 
-  const {customer, customerData} = useAuth()
+  const { customer, customerData } = useAuth()
 
   return (
     <div className="min-h-screen bg-gray-50 pb-28 pt-20 px-4">
       {/* Barre du haut */}
       <div className="fixed top-0 left-0 right-0 bg-white border-b shadow-sm z-50 flex justify-between items-center px-4 py-3">
-        <img src="" alt="Carte Grenoble" className="h-6" />
+        {customer && customerData ? <p>{customerData.city}</p> : null }
+
         <img src={logo} alt="Naymo" className="h-10" />
+
         <div className="rounded-full border-2 border-gray-300 p-2">
           <Bell size={24} className="text-green-500 fill-current" />
         </div>

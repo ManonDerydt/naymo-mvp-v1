@@ -27,7 +27,7 @@ const Dashboard = () => {
       icon: <Gift className="w-6 h-6 text-purple-500" />,
       title: "Points distribués",
       value: "0,000",
-      trend: "+24%"
+      trend: "+0%"
     }
   ]
 

@@ -80,7 +80,7 @@ const CustomerSearch = () => {
                 <h2 className="text-lg font-semibold">Carte interactive</h2>
                 <div className="w-full h-96 bg-gray-300 rounded-lg overflow-hidden">
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d90001.78323013068!2d5.677887686271617!3d45.17584568692289!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2sfr!4v1745845788795!5m2!1sfr!2sfr"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d89987.67037611772!2d5.726812342404504!3d45.18477436052415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2sfr!4v1746611347536!5m2!1sfr!2sfr"
                         className="w-full h-full border-0"
                         allowFullScreen
                         loading="lazy"

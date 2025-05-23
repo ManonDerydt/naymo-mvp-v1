@@ -15,6 +15,7 @@ import CustomerLayout from './components/layout/CustomerLayout'
 import CustomerSearch from './pages/customer/CustomerSearch'
 import CustomerSettings from './pages/customer/CustomerSettings'
 import CustomerMyNaymo from './pages/customer/CustomerMyNaymo'
+import ResetPassword from './pages/auth/ResetPassword'
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/customer/login" element={<CustomerLogin />} />
         <Route path="/merchant/register" element={<RegisterSteps />} />
         <Route path="/customer/register" element={<CustomerRegisterSteps />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         
         {/* Protected routes - will need authentication later */}
         <Route element={<Layout />}>

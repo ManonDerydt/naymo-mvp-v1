@@ -68,6 +68,12 @@ const MerchantLogin = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            <div className="text-right">
+              <Link to="/reset-password?type=merchant" className="text-sm text-primary-500 hover:text-primary-600">
+                Mot de passe oublié ?
+              </Link>
+            </div>
           </div>
 
           <div>

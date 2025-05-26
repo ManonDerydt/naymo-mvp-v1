@@ -267,6 +267,15 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
     // Ajoute d'autres pictogrammes selon tes besoins
   ]
 
+  const handleRemoveKeyword = (keywordToRemove: string) => {
+    onChange({
+      target: {
+        name: 'keywords',
+        value: formData.keywords.filter(keyword => keyword !== keywordToRemove),
+      }
+    })
+  }
+
   return (
     <div className="space-y-6">
       <Input 
@@ -323,6 +332,13 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
           {formData.keywords.map((keyword, index) => (
             <li key={index} className="flex justify-between items-center">
               <span>{keyword}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveKeyword(keyword)}
+                className="text-red-500"
+              >
+                Supprimer
+              </button>
             </li>
           ))}
         </ul>
@@ -404,8 +420,21 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       label="Code postal"
       name="postal_code"
       value={formData.postal_code}
-      onChange={onChange}
+      onChange={(e) => {
+        const onlyDigits = e.target.value.replace(/\D/g, '') // Supprime tout sauf les chiffres
+        if (onlyDigits.length <= 5) {
+          onChange({
+            target: {
+              name: 'postal_code',
+              value: onlyDigits,
+            }
+          })
+        }
+      }}
       placeholder="Ex: 75001"
+      maxLength={5}
+      pattern="\d{5}"
+      type="text"
     />
   </div>
 )

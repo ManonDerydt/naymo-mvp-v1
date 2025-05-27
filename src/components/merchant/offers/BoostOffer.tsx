@@ -8,6 +8,7 @@ type Step = 'select' | 'payment' | 'success'
 interface Offer {
   id: string
   name: string
+  isBoosted?: boolean
 }
 
 const BoostOffer = () => {
@@ -43,12 +44,14 @@ const BoostOffer = () => {
         const offersQuery = query(collection(db, 'offer'), where('__name__', 'in', offerIds))
         const offersSnapshot = await getDocs(offersQuery)
 
-        const fetchedOffers = offersSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Offer[]
+        const fetchedOffers = offersSnapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...(doc.data() as Omit<Offer, 'id'>),
+          }))
+          .filter(offer => !offer.isBoosted)
 
-        setOffers(fetchedOffers)
+        setOffers(fetchedOffers as Offer[])
       } catch (error) {
         console.error('Erreur lors de la récupération des offres :', error)
       } finally {

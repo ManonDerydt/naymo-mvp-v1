@@ -287,6 +287,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
       />
       <Input
         label="Mot de passe"
+        type="password"
         name="password"
         value={formData.password}
         onChange={onChange}

@@ -18,22 +18,26 @@ interface EditOfferModalProps {
 }
 
 const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
-  const [formData, setFormData] = useState(initialData)
+  const [formData, setFormData] = useState({
+    description: initialData?.description ?? "",
+    duration: initialData?.duration ?? "",
+    isBoosted: initialData?.isBoosted ?? false,
+    name: initialData?.name ?? "",
+    target: initialData?.target ?? "",
+  })
   const [step, setStep] = useState<'info' | 'success'>('info')
 
   const { merchant } = useAuth();
 
   // Initialise formData avec les données de l'offre
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        description: initialData.description || "",
-        duration: initialData.duration || "",
-        isBoosted: initialData.isBoosted || false,
-        name: initialData.name || "",
-        target: initialData.target || "",
-      });
-    }
+    setFormData({
+      description: initialData?.description ?? "",
+      duration: initialData?.duration ?? "",
+      isBoosted: initialData?.isBoosted ?? false,
+      name: initialData?.name ?? "",
+      target: initialData?.target ?? "",
+    });
   }, [initialData]);
 
   const handleSubmit = async () => {
@@ -148,7 +152,16 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
               <Input
                 label="Durée"
                 value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                onChange={(e) => {
+                  const onlyDigits = e.target.value.replace(/\D/g, ''); // Supprime tout sauf les chiffres
+                  const numericValue = parseInt(onlyDigits, 10);
+                  if (onlyDigits === '' || (numericValue >= 1 && numericValue <= 12)) {
+                    setFormData(prev => ({
+                      ...prev,
+                      duration: onlyDigits,
+                    }));
+                  }
+                }}
               />
 
               <div className="space-y-2">
@@ -173,7 +186,6 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
                 </Button>
                 <Button onClick={() => {
                     handleSubmit()
-                    setStep('success')
                 }}>
                   Enregistrer
                 </Button>

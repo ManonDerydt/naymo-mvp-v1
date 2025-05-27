@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Eye, Pencil, ShoppingBag, Trash, TrendingUp } from 'lucide-react'
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore'
+import { collection, query, where, getDocs, deleteDoc, doc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 import { Button } from '@/components/ui'
 import EditOfferModal from './EditOfferModal'
@@ -27,44 +27,48 @@ const CurrentOffers = () => {
   const { merchant } = useAuth()
 
   useEffect(() => {
-    const fetchOffers = async () => {
+    if (!merchant) return;
 
-      if (!merchant) return
+    const merchantOfferQuery = query(
+      collection(db, 'merchant_has_offer'),
+      where('merchant_id', '==', merchant.uid)
+    );
 
-      try {
-        const merchantOfferQuery = query(
-          collection(db, 'merchant_has_offer'),
-          where('merchant_id', '==', merchant.uid)
-        )
-        const merchantOfferSnapshot = await getDocs(merchantOfferQuery)
+    const unsubscribe = onSnapshot(merchantOfferQuery, async (merchantOfferSnapshot) => {
+      const offerIds = merchantOfferSnapshot.docs
+        .map(doc => doc.data().offer_id)
+        .filter(Boolean);
 
-        const offerIds = merchantOfferSnapshot.docs
-          .map(doc => doc.data().offer_id)
-          .filter(Boolean)
+      if (offerIds.length === 0) {
+        setOffers([]);
+        setLoading(false);
+        return;
+      }
 
-        if (offerIds.length === 0) {
-          setOffers([])
-          return
-        }
+      const offersQuery = query(
+        collection(db, 'offer'),
+        where('__name__', 'in', offerIds)
+      );
 
-        const offersQuery = query(collection(db, 'offer'), where('__name__', 'in', offerIds))
-        const offersSnapshot = await getDocs(offersQuery)
-
+      // Utiliser onSnapshot pour écouter aussi les changements sur "offer"
+      const unsubscribeOffers = onSnapshot(offersQuery, (offersSnapshot) => {
         const fetchedOffers = offersSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data(),
-        })) as Offer[]
+        })) as Offer[];
 
-        setOffers(fetchedOffers)
-      } catch (error) {
-        console.error("Erreur lors de la récupération des offres :", error)
-      } finally {
-        setLoading(false)
-      }
-    }
+        setOffers(fetchedOffers);
+        setLoading(false);
+      });
 
-    fetchOffers()
-  }, [merchant])
+      // Nettoyage pour l'écoute sur "offer"
+      return () => unsubscribeOffers();
+    });
+
+    // Nettoyage pour l'écoute sur "merchant_has_offer"
+    return () => unsubscribe();
+  }, [merchant]);
+
 
   const handleDeleteOffer = async (offerId: string) => {
     try {

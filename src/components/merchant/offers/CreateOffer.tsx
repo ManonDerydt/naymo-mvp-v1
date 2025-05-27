@@ -35,7 +35,8 @@ const CreateOffer = () => {
 
       const offerRef = collection(db, "offer")
       const offerDoc = await addDoc(offerRef, {
-        ...formData
+        ...formData,
+        isBoosted: false, // champ ajouté ici
       })
 
       const merchantHasOfferRef = collection(db, "merchant_has_offer")

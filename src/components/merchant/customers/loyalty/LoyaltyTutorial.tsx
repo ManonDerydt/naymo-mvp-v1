@@ -1,8 +1,18 @@
 const LoyaltyTutorial = () => {
+  let url = "https://www.youtube.com/watch?v=zoFnEF-A7kQ";
+  if (url.includes("watch?v=")) {
+    url = url.replace("watch?v=", "embed/");
+  }
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-        <p className="text-gray-500">Vidéo tutoriel</p>
+        <iframe
+          className="w-full h-full rounded-lg"
+          src={url}
+          title="Tutoriel sur le programme de fidélité"
+          allowFullScreen
+        ></iframe>
       </div>
       <h3 className="font-medium text-gray-900">
         Comment optimiser votre programme de fidélité

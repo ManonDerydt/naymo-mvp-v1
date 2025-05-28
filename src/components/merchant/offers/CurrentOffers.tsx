@@ -124,8 +124,8 @@ const CurrentOffers = () => {
           <div className="flex justify-between items-center">
             <div>
               {offer.isBoosted && (
-                <h6 className="text-sm font-medium text-white bg-yellow-500 inline-block px-2 py-1 rounded-full mb-2">
-                  Offre boostée
+                <h6 className="inline-flex items-center justify-center bg-yellow-500 text-white text-2xl w-10 h-10 rounded-full mb-2">
+                  ⭐
                 </h6>
               )}
             </div>

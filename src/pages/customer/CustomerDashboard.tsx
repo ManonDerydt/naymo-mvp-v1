@@ -96,16 +96,26 @@ const CustomerDashboard = () => {
             <>
               <div className="overflow-x-auto">
                 <div className="flex space-x-4 pb-2">
-                  {offers.map((offer) => (
-                    <div
-                      key={offer.id}
-                      className="min-w-[250px] max-w-[300px] p-4 border rounded-lg shadow-sm bg-white flex-shrink-0"
-                    >
-                      <h3 className="text-lg font-medium text-primary-600">{offer.name}</h3>
-                      <p className="text-sm text-gray-700">{offer.description}</p>
-                      <p className="text-xs text-gray-400">Durée : {offer.duration} mois</p>
-                    </div>
-                  ))}
+                  {/* Tri des offres : boostées d'abord */}
+                  {[...offers]
+                    .sort((a, b) => (b.isBoosted ? 1 : 0) - (a.isBoosted ? 1 : 0))
+                    .map((offer) => (
+                      <div
+                        key={offer.id}
+                        className="min-w-[250px] max-w-[300px] p-4 border rounded-lg shadow-sm bg-white flex-shrink-0"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-medium text-primary-600">{offer.name}</h3>
+                          {offer.isBoosted && (
+                            <span className="inline-flex items-center justify-center bg-yellow-500 text-white text-sm w-6 h-6 rounded-full">
+                              ⭐
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700">{offer.description}</p>
+                        <p className="text-xs text-gray-400">Durée : {offer.duration} mois</p>
+                      </div>
+                    ))}
                 </div>
                 <hr />
               </div>

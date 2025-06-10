@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Store } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Store } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input, FileUpload } from '@/components/forms'
 
@@ -276,6 +276,8 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
     })
   }
 
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <div className="space-y-6">
       <Input 
@@ -285,14 +287,24 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         onChange={onChange}
         placeholder="Ex: yourname@mail.com"
       />
-      <Input
-        label="Mot de passe"
-        type="password"
-        name="password"
-        value={formData.password}
-        onChange={onChange}
-        placeholder="Ex: mypassword1234"
-      />
+      <div className="relative">
+        <Input
+          label="Mot de passe"
+          type={showPassword ? 'text' : 'password'}
+          name="password"
+          value={formData.password}
+          onChange={onChange}
+          placeholder="Ex: mypassword1234"
+          className="pr-10" // Pour laisser de la place à l'œil
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-[40px] text-gray-500"
+        >
+          {showPassword ? <EyeOff /> : <Eye />}
+        </button>
+      </div>
       <Input
         label="Nom de l'entreprise"
         name="company_name"

@@ -16,6 +16,7 @@ type Offer = {
   revenue: string
   purchases: number
   isBoosted: boolean
+  createdAt: any
 }
 
 const CurrentOffers = () => {
@@ -57,7 +58,13 @@ const CurrentOffers = () => {
           ...doc.data(),
         })) as Offer[];
 
-        setOffers(fetchedOffers);
+        const sortedOffers = fetchedOffers.sort((a, b) => {
+          const dateA = a.createdAt?.toDate?.() ?? new Date(0)
+          const dateB = b.createdAt?.toDate?.() ?? new Date(0)
+          return dateB.getTime() - dateA.getTime()
+        })
+
+        setOffers(sortedOffers);
         setLoading(false);
       });
 

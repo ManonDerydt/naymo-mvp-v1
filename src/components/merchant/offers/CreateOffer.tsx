@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import { auth, db } from '@/components/firebase/firebaseConfig'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 
 type Step = 'form' | 'summary' | 'success'
 
@@ -37,6 +37,7 @@ const CreateOffer = () => {
       const offerDoc = await addDoc(offerRef, {
         ...formData,
         isBoosted: false, // champ ajouté ici
+        createdAt: serverTimestamp(), // Ajout du champ createdAt
       })
 
       const merchantHasOfferRef = collection(db, "merchant_has_offer")

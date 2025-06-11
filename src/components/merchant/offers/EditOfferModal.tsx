@@ -9,6 +9,7 @@ import { useAuth } from '@/components/firebase/useAuth'
 interface EditOfferModalProps {
   onClose: () => void
   initialData: {
+    id: string // ID de l'offre à modifier
     description: string
     duration: string
     isBoosted: boolean
@@ -26,6 +27,7 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
     target: initialData?.target ?? "",
   })
   const [step, setStep] = useState<'info' | 'success'>('info')
+  const [error, setError] = useState<string | null>(null) // Pour gérer les erreurs
 
   const { merchant } = useAuth();
 
@@ -44,30 +46,33 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
     try {
         if (!merchant) {
           console.error("Utilisateur non connecté !");
+          setError("Vous devez être connecté pour modifier une offre.")
           return;
         }
     
-        // Étape 1 : Chercher le document dans "merchant_has_offer" qui correspond au merchant_id
-        const merchantOffersRef = collection(db, "merchant_has_offer");
-        const q = query(merchantOffersRef, where("merchant_id", "==", merchant.uid));
-        const querySnapshot = await getDocs(q);
-        
-        
-        if (querySnapshot.empty) {
-            console.error("Aucune offre trouvée pour ce marchand !");
-            return;
-        }
-        
-        // Récupérer le premier document trouvé (si plusieurs, adapter la logique selon le besoin)
-        const merchantOfferDoc = querySnapshot.docs[0];
-        const offerId = merchantOfferDoc.data().offer_id;
-    
+        const offerId = initialData.id
+
         if (!offerId) {
-          console.error("L'ID de l'offre est manquant !");
-          return;
+          console.error("L'ID de l'offre est manquant !")
+          setError("Une erreur est survenue : ID de l'offre manquant.")
+          return
+        }
+
+        // Validation : Vérifier que l'offre appartient au marchand via merchant_has_offer
+        const merchantOfferQuery = query(
+          collection(db, "merchant_has_offer"),
+          where("offer_id", "==", offerId),
+          where("merchant_id", "==", merchant.uid)
+        )
+        const merchantOfferSnapshot = await getDocs(merchantOfferQuery)
+
+        if (merchantOfferSnapshot.empty) {
+          console.error("L'offre n'appartient pas à ce marchand !")
+          setError("Vous n'êtes pas autorisé à modifier cette offre.")
+          return
         }
     
-        // Étape 2 : Mise à jour des données de l'offre
+        // Mise à jour des données de l'offre
         const updatedData = {
           description: formData.description,
           duration: formData.duration,
@@ -88,6 +93,7 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
         setStep('success');
       } catch (error) {
         console.error("Erreur lors de la mise à jour des données : ", error);
+        setError("Une erreur est survenue lors de la mise à jour de l'offre.")
       }
   };
 
@@ -131,6 +137,7 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
         <div className="p-6">
           {step === 'info' ? (
             <div className="space-y-6">
+              {error && <p className="text-red-600 text-sm">{error}</p>} {/* Affichage de l'erreur */}
               <Input
                 label="Nom de l'offre"
                 value={formData.name}

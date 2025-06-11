@@ -8,6 +8,22 @@ import { doc, setDoc } from 'firebase/firestore'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth, db } from '@/components/firebase/firebaseConfig'
 
+// Interface pour les erreurs
+interface FormErrors {
+  gender?: string
+  last_name?: string
+  first_name?: string
+  birth_date?: string
+  phone_number?: string
+  zip_code?: string
+  city?: string
+  email?: string
+  occupation?: string
+  password?: string
+  why_naymo?: string
+  general?: string
+}
+
 // Définition d'une interface pour le formulaire
 interface FormData {
   gender: string
@@ -27,6 +43,8 @@ interface FormData {
 interface StepProps {
   formData: FormData
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  errors: FormErrors
+  setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
 }
 
 const steps = [
@@ -64,9 +82,68 @@ const CustomerRegisterSteps = () => {
     newsletter: false,
     why_naymo: []
   })
+  const [errors, setErrors] = useState<FormErrors>({})
+
+  const validateStep = (stepIndex: number): boolean => {
+    const newErrors: FormErrors = {}
+    const stepFields = steps[stepIndex].fields
+
+    if (stepFields.includes('gender')) {
+      if (!formData.gender) newErrors.gender = 'Le genre est requis'
+    }
+    if (stepFields.includes('first_name')) {
+      if (!formData.first_name) newErrors.first_name = 'Le prénom est requis'
+    }
+    if (stepFields.includes('last_name')) {
+      if (!formData.last_name) newErrors.last_name = 'Le nom est requis'
+    }
+    if (stepFields.includes('birth_date')) {
+      if (!formData.birth_date) newErrors.birth_date = 'La date de naissance est requise'
+      else {
+        const birthDate = new Date(formData.birth_date)
+        const today = new Date()
+        let age = today.getFullYear() - birthDate.getFullYear()
+        const monthDiff = today.getMonth() - birthDate.getMonth()
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--
+        }
+        if (age < 18) newErrors.birth_date = 'Vous devez avoir au moins 18 ans'
+      }
+    }
+    if (stepFields.includes('phone_number')) {
+      if (!formData.phone_number) newErrors.phone_number = 'Le numéro de téléphone est requis'
+      else if (!/^\d{10}$/.test(formData.phone_number)) newErrors.phone_number = 'Numéro de téléphone invalide (10 chiffres requis)'
+    }
+    if (stepFields.includes('occupation')) {
+      if (!formData.occupation) newErrors.occupation = 'La profession est requise'
+    }
+    if (stepFields.includes('email')) {
+      if (!formData.email) newErrors.email = 'L\'email est requis'
+      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email invalide'
+    }
+    if (stepFields.includes('password')) {
+      if (!formData.password) newErrors.password = 'Le mot de passe est requis'
+      else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
+    }
+    if (stepFields.includes('city')) {
+      if (!formData.city) newErrors.city = 'La ville est requise'
+    }
+    if (stepFields.includes('zip_code')) {
+      if (!formData.zip_code) newErrors.zip_code = 'Le code postal est requis'
+      else if (!/^\d{5}$/.test(formData.zip_code)) newErrors.zip_code = 'Code postal invalide (5 chiffres requis)'
+    }
+    if (stepFields.includes('why_naymo')) {
+      if (formData.why_naymo.length === 0) newErrors.why_naymo = 'Au moins une raison est requise'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
+
+    setErrors({ ...errors, [name]: undefined }) // Effacer l'erreur du champ modifié
 
     if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked })
@@ -88,6 +165,8 @@ const CustomerRegisterSteps = () => {
   }
 
   const handleSubmitRegister = async () => {
+    if (!validateStep(currentStep)) return
+
     try {
       // Créer l'utilisateur dans Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
@@ -106,22 +185,38 @@ const CustomerRegisterSteps = () => {
 
       navigate('/customer/dashboard')
       
-    } catch (error) {
+    } catch (error: any) {
       console.log("Erreur lors de l'enregistrement des données : ", error)
+      let errorMessage = "Erreur lors de l'enregistrement. Veuillez réessayer."
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = "Cet email est déjà utilisé."
+        setErrors({ ...errors, email: errorMessage })
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = "L'email est invalide."
+        setErrors({ ...errors, email: errorMessage })
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = "Le mot de passe est trop faible."
+        setErrors({ ...errors, password: errorMessage })
+      } else {
+        setErrors({ ...errors, general: errorMessage })
+      }
     }
   }
 
   const nextStep = () => {
-    if (currentStep === steps.length - 1) {
-      // Submit form and redirect to dashboard
-      handleSubmitRegister()
-    } else {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+    if (validateStep(currentStep)) {
+      if (currentStep === steps.length - 1) {
+        // Submit form and redirect to dashboard
+        handleSubmitRegister()
+      } else {
+        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+      }
     }
   }
 
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0))
+    setErrors({}) // Réinitialiser les erreurs lors du retour en arrière
   }
 
   return (
@@ -135,18 +230,21 @@ const CustomerRegisterSteps = () => {
           <p className="mt-2 text-sm text-gray-600">
             Étape {currentStep + 1} sur {steps.length}
           </p>
+          {errors.general && (
+            <p className="mt-2 text-sm text-red-600">{errors.general}</p>
+          )}
         </div>
 
         <div className="bg-white shadow-sm rounded-lg p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
-              <CustomerInfoStep formData={formData} onChange={handleInputChange} />
+              <CustomerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 1 && (
-              <LocationStep formData={formData} onChange={handleInputChange} />
+              <LocationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 2 && (
-              <PreferencesStep formData={formData} onChange={handleInputChange} />
+              <PreferencesStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
 
             <div className="flex justify-between pt-6">
@@ -177,11 +275,12 @@ const CustomerRegisterSteps = () => {
 }
 
 // Étape 1
-const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
+const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
 
   return (
     <div className="space-y-6">
       <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+      {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
       <div className="flex gap-4">
         <label className="flex items-center space-x-2">
           <input
@@ -210,6 +309,7 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.first_name}
         onChange={onChange}
         placeholder="Ex: François"
+        error={errors.first_name}
       />
       <Input
         label="Nom"
@@ -217,6 +317,7 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.last_name}
         onChange={onChange}
         placeholder="Ex: Dupont"
+        error={errors.last_name}
       />
       <Input
         label="Date de naissance"
@@ -224,6 +325,7 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         type="date"
         value={formData.birth_date}
         onChange={onChange}
+        error={errors.birth_date}
       />
       <Input
         label="Numéro de téléphone"
@@ -234,6 +336,7 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         maxLength={10}
         pattern="\d{10}"
         type="tel"
+        error={errors.phone_number}
       />
       <Input 
         label="Profession" 
@@ -241,6 +344,7 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.occupation} 
         onChange={onChange} 
         placeholder="Ex: Fleuriste" 
+        error={errors.occupation}
       />
       <Input 
         label="Adresse e-mail" 
@@ -248,7 +352,8 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         type="email" 
         value={formData.email} 
         onChange={onChange} 
-        placeholder="Ex: exemple@mail.com" 
+        placeholder="Ex: exemple@mail.com"
+        error={errors.email}
       />
       <Input 
         label="Mot de passe" 
@@ -256,14 +361,15 @@ const CustomerInfoStep = ({ formData, onChange }: StepProps) => {
         type="password" 
         value={formData.password} 
         onChange={onChange} 
-        placeholder="********" 
+        placeholder="********"
+        error={errors.password} 
       />
     </div>
   )
 }
 
 // Étape 2
-const LocationStep = ({ formData, onChange }: StepProps) => (
+const LocationStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
     <Input
       label="Ville"
@@ -271,6 +377,7 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       value={formData.city}
       onChange={onChange}
       placeholder="Ex: Grenoble"
+      error={errors.city}
     />
     <Input
       label="Code postal"
@@ -280,12 +387,13 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       placeholder="Ex: 38000"
       maxLength={5}
       type="text"
+      error={errors.zip_code}
     />
   </div>
 )
 
 // Étape 3
-const PreferencesStep = ({ formData, onChange }: StepProps) => (
+const PreferencesStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
     <div className="flex items-center space-x-2">
       <Input
@@ -302,6 +410,7 @@ const PreferencesStep = ({ formData, onChange }: StepProps) => (
       value={formData.why_naymo.join(', ')}
       onChange={onChange}
       placeholder="Ex: Visibilité, communauté..."
+      error={errors.why_naymo}
     />
   </div>
 )

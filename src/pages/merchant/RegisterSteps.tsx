@@ -9,6 +9,26 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth, db, storage } from '@/components/firebase/firebaseConfig'
 
+// Interface pour les erreurs
+interface FormErrors {
+  email?: string
+  password?: string
+  company_name?: string
+  shortDescription?: string
+  business_type?: string
+  keywords?: string
+  commitments?: string
+  owner_name?: string
+  owner_birthdate?: string
+  address?: string
+  city?: string
+  postal_code?: string
+  logo?: string
+  cover_photo?: string
+  store_photos?: string
+  general?: string
+}
+
 // Définition d'une interface pour le formulaire
 interface FormData {
   email: string
@@ -38,6 +58,8 @@ type FieldChangeEvent =
 interface StepProps {
   formData: FormData
   onChange: (e: FieldChangeEvent) => void
+  errors: FormErrors
+  setErrors: React.Dispatch<React.SetStateAction<FormErrors>> // Ajout de setErrors
 }
 
 const steps = [
@@ -86,7 +108,76 @@ const RegisterSteps = () => {
     },
   })
 
+  const [errors, setErrors] = useState<FormErrors>({})
+
+  // Fonction de validation pour chaque étape
+  const validateStep = (stepIndex: number): boolean => {
+    const newErrors: FormErrors = {}
+    const stepFields = steps[stepIndex].fields
+
+    if (stepFields.includes('email')) {
+      if (!formData.email) newErrors.email = 'L\'email est requis'
+      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email invalide'
+    }
+    if (stepFields.includes('password')) {
+      if (!formData.password) newErrors.password = 'Le mot de passe est requis'
+      else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
+    }
+    if (stepFields.includes('company_name')) {
+      if (!formData.company_name) newErrors.company_name = 'Le nom de l\'entreprise est requis'
+    }
+    if (stepFields.includes('shortDescription')) {
+      if (!formData.shortDescription) newErrors.shortDescription = 'La description est requise'
+      else if (formData.shortDescription.length > 200) newErrors.shortDescription = 'La description ne doit pas dépasser 200 caractères'
+    }
+    if (stepFields.includes('business_type')) {
+      if (!formData.business_type) newErrors.business_type = 'Le type d\'activité est requis'
+    }
+    if (stepFields.includes('keywords')) {
+      if (formData.keywords.length === 0) newErrors.keywords = 'Au moins un mot-clé est requis'
+    }
+    if (stepFields.includes('commitments')) {
+      if (formData.commitments.length === 0) newErrors.commitments = 'Au moins un engagement est requis'
+    }
+    if (stepFields.includes('owner_name')) {
+      if (!formData.owner_name) newErrors.owner_name = 'Le nom du gérant est requis'
+    }
+    if (stepFields.includes('owner_birthdate')) {
+      if (!formData.owner_birthdate) newErrors.owner_birthdate = 'La date de naissance est requise'
+      else {
+        const birthDate = new Date(formData.owner_birthdate)
+        const today = new Date()
+        const age = today.getFullYear() - birthDate.getFullYear()
+        if (age < 18) newErrors.owner_birthdate = 'Le gérant doit avoir au moins 18 ans'
+      }
+    }
+    if (stepFields.includes('address')) {
+      if (!formData.address) newErrors.address = 'L\'adresse est requise'
+    }
+    if (stepFields.includes('city')) {
+      if (!formData.city) newErrors.city = 'La ville est requise'
+    }
+    if (stepFields.includes('postal_code')) {
+      if (!formData.postal_code) newErrors.postal_code = 'Le code postal est requis'
+      else if (!/^\d{5}$/.test(formData.postal_code)) newErrors.postal_code = 'Code postal invalide (5 chiffres requis)'
+    }
+    if (stepFields.includes('logo')) {
+      if (!formData.media.logo) newErrors.logo = 'Le logo est requis'
+    }
+    if (stepFields.includes('cover_photo')) {
+      if (!formData.media.cover_photo) newErrors.cover_photo = 'La photo de couverture est requise'
+    }
+    if (stepFields.includes('store_photos')) {
+      if (formData.media.store_photos.length < 3) newErrors.store_photos = 'Au moins 3 photos du commerce sont requises'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmitRegister = async () => {
+    if (!validateStep(currentStep)) return
+
     try {
       // Créer l'utilisateur dans Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
@@ -141,8 +232,21 @@ const RegisterSteps = () => {
 
       navigate('/dashboard')
       
-    } catch (error) {
+    } catch (error: any) {
       console.log("Erreur lors de l'enregistrement des données : ", error)
+      let errorMessage = "Erreur lors de l'enregistrement. Veuillez réessayer."
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = "Cet email est déjà utilisé."
+        setErrors({ ...errors, email: errorMessage })
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = "L'email est invalide."
+        setErrors({ ...errors, email: errorMessage })
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = "Le mot de passe est trop faible."
+        setErrors({ ...errors, password: errorMessage })
+      } else {
+        setErrors({ ...errors, general: errorMessage })
+      }
     }
   }
 
@@ -151,9 +255,26 @@ const RegisterSteps = () => {
       ...formData,
       [e.target.name]: e.target.value,
     })
+    // Effacer l'erreur du champ modifié
+    setErrors({ ...errors, [e.target.name]: undefined })
   }
 
   const handleFileChange = (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => {
+    const newErrors: FormErrors = { ...errors }
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        newErrors[type] = 'Seuls les fichiers image sont acceptés'
+        return
+      }
+      if (file.size > 5 * 1024 * 1024) { // 5 Mo
+        newErrors[type] = 'La taille du fichier ne doit pas dépasser 5 Mo'
+        return
+      }
+    })
+    if (newErrors[type]) {
+      setErrors(newErrors)
+      return
+    }
     setFormData({
       ...formData,
       media: {
@@ -161,19 +282,23 @@ const RegisterSteps = () => {
         [type]: type === 'store_photos' ? files : files[0],
       },
     })
+    setErrors({ ...errors, [type]: undefined })
   }
 
   const nextStep = () => {
-    if (currentStep === steps.length - 1) {
-      // Submit form and redirect to dashboard
-      handleSubmitRegister()
-    } else {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+    if (validateStep(currentStep)) {
+      if (currentStep === steps.length - 1) {
+        // Submit form and redirect to dashboard
+        handleSubmitRegister()
+      } else {
+        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
+      }
     }
   }
 
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0))
+    setErrors({}) // Réinitiliser les erreurs lors du retour en arrière
   }
 
   return (
@@ -187,21 +312,24 @@ const RegisterSteps = () => {
           <p className="mt-2 text-sm text-gray-600">
             Étape {currentStep + 1} sur {steps.length}
           </p>
+          {errors.general && (
+            <p className="mt-2 text-sm text-red-600">{errors.general}</p>
+          )}
         </div>
 
         <div className="bg-white shadow-sm rounded-lg p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
-              <BusinessInfoStep formData={formData} onChange={handleInputChange} />
+              <BusinessInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 1 && (
-              <OwnerInfoStep formData={formData} onChange={handleInputChange} />
+              <OwnerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors}/>
             )}
             {currentStep === 2 && (
-              <LocationStep formData={formData} onChange={handleInputChange} />
+              <LocationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 3 && (
-              <MediaStep onFileChange={handleFileChange} />
+              <MediaStep onFileChange={handleFileChange} errors={errors} />
             )}
 
             <div className="flex justify-between pt-6">
@@ -231,7 +359,7 @@ const RegisterSteps = () => {
   )
 }
 
-const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
+const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) => {
   const [newKeyword, setNewKeyword] = useState('')
   // const [newCommitment, setNewCommitment] = useState('')
   const [selectedCommitments, setSelectedCommitments] = useState<string[]>(formData.commitments || [])
@@ -244,7 +372,8 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
           value: [...formData.keywords, newKeyword],
         },
       })
-      setNewKeyword('') // Réinitialiser le champ de texte
+      setNewKeyword('')
+      setErrors({ ...errors, keywords: undefined })
     }
   }
 
@@ -255,6 +384,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
       onChange({
         target: { name: 'commitments', value: newCommitments },
       })
+      setErrors({ ...errors, commitments: undefined })
     }
   }
 
@@ -286,6 +416,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.email}
         onChange={onChange}
         placeholder="Ex: yourname@mail.com"
+        error={errors.email}
       />
       <div className="relative">
         <Input
@@ -296,6 +427,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
           onChange={onChange}
           placeholder="Ex: mypassword1234"
           className="pr-10" // Pour laisser de la place à l'œil
+          error={errors.password}
         />
         <button
           type="button"
@@ -311,6 +443,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.company_name}
         onChange={onChange}
         placeholder="Ex: Ma Boutique"
+        error={errors.company_name}
       />
       <Input
         label="Description courte"
@@ -318,6 +451,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.shortDescription}
         onChange={onChange}
         placeholder="Ex: Voici l'entreprise XXX..."
+        error={errors.shortDescription}
       />
       <Input
         label="Type d'activité"
@@ -325,6 +459,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
         value={formData.business_type}
         onChange={onChange}
         placeholder="Ex: Restaurant, Boutique, Service..."
+        error={errors.business_type}
       />
       {/* Ajout des mots-clés */}
       <div>
@@ -341,6 +476,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
             Ajouter
           </Button>
         </div>
+        {errors.keywords && <p className="mt-1 text-sm text-red-600">{errors.keywords}</p>}
         <ul className="mt-2 space-y-1">
           {formData.keywords.map((keyword, index) => (
             <li key={index} className="flex justify-between items-center">
@@ -372,6 +508,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
             </button>
           ))}
         </div>
+        {errors.commitments && <p className="mt-1 text-sm text-red-600">{errors.commitments}</p>}
         <div className="mt-4">
           <p className="text-sm font-medium text-gray-700">Engagements sélectionnés :</p>
           <ul className="mt-2 space-y-1">
@@ -394,7 +531,7 @@ const BusinessInfoStep = ({ formData, onChange }: StepProps) => {
   )
 }
 
-const OwnerInfoStep = ({ formData, onChange }: StepProps) => (
+const OwnerInfoStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
     <Input
       label="Nom et prénom du gérant"
@@ -402,6 +539,7 @@ const OwnerInfoStep = ({ formData, onChange }: StepProps) => (
       value={formData.owner_name}
       onChange={onChange}
       placeholder="Ex: Jean Dupont"
+      error={errors.owner_name}
     />
     <Input
       label="Date de naissance"
@@ -409,11 +547,12 @@ const OwnerInfoStep = ({ formData, onChange }: StepProps) => (
       type="date"
       value={formData.owner_birthdate}
       onChange={onChange}
+      error={errors.owner_birthdate}
     />
   </div>
 )
 
-const LocationStep = ({ formData, onChange }: StepProps) => (
+const LocationStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
     <Input
       label="Adresse"
@@ -421,6 +560,7 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       value={formData.address}
       onChange={onChange}
       placeholder="Ex: 123 rue du Commerce"
+      error={errors.address}
     />
     <Input
       label="Ville"
@@ -428,6 +568,7 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       value={formData.city}
       onChange={onChange}
       placeholder="Ex: Paris"
+      error={errors.city}
     />
     <Input
       label="Code postal"
@@ -448,25 +589,29 @@ const LocationStep = ({ formData, onChange }: StepProps) => (
       maxLength={5}
       pattern="\d{5}"
       type="text"
+      error={errors.postal_code}
     />
   </div>
 )
 
-const MediaStep = ({ onFileChange }: { onFileChange: (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => void }) => (
+const MediaStep = ({ onFileChange, errors }: { onFileChange: (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => void, errors: FormErrors }) => (
   <div className="space-y-8">
     <FileUpload
       label="Logo de votre entreprise"
       onChange={(files) => onFileChange('logo', files)}
+      error={errors.logo}
     />
     <FileUpload
       label="Photo de couverture"
       onChange={(files) => onFileChange('cover_photo', files)}
+      error={errors.cover_photo}
     />
     <FileUpload
       label="Photos du commerce (min. 3)"
       multiple
       maxFiles={5}
       onChange={(files) => onFileChange('store_photos', files)}
+      error={errors.store_photos}
     />
   </div>
 )

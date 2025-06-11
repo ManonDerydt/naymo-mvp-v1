@@ -9,14 +9,16 @@ interface FileUploadProps {
   maxFiles?: number
   accept?: string
   onChange?: (files: File[]) => void
+  error?: string
 }
 
-const FileUpload = ({ 
-  label, 
-  multiple = false, 
+const FileUpload = ({
+  label,
+  multiple = false,
   maxFiles = 1,
   accept = "image/*",
-  onChange 
+  onChange,
+  error // Ajout de error dans les props déstructurées
 }: FileUploadProps) => {
   const [files, setFiles] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
@@ -53,14 +55,18 @@ const FileUpload = ({
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-      
-      <div 
+      <div>
+        <label className="block text-sm font-medium text-gray-700">{label}</label>
+        {error && <p className="mt-1 text-sm text-red-600">{error}</p>} {/* Affichage de l'erreur */}
+      </div>
+
+      <div
         className={cn(
           "relative border-2 border-dashed border-gray-300 rounded-lg p-6",
           "hover:border-primary-500 transition-colors duration-200",
           "flex flex-col items-center justify-center gap-4",
-          "min-h-[200px]"
+          "min-h-[200px]",
+          error && "border-red-500" // Bordure rouge si erreur
         )}
         onClick={() => inputRef.current?.click()}
       >
@@ -83,7 +89,7 @@ const FileUpload = ({
             </p>
           )}
         </div>
-        
+
         <input
           ref={inputRef}
           type="file"

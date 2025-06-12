@@ -178,7 +178,17 @@ const CustomerRegisterSteps = () => {
 
       // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
       await setDoc(doc(db, "customer", user.uid), {
-        ...formData
+        gender: formData.gender,
+        last_name: formData.last_name,
+        first_name: formData.first_name,
+        birth_date: formData.birth_date,
+        phone_number: formData.phone_number,
+        zip_code: formData.zip_code,
+        city: formData.city,
+        email: formData.email,
+        occupation: formData.occupation,
+        newsletter: formData.newsletter,
+        why_naymo: formData.why_naymo
       })
 
       console.log("Données du client enregistrées sous l'UID : ", user.uid)

@@ -13,7 +13,8 @@ const CustomerDashboard = () => {
   const { customer, customerData } = useAuth()
 
   const [offers, setOffers] = useState<Offer[]>([])
-  const [boostedOffer, setBoostedOffer] = useState<Offer | null>(null)
+  const [showAllOffers, setShowAllOffers] = useState(false)
+  const [filter, setFilter] = useState('')
 
   type Offer = {
     id: string
@@ -32,9 +33,6 @@ const CustomerDashboard = () => {
           ...(doc.data() as Omit<Offer, 'id'>)
         }))
         setOffers(offersList)
-
-        const boosted = offersList.find(offer => offer.isBoosted === true)
-        setBoostedOffer(boosted || null)
       } catch (error) {
         console.error("Erreur lors de la récupération des offres :", error)
       }
@@ -43,6 +41,18 @@ const CustomerDashboard = () => {
     fetchOffers()
   }, [])
 
+  // Filtrer et trier les offres
+  const filteredOffers = offers
+    .filter(offer => 
+      offer.name.toLowerCase().includes(filter.toLowerCase()) ||
+      offer.description.toLowerCase().includes(filter.toLowerCase())
+    )
+    .sort((a, b) => (b.isBoosted ? 1 : 0) - (a.isBoosted ? 1 : 0))
+
+  // Les trois premières offres boostées
+  const topBoostedOffers = filteredOffers
+    .filter(offer => offer.isBoosted)
+    .slice(0, 3)
 
   return (
     <div className="min-h-screen bg-gray-50 pb-28">
@@ -73,55 +83,73 @@ const CustomerDashboard = () => {
         </div>
         <div className="lg:col-span-2">
           <p className="font-semibold mb-2">L'offre du moment*</p>
-          {boostedOffer ? (
-            <div className="border p-4 rounded shadow bg-primary-50">
-              <h3 className="text-lg font-bold text-primary-700">{boostedOffer.name}</h3>
-              <p>{boostedOffer.description}</p>
-              <p className="text-sm text-gray-600">Durée : {boostedOffer.duration} mois</p>
+          {topBoostedOffers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {topBoostedOffers.map(offer => (
+                <div key={offer.id} className="border p-4 rounded shadow bg-primary-50">
+                  <h3 className="text-lg font-bold text-primary-700 flex items-center">
+                    {offer.name}
+                    {offer.isBoosted && (
+                      <span className="ml-2 inline-flex items-center justify-center bg-yellow-500 text-white text-sm w-5 h-5 rounded-full">
+                        ⭐
+                      </span>
+                    )}
+                  </h3>
+                  <p>{offer.description}</p>
+                  <p className="text-sm text-gray-600">Durée : {offer.duration} mois</p>
+                </div>
+              ))}
             </div>
-            
           ) : (
             <p className="text-gray-500">Aucune offre boostée actuellement.</p>
           )}
         </div>
         
-        
-        
         <div className="mt-6 space-y-4">
-          <h2 className="text-xl font-semibold text-gray-800">Les offres en cours*</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-800">Les offres en cours*</h2>
+            {!showAllOffers && (
+              <button
+                onClick={() => setShowAllOffers(true)}
+                className="text-primary-600 hover:text-primary-800 text-sm underline"
+              >
+                Voir les offres en cours
+              </button>
+            )}
+          </div>
+          <input
+            type="text"
+            placeholder="Rechercher une offre..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full p-2 border rounded-lg mb-4"
+          />
 
-          {offers.length === 0 ? (
+          {filteredOffers.length === 0 ? (
             <p className="text-sm text-gray-500">Aucune offre disponible pour le moment.</p>
           ) : (
-            <>
-              <div className="overflow-x-auto">
-                <div className="flex space-x-4 pb-2">
-                  {/* Tri des offres : boostées d'abord */}
-                  {[...offers]
-                    .sort((a, b) => (b.isBoosted ? 1 : 0) - (a.isBoosted ? 1 : 0))
-                    .map((offer) => (
-                      <div
-                        key={offer.id}
-                        className="min-w-[250px] max-w-[300px] p-4 border rounded-lg shadow-sm bg-white flex-shrink-0"
-                      >
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-lg font-medium text-primary-600">{offer.name}</h3>
-                          {offer.isBoosted && (
-                            <span className="inline-flex items-center justify-center bg-yellow-500 text-white text-sm w-6 h-6 rounded-full">
-                              ⭐
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-700">{offer.description}</p>
-                        <p className="text-xs text-gray-400">Durée : {offer.duration} mois</p>
-                      </div>
-                    ))}
-                </div>
-                <hr />
+            <div className="overflow-x-auto">
+              <div className="flex space-x-4 pb-2">
+                {(!showAllOffers ? topBoostedOffers : filteredOffers).map((offer) => (
+                  <div
+                    key={offer.id}
+                    className="min-w-[250px] max-w-[300px] p-4 border rounded-lg shadow-sm bg-white flex-shrink-0"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-primary-600">{offer.name}</h3>
+                      {offer.isBoosted && (
+                        <span className="inline-flex items-center justify-center bg-yellow-500 text-white text-sm w-6 h-6 rounded-full">
+                          ⭐
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-700">{offer.description}</p>
+                    <p className="text-xs text-gray-400">Durée : {offer.duration} mois</p>
+                  </div>
+                ))}
               </div>
-
               <hr />
-            </>
+            </div>
           )}
         </div>
 

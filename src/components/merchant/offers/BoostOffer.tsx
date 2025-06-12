@@ -171,7 +171,7 @@ const BoostOffer = () => {
       <h3 className="text-lg font-medium text-gray-900 mb-6">
         Sélectionnez l'offre à booster
       </h3>
-      
+      <p className="mb-5 text-sm text-gray-500">L'offre boostée sera mentionnée parmi les premières de la liste des clients</p>
       <div className="space-y-4">
         {loading ? (
           <p>Chargement des offres...</p>

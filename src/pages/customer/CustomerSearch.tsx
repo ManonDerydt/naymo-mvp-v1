@@ -22,7 +22,7 @@ const CustomerSearch = () => {
             const merchantData = await Promise.all(
                 merchantSnapshot.docs.map(async (doc) => {
                     const merchantId = doc.id;
-                    console.log(`Vérification pour merchant_id: ${merchantId}, nom: ${doc.data().company_name || "Nom inconnu"}`);
+                    // console.log(`Vérification pour merchant_id: ${merchantId}, nom: ${doc.data().company_name || "Nom inconnu"}`);
                     const merchant = {
                         name: doc.data().company_name || "Nom inconnu",
                         type: doc.data().business_type || "Type inconnu",

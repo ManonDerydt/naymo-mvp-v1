@@ -46,7 +46,7 @@ const CustomerSearch = () => {
                         // console.log(`Aucune offre trouvée pour ${merchant.name} (merchant_id: ${merchantId})`);
                     }
 
-                    console.log(`Merchant: ${merchant.name}, hasOffers: ${merchant.hasOffers}`);
+                    // console.log(`Merchant: ${merchant.name}, hasOffers: ${merchant.hasOffers}`);
                     return merchant;
                 })
             );
@@ -72,7 +72,7 @@ const CustomerSearch = () => {
         })
         .sort((a, b) => (a.hasOffers === b.hasOffers ? 0 : a.hasOffers ? -1 : 1)); // tri : true avant false
     
-    console.log("Résultats triés : ", filteredResults.map(m => `${m.name} (${m.hasOffers})`));    
+    // console.log("Résultats triés : ", filteredResults.map(m => `${m.name} (${m.hasOffers})`));    
 
     return (
         <div className="min-h-screen bg-gray-50 pb-28">

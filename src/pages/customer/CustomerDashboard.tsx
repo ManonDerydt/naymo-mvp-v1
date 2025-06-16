@@ -52,7 +52,7 @@ const CustomerDashboard = () => {
   // Les trois premières offres boostées
   const topBoostedOffers = filteredOffers
     .filter(offer => offer.isBoosted)
-    .slice(0, 3)
+    .slice(0, 1)
 
   return (
     <div className="min-h-screen bg-gray-50 pb-28">

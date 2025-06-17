@@ -22,7 +22,7 @@ const CustomerSearch = () => {
             const merchantData = await Promise.all(
                 merchantSnapshot.docs.map(async (doc) => {
                     const merchantId = doc.id;
-                    // console.log(`Vérification pour merchant_id: ${merchantId}, nom: ${doc.data().company_name || "Nom inconnu"}`);
+
                     const merchant = {
                         name: doc.data().company_name || "Nom inconnu",
                         type: doc.data().business_type || "Type inconnu",
@@ -41,12 +41,8 @@ const CustomerSearch = () => {
                     const offerDocs = offerSnapshot.docs;
                     if (offerDocs.length > 0) {
                         merchant.hasOffers = true; // Au moins une offre associée
-                        // console.log(`Offres trouvées pour ${merchant.name} (merchant_id: ${merchantId}), nombre d'offres: ${offerDocs.length}, exemples d'IDs: ${offerDocs.map(doc => doc.data().offer_id).join(', ')}`);
-                    } else {
-                        // console.log(`Aucune offre trouvée pour ${merchant.name} (merchant_id: ${merchantId})`);
                     }
 
-                    // console.log(`Merchant: ${merchant.name}, hasOffers: ${merchant.hasOffers}`);
                     return merchant;
                 })
             );
@@ -71,8 +67,6 @@ const CustomerSearch = () => {
             return matchesSearch && matchesType;
         })
         .sort((a, b) => (a.hasOffers === b.hasOffers ? 0 : a.hasOffers ? -1 : 1)); // tri : true avant false
-    
-    // console.log("Résultats triés : ", filteredResults.map(m => `${m.name} (${m.hasOffers})`));    
 
     return (
         <div className="min-h-screen bg-gray-50 pb-28">

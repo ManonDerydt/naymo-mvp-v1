@@ -52,7 +52,7 @@ interface FormData {
 
 // Définition d'un type pour l'événement de changement
 type FieldChangeEvent =
-  | React.ChangeEvent<HTMLInputElement>
+  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   | { target: { name: keyof FormData | 'keywords' | 'commitments'; value: any } }
 
 interface StepProps {
@@ -251,13 +251,16 @@ const RegisterSteps = () => {
   }
 
   const handleInputChange = (e: FieldChangeEvent) => {
+    const { name, value } = e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement
+      ? e.target
+      : e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
-    })
+      [name]: value,
+    });
     // Effacer l'erreur du champ modifié
-    setErrors({ ...errors, [e.target.name]: undefined })
-  }
+    setErrors({ ...errors, [name]: undefined });
+  };
 
   const handleFileChange = (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => {
     const newErrors: FormErrors = { ...errors }
@@ -393,8 +396,7 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
     { name: 'Client', imageUrl: '/src/assets/engagements/Client_icon.png' },
     { name: 'Humain', imageUrl: '/src/assets/engagements/Humain_icon.png' },
     { name: 'Magasin', imageUrl: '/src/assets/engagements/Mon_Magasin_icon.png' },
-    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect_Environnement_icon.png' },
-    // Ajoute d'autres pictogrammes selon tes besoins
+    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect_Environnement_icon.png' }
   ]
 
   const handleRemoveKeyword = (keywordToRemove: string) => {
@@ -453,14 +455,24 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
         placeholder="Ex: Voici l'entreprise XXX..."
         error={errors.shortDescription}
       />
-      <Input
-        label="Type d'activité"
-        name="business_type"
-        value={formData.business_type}
-        onChange={onChange}
-        placeholder="Ex: Restaurant, Boutique, Service..."
-        error={errors.business_type}
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Type d'activité</label>
+        <select
+          name="business_type"
+          value={formData.business_type}
+          onChange={onChange}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+          <option value="">Sélectionnez un type d'activité</option>
+          <option value="Alimentation">Alimentation</option>
+          <option value="Vestimentaire">Vestimentaire</option>
+          <option value="Décoration">Décoration</option>
+          <option value="Artisanat">Artisanat</option>
+          <option value="Restauration">Restauration</option>
+          <option value="Événementiel">Événementiel</option>
+        </select>
+        {errors.business_type && <p className="mt-1 text-sm text-red-600">{errors.business_type}</p>}
+      </div>
       {/* Ajout des mots-clés */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Mots-clés</label>

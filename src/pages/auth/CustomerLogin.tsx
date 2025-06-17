@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Store } from 'lucide-react'
 import { Button } from '@/components/ui'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/components/firebase/firebaseConfig'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { auth, db } from '@/components/firebase/firebaseConfig'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 
 const CustomerLogin = () => {
   const [email, setEmail] = useState('')
@@ -18,9 +19,25 @@ const CustomerLogin = () => {
     setError('')
 
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      // Authentification avec Firebase Authentication
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+
+      // Vérification dans la collection "customer"
+      const customerQuery = query(collection(db, "customer"), where("email", "==", email))
+      const customerSnapshot = await getDocs(customerQuery)
+      
+      if (customerSnapshot.empty) {
+        // Si aucun document n'est trouvé dans "customer", déconnecter l'utilisateur
+        await signOut(auth)
+        setError('Cet email n\'est pas associé à un compte client. Veuillez utiliser un compte client ou vous inscrire.')
+        return
+      }
+
+      // Si l'utilisateur est trouvé dans "customer", rediriger vers le dashboard client
       navigate('/customer/dashboard')
-    } catch (err) {
+    } catch (err: any) {
+      // Gestion des erreurs d'authentification (email/mot de passe incorrect)
       setError('Email ou mot de passe incorrect.')
     }
   }

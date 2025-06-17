@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Store } from 'lucide-react'
 import { Button } from '@/components/ui'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/components/firebase/firebaseConfig'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { auth, db } from '@/components/firebase/firebaseConfig'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 
 const MerchantLogin = () => {
   const [email, setEmail] = useState('')
@@ -18,9 +19,25 @@ const MerchantLogin = () => {
     setError('')
 
     try {
-      await signInWithEmailAndPassword(auth, email, password)
+      // Authentification avec Firebase Authentication
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+
+      // Vérification dans la collection "merchant"
+      const merchantQuery = query(collection(db, "merchant"), where("email", "==", email))
+      const merchantSnapshot = await getDocs(merchantQuery)
+      
+      if (merchantSnapshot.empty) {
+        // Si aucun document n'est trouvé dans "merchant", déconnecter l'utilisateur
+        await signOut(auth)
+        setError('Cet email n\'est pas associé à un compte commerçant. Veuillez utiliser un compte commerçant ou vous inscrire.')
+        return
+      }
+
+      // Si l'utilisateur est trouvé dans "merchant", rediriger vers le dashboard
       navigate('/dashboard')
-    } catch (err) {
+    } catch (err: any) {
+      // Gestion des erreurs d'authentification (email/mot de passe incorrect)
       setError('Email ou mot de passe incorrect.')
     }
   }

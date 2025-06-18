@@ -4,11 +4,20 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/components/firebase/useAuth"
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
+import Map from "@/components/map/MapComponent"
 
 const CustomerSearch = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedType, setSelectedType] = useState<string | null>(null); // État pour le type sélectionné
-    const [stores, setStores] = useState<{ name: string, type: string; owner_name: string; shortDescription: string; logo: string, hasOffers: boolean }[]>([]);
+    const [stores, setStores] = useState<{ 
+        name: string; 
+        type: string; 
+        owner_name: string; 
+        shortDescription: string; 
+        logo: string, 
+        hasOffers: boolean;
+        address: string
+    }[]>([]);
     const [loading, setLoading] = useState(true);
 
     const { customer, customerData } = useAuth();
@@ -16,42 +25,42 @@ const CustomerSearch = () => {
     // Récupérer les données de la collection "merchant" et vérifier les offres
     useEffect(() => {
         const fetchMerchantsAndOffers = async () => {
-        try {
-            // Récupérer tous les commerçants
-            const merchantSnapshot = await getDocs(collection(db, "merchant"));
-            const merchantData = await Promise.all(
-                merchantSnapshot.docs.map(async (doc) => {
-                    const merchantId = doc.id;
+            try {
+                // Récupérer tous les commerçants
+                const merchantSnapshot = await getDocs(collection(db, "merchant"));
+                const merchantData = await Promise.all(
+                    merchantSnapshot.docs.map(async (doc) => {
+                        const merchantId = doc.id;
 
-                    const merchant = {
-                        name: doc.data().company_name || "Nom inconnu",
-                        type: doc.data().business_type || "Type inconnu",
-                        owner_name: doc.data().owner_name || "Propriétaire inconnu",
-                        shortDescription: doc.data().shortDescription || "Aucune description",
-                        logo: doc.data().logo || "/default-logo.png",
-                        hasOffers: false,
-                    };
+                        const merchant = {
+                            name: doc.data().company_name || "Nom inconnu",
+                            type: doc.data().business_type || "Type inconnu",
+                            owner_name: doc.data().owner_name || "Propriétaire inconnu",
+                            shortDescription: doc.data().shortDescription || "Aucune description",
+                            logo: doc.data().logo || "/default-logo.png",
+                            hasOffers: false,
+                            address: doc.data().address || "Adresse inconnue",
+                        };
 
-                    // Vérifier si ce commerçant a des offres via "merchant_has_offer"
-                    const offerQuery = query(
-                        collection(db, "merchant_has_offer"),
-                        where("merchant_id", "==", merchantId)
-                    );
-                    const offerSnapshot = await getDocs(offerQuery);
-                    const offerDocs = offerSnapshot.docs;
-                    if (offerDocs.length > 0) {
-                        merchant.hasOffers = true; // Au moins une offre associée
-                    }
+                        // Vérifier si ce commerçant a des offres via "merchant_has_offer"
+                        const offerQuery = query(
+                            collection(db, "merchant_has_offer"),
+                            where("merchant_id", "==", merchantId)
+                        );
+                        const offerSnapshot = await getDocs(offerQuery);
+                        if (offerSnapshot.docs.length > 0) {
+                            merchant.hasOffers = true; // Au moins une offre associée
+                        }
 
-                    return merchant;
-                })
-            );
-            setStores(merchantData);
-        } catch (error) {
-          console.error("Erreur lors de la récupération des magasins ou des offres :", error);
-        } finally {
-          setLoading(false);
-        }
+                        return merchant;
+                    })
+                );
+                setStores(merchantData);
+            } catch (error) {
+                console.error("Erreur lors de la récupération des magasins ou des offres :", error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchMerchantsAndOffers();
     }, []);
@@ -112,14 +121,7 @@ const CustomerSearch = () => {
                 {/* Carte */}
                 <h2 className="text-lg font-semibold">Carte interactive</h2>
                 <div className="w-full h-96 bg-gray-300 rounded-lg overflow-hidden">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d89987.67037611772!2d5.726812342404504!3d45.18477436052415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sfr!2sfr!4v1746611347536!5m2!1sfr!2sfr"
-                        className="w-full h-full border-0"
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title="Google Maps"
-                    ></iframe>
+                    <Map stores={filteredResults} />
                 </div>
 
                 {/* Résultats de la recherche */}

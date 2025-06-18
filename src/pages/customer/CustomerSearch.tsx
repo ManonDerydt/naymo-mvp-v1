@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/components/firebase/useAuth"
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
-import Map from "@/components/map/MapComponent"
+import Map from "@/components/map/Map"
 
 const CustomerSearch = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -85,8 +85,9 @@ const CustomerSearch = () => {
 
                 <img src={logo} alt="Naymo" className="h-10" />
                 
-                <div className="rounded-full border-2 border-gray-300 p-2">
+                <div className="relative">
                     <Bell size={24} className="text-green-500 fill-current" />
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
                 </div>
             </div>
 

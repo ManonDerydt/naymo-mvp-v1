@@ -2,8 +2,10 @@ import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from '@react-google-map
 import { useState, useEffect } from 'react';
 
 const Map = ({ stores }: { stores: any[] }) => {
+  const key = 'AIzaSyDQns4mxS0cnLznaOJElNlGawZgGoYlvW8'
+  
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyDQns4mxS0cnLznaOJElNlGawZgGoYlvW8', // Remplace par ta vraie clé
+    googleMapsApiKey: key,
     language: 'fr', // Définir la langue en français
   });
 

@@ -52,7 +52,10 @@ const CustomerDashboard = () => {
   // Les trois premières offres boostées
   const topBoostedOffers = filteredOffers
     .filter(offer => offer.isBoosted)
-    .slice(0, 1)
+    .slice(0, 3)
+
+  // Une seule offre boostée pour "L'offre du moment"
+  const topMomentOffer = topBoostedOffers.slice(0, 1)
 
   return (
     <div className="min-h-screen bg-gray-50 pb-28">
@@ -83,9 +86,9 @@ const CustomerDashboard = () => {
         </div>
         <div className="lg:col-span-2">
           <p className="font-semibold mb-2">L'offre du moment*</p>
-          {topBoostedOffers.length > 0 ? (
+          {topMomentOffer.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {topBoostedOffers.map(offer => (
+              {topMomentOffer.map(offer => (
                 <div key={offer.id} className="border p-4 rounded shadow bg-primary-50">
                   <h3 className="text-lg font-bold text-primary-700 flex items-center">
                     {offer.name}

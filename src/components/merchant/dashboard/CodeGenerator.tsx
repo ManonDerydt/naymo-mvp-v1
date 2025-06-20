@@ -11,7 +11,7 @@ const CodeGenerator = () => {
             placeholder="Nombre de points"
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           />
-          <Button className="w-full md:w-auto">Générer un code</Button>
+          <Button className="w-full md:w-auto bg-[#032313]">Générer un code</Button>
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">

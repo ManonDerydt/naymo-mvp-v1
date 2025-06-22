@@ -122,7 +122,7 @@ const CustomerSettings = () => {
       navigate("/");
     } catch (err: any) {
       setError("Erreur lors de la ré-authentification ou suppression");
-      console.error("Erreur lors de la suppression:", err);
+      console.error("Echec de la suppression:", err);
     }
   };
 
@@ -141,7 +141,7 @@ const CustomerSettings = () => {
 
   const legalDocuments = [
     {
-      title: 'CGU',
+      title: "CGU",
       description: "Conditions générales d'utilisation de la plateforme",
       content: `Les présentes conditions générales d'utilisation (CGU) régissent l'utilisation de la plateforme Naymo.
 
@@ -155,11 +155,11 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 2. Utilisation de la plateforme
 - La plateforme doit être utilisée conformément aux lois en vigueur
 - Tout contenu publié doit respecter nos règles de communauté
-- Nous nous réservons le droit de suspendre ou supprimer un compte en cas d'utilisation abusive`
+- Nous nous réservons le droit de suspendre ou supprimer un compte en cas d'utilisation abusive`,
     },
     {
-      title: 'Politique de confidentialité',
-      description: 'Gestion de vos données personnelles',
+      title: "Politique de confidentialité",
+      description: "Gestion de vos données personnelles",
       content: `Notre politique de confidentialité explique comment nous collectons, utilisons et protégeons vos données personnelles.
 
 1. Collecte des données
@@ -175,11 +175,11 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 3. Protection des données
 - Stockage sécurisé
 - Non-transmission à des tiers
-- Durée de conservation limitée`
+- Durée de conservation limitée`,
     },
     {
-      title: 'Charte cookies',
-      description: 'Utilisation des cookies sur la plateforme',
+      title: "Charte cookies",
+      description: "Utilisation des cookies sur la plateforme",
       content: `Notre charte cookies explique comment nous utilisons les cookies et technologies similaires sur notre plateforme.
 
 1. Types de cookies utilisés
@@ -194,105 +194,136 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
 3. Durée de conservation
 - Les cookies temporaires sont supprimés à la fermeture du navigateur
-- Les cookies permanents ont une durée de vie limitée`
+- Les cookies permanents ont une durée de vie limitée`,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28 pt-20 px-4">
-       {/* HEADER */}
-            <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-lg z-50 flex items-center px-4 py-3">
-                <div className="flex-1" />
-                <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-                <div className="flex-1 flex justify-end">
-                    <div className="relative">
-                        <Bell size={24} className="text-green-500 fill-current" />
-                        <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">3</span>
-                    </div>
-                </div>
-            </div>
+    <div className="min-h-screen from-green-50 via-white to-green-100 pb-28 pt-10 px-4">
+      {/* HEADER */}
+      <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-lg z-50 flex items-center px-4 py-3">
+        <div className="flex-1" />
+        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
+        <div className="flex-1 flex justify-end">
+          <div className="relative">
+            <Bell size={24} className="text-green-500 fill-current" />
+            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">3</span>
+          </div>
+        </div>
+      </div>
 
-      {/* Sections principales */}
-      <div className="space-y-6 mt-4">
+      <div className="max-w-2xl mx-auto mt-16 space-y-8">
         {/* Profil */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Profil</h2>
-          <div className="bg-white rounded-lg shadow p-4 space-y-2">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Profil</h2>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
             {customer && customerData ? (
               <>
                 {!isEditingProfile ? (
-                  <>
-                    <div className="flex items-center p-2">
-                      <User className="text-green-500 mr-3" size={20} />
-                      <span><strong>Prénom :</strong> {customerData.first_name}</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                        <User className="text-green-600" size={20} />
+                      </div>
+                      <span className="text-gray-900 font-medium">
+                        Prénom : <strong>{customerData.first_name}</strong>
+                      </span>
                     </div>
-                    <div className="flex items-center p-2">
-                      <Search className="text-green-500 mr-3" size={20} />
-                      <span><strong>Email :</strong> {customerData.email}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                        <Search className="text-green-600" size={20} />
+                      </div>
+                      <span className="text-gray-900 font-medium">
+                        Email : <strong>{customerData.email}</strong>
+                      </span>
                     </div>
-                    <div className="flex items-center p-2">
-                      <HelpCircle className="text-green-500 mr-3" size={20} />
-                      <span><strong>Date de naissance :</strong> {new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                        <HelpCircle className="text-green-600" size={20} />
+                      </div>
+                      <span className="text-gray-900 font-medium">
+                        Date de naissance :{" "}
+                        <strong>
+                          {customerData.birth_date
+                            ? new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              })
+                            : "Non spécifié"}
+                        </strong>
+                      </span>
                     </div>
-                    <div className="flex items-center p-2">
-                      <Lock className="text-green-500 mr-3" size={20} />
-                      <span><strong>Numéro de téléphone :</strong> {customerData.phone_number || "Non spécifié"}</span>
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                        <Lock className="text-green-600" size={20} />
+                      </div>
+                      <span className="text-gray-900 font-medium">
+                        Téléphone : <strong>{customerData.phone_number || "Non spécifié"}</strong>
+                      </span>
                     </div>
-                    <div className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onClick={() => setIsEditingProfile(true)}>
-                      <Edit className="text-green-500 mr-3" size={20} />
-                      <span>Modifier</span>
+                    <div
+                      className="flex items-center gap-3 p-3 bg-[#7ebd07] rounded-2xl shadow cursor-pointer hover:bg-green-100 w-fit mt-10"
+                      onClick={() => setIsEditingProfile(true)}
+                    >
+                      <Edit className="text-white" size={20} />
+                      <span className="font-semibold text-white">Modifier</span>
                     </div>
-                  </>
+                  </div>
                 ) : (
                   <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
-                    <div className="ml-8 space-y-4">
-                      <span><strong>Prénom :</strong></span>
-                      <input
-                        type="text"
-                        value={editedData.first_name}
-                        onChange={(e) => setEditedData({ ...editedData, first_name: e.target.value })}
-                        placeholder="Prénom"
-                        className="block w-full border p-2 rounded"
-                      />
-                      <span><strong>Email :</strong></span>
-                      <input
-                        type="email"
-                        value={editedData.email}
-                        onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
-                        placeholder="Email"
-                        className="block w-full border p-2 rounded"
-                        disabled
-                      />
-                      <span><strong>Date de naissance :</strong></span>
-                      <input
-                        type="date"
-                        value={editedData.birth_date}
-                        onChange={(e) => setEditedData({ ...editedData, birth_date: e.target.value })}
-                        className="block w-full border p-2 rounded"
-                      />
-                      <span><strong>Numéro de téléphone :</strong></span>
-                      <input
-                        type="tel"
-                        value={editedData.phone_number}
-                        onChange={(e) => setEditedData({ ...editedData, phone_number: e.target.value.replace(/\D/g, "").slice(0, 10) })}
-                        placeholder="Numéro de téléphone"
-                        className="block w-full border p-2 rounded"
-                      />
-                      <div className="flex justify-end space-x-4">
+                    <div className="space-y-4">
+                      <label className="block">
+                        <span className="text-gray-700 font-medium">Prénom</span>
+                        <input
+                          type="text"
+                          value={editedData.first_name}
+                          onChange={(e) => setEditedData({ ...editedData, first_name: e.target.value })}
+                          placeholder="Prénom"
+                          className="block w-full border p-3 rounded-2xl mt-1"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 font-medium">Email</span>
+                        <input
+                          type="email"
+                          value={editedData.email}
+                          onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
+                          placeholder="Email"
+                          className="block w-full border p-3 rounded-2xl mt-1"
+                          disabled
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 font-medium">Date de naissance</span>
+                        <input
+                          type="date"
+                          value={editedData.birth_date}
+                          onChange={(e) => setEditedData({ ...editedData, birth_date: e.target.value })}
+                          className="block w-full border p-3 rounded-2xl mt-1"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="text-gray-700 font-medium">Numéro de téléphone</span>
+                        <input
+                          type="tel"
+                          value={editedData.phone_number}
+                          onChange={(e) => setEditedData({ ...editedData, phone_number: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                          placeholder="Numéro de téléphone"
+                          className="block w-full border p-3 rounded-2xl mt-1"
+                        />
+                      </label>
+                      <div className="flex justify-end space-x-4 pt-2">
                         <button
                           type="button"
                           onClick={() => setIsEditingProfile(false)}
-                          className="bg-gray-500 text-white px-4 py-2 rounded"
+                          className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl"
                         >
                           Annuler
                         </button>
                         <button
                           type="submit"
-                          className="bg-green-500 text-white px-4 py-2 rounded"
+                          className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
                           disabled={loading}
                         >
                           {loading ? "Sauvegarde..." : "Sauvegarder"}
@@ -308,46 +339,48 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
         {/* Mon compte */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Mon compte</h2>
-          <div className="bg-white rounded-lg shadow p-4 space-y-2">
-            <div className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onClick={() => setShowPasswordForm(true)}>
-              <Lock className="text-green-500 mr-3" size={20} />
-              <span>Changer mon mot de passe</span>
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Mon compte</h2>
+          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setShowPasswordForm(true)}>
+              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                <Lock className="text-green-600" size={20} />
+              </div>
+              <span className="font-semibold text-green-800">Changer mon mot de passe</span>
             </div>
             {showPasswordForm && (
-              <div className="ml-8 space-y-2">
+              <div className="ml-12 space-y-4">
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mot de passe actuel"
-                  className="block border px-3 py-2 w-full rounded"
+                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
                 />
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Nouveau mot de passe"
-                  className="block border px-3 py-2 w-full rounded"
+                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
                 />
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirmer le nouveau mot de passe"
-                  className="block border px-3 py-2 w-full rounded"
+                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
                 />
                 <div className="flex justify-end space-x-4">
                   <button
                     type="button"
                     onClick={() => { setShowPasswordForm(false); setPassword(""); setNewPassword(""); setConfirmPassword(""); setError(null); }}
-                    className="bg-gray-500 text-white px-4 py-2 rounded"
+                    className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl"
                   >
                     Annuler
                   </button>
                   <button
                     onClick={handleChangePassword}
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
                     disabled={loading || !newPassword || newPassword !== confirmPassword}
                   >
                     {loading ? "Mise à jour..." : "Sauvegarder"}
@@ -355,33 +388,38 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                 </div>
               </div>
             )}
-            <div className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onClick={() => setDeleteStep("reason")}>
-              <Trash2 className="text-green-500 mr-3" size={20} />
-              <span>Supprimer mon compte</span>
+            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setDeleteStep("reason")}>
+              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                <Trash2 className="text-green-600" size={20} />
+              </div>
+              <span className="font-semibold text-green-800">Supprimer mon compte</span>
             </div>
-            <div className="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer" onClick={handleLogout}>
-              <LogOut className="text-green-500 mr-3" size={20} />
-              <span>Me déconnecter</span>
+            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={handleLogout}>
+              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                <LogOut className="text-green-600" size={20} />
+              </div>
+              <span className="font-semibold text-green-800">Me déconnecter</span>
             </div>
           </div>
         </section>
 
         {/* Confidentialité */}
         <section>
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Confidentialité</h2>
-          <div className="bg-white rounded-lg shadow p-4 space-y-2">
+          <h2 className="text-2xl font-bold mb-4 text-gray-800">Confidentialité</h2>
+          <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="max-w-3xl space-y-8">
               <section className="space-y-4">
-                <h2 className="text-lg font-medium text-gray-900">Documents légaux</h2>
-                <div className="grid gap-4 md:grid-cols-2">
+                <h2 className="text-lg font-bold text-gray-900">Documents légaux</h2>
+                <div className="grid gap-6 md:grid-cols-2">
                   {legalDocuments.map((doc) => (
-                    <div key={doc.title} className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="font-medium text-gray-900 mb-2">{doc.title}</h3>
+                    <div key={doc.title} className="p-6 bg-[#f2f8ea] rounded-2xl shadow">
+                      <h3 className="font-bold text-gray-900 mb-3">{doc.title}</h3>
                       <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setSelectedDocument(doc)}
+                        className="border-[#7fbd07] text-green-700"
                       >
                         Consulter
                       </Button>
@@ -389,7 +427,6 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                   ))}
                 </div>
               </section>
-
               {selectedDocument && (
                 <LegalDocumentModal
                   title={selectedDocument.title}
@@ -401,10 +438,10 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
           </div>
         </section>
 
-        {/* Modal de suppression */}
+        {/* Modals de suppression */}
         {deleteStep !== "idle" && deleteStep !== "success" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6">
               {deleteStep === "confirm" && (
                 <div className="space-y-4">
                   <h3 className="font-medium text-red-900">Confirmation de suppression</h3>
@@ -423,7 +460,6 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                   </Button>
                 </div>
               )}
-
               {deleteStep === "reauthenticate" && (
                 <div className="space-y-4">
                   <h3 className="font-medium text-red-900">Vérification d'identité</h3>
@@ -431,14 +467,14 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-3 border rounded-2xl"
                     placeholder="Votre email"
                   />
                   <input
                     type="password"
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
-                    className="w-full p-2 border rounded-md"
+                    className="w-full p-3 border rounded-2xl"
                     placeholder="Votre mot de passe"
                   />
                   {error && <p className="text-red-600">{error}</p>}
@@ -460,13 +496,13 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
         {deleteStep === "reason" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6">
               <div className="space-y-4">
                 <h3 className="font-medium text-red-900">Raison de la suppression</h3>
                 <textarea
                   value={deletionReason}
                   onChange={(e) => setDeletionReason(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-3 border rounded-2xl"
                   rows={3}
                   placeholder="Dites-nous pourquoi vous souhaitez supprimer votre compte..."
                 />
@@ -489,7 +525,7 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
         {deleteStep === "success" && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="bg-white rounded-2xl max-w-md w-full p-6">
               <div className="space-y-4">
                 <h3 className="font-medium text-green-900">Compte supprimé avec succès</h3>
                 <p className="text-sm text-green-600">Votre compte a été supprimé. Merci de nous avoir utilisé.</p>

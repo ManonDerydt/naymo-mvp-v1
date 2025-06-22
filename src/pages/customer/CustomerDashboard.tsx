@@ -99,7 +99,7 @@ const CustomerDashboard = () => {
             <div className="flex-1 mx-3">
               <div className="relative w-full h-3 bg-gray-200 rounded-full">
                 <div
-                  className="absolute left-0 top-0 h-3 bg-[#7e3af2] rounded-full"
+                  className="absolute left-0 top-0 h-3 bg-[#7ebd07] rounded-full"
                   style={{ width: "60%" }}
                 />
               </div>

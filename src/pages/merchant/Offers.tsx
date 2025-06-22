@@ -22,6 +22,10 @@ const Offers = () => {
         <h1 className="text-2xl font-bold text-gray-900">Mes Offres</h1>
       </div>
 
+      <p className="text-md text-gray-500">
+        Ces offres seront rendues visibles par vos clients, c'est une opportunité de générer un chiffre d'affaires supplméentaire et une occasion de booster votre visibilité.
+      </p>
+
       <div className="bg-white rounded-lg shadow-sm">
         <div className="border-b border-gray-200">
           <div className="flex space-x-4 p-4">

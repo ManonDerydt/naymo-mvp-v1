@@ -19,8 +19,8 @@ const Sidebar = () => {
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-      <div className="flex flex-col flex-grow bg-white border-r border-gray-200 bg-[#032313]">
-        <div className="flex items-center h-16 flex-shrink-0 px-4">
+      <div className="flex flex-col flex-grow border-r border-gray-200 bg-[#032313]">
+        <div className="flex items-center h-16 flex-shrink-0">
          {merchant && merchantData ? 
           <div className="flex justify-center">
             <img 
@@ -71,7 +71,7 @@ const Sidebar = () => {
           {merchant && merchantData && (
             <>
               <hr className="border-gray-200 my-4" />
-              <div className="flex items-center space-x-4 px-4">
+              <div className="flex items-center space-x-4">
                 <img
                   src={merchantData.logo}
                   alt="Logo du marchand"

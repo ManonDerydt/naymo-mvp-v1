@@ -22,6 +22,9 @@ const Customers = () => {
         <h1 className="text-2xl font-bold text-gray-900">Mes Clients</h1>
       </div>
 
+        <p className="text-md text-gray-500">
+Vous retrouverez toutes les statistiques de vos clients pour potentiellement ajuster vos offres.      </p>
+
       <div className="bg-white rounded-lg shadow-sm">
         <div className="border-b border-gray-200">
           <div className="flex space-x-4 p-4">

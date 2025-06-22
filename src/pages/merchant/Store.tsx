@@ -45,6 +45,7 @@ const Store = () => {
   return (
     <div className="space-y-8">
       <div className="relative h-64 rounded-xl overflow-hidden">
+        
         <img
           src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
           alt={merchant && merchantData ? "" : "Store cover"}
@@ -65,6 +66,9 @@ const Store = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
+          <p className="text-md text-gray-500">
+        Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
+      </p>
           <section className="bg-white p-6 rounded-lg shadow-sm">
             <h2 className="text-xl font-semibold mb-4">À propos</h2>
             <p className="text-gray-600">

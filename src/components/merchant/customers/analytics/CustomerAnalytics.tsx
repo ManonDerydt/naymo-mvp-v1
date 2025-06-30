@@ -1,34 +1,59 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/components/firebase/firebaseConfig";
 import AnalyticsCard from './AnalyticsCard';
+import { useAuth } from "@/components/firebase/useAuth";
 
 const CustomerAnalytics = () => {
+  const { merchant } = useAuth()
   const [analytics, setAnalytics] = useState([]);
 
   useEffect(() => {
+    if (!merchant) return
+
     const fetchData = async () => {
-      const snapshot = await getDocs(collection(db, "customer"));
-      const clients = snapshot.docs.map(doc => {
-        const data = doc.data();
-        const birthDate = data.birth_date ? new Date(data.birth_date) : null;
-        const age = birthDate
-          ? new Date().getFullYear() - birthDate.getFullYear()
-          : null;
+      // Étape 1 : récupérer les relations clients fidèles
+      const q = query(
+        collection(db, "fidelisation"),
+        where("merchantId", "==", merchant.uid)
+      )
+      const snap = await getDocs(q)
+      const fidelisations = snap.docs.map(doc => doc.data())
 
-        return {
-          age,
-          city: data.city || "Inconnu",
-          points: data.points || 0,
-        };
-      });
+      // Liste unique des customerId associés à ce commerçant
+      const customerIds = [...new Set(fidelisations.map(f => f.customerId))]
 
-      const processed = processAnalyticsData(clients);
-      setAnalytics(processed);
-    };
+      // Étape 2 : récupérer les infos des clients
+      const clientData = await Promise.all(
+        customerIds.map(async (id) => {
+          const customerDoc = await getDoc(doc(db, "customer", id))
+          const data = customerDoc.exists() ? customerDoc.data() : null
+          if (!data) return null
 
-    fetchData();
-  }, []);
+          const birthDate = data.birth_date ? new Date(data.birth_date) : null
+          const age = birthDate ? new Date().getFullYear() - birthDate.getFullYear() : null
+
+          // Trouver les points depuis la relation de fidélité (car pas dans customer)
+          const fidelisation = fidelisations.find(f => f.customerId === id)
+          const points = fidelisation?.points || 0
+
+          return {
+            age,
+            city: data.city || "Inconnu",
+            points,
+          }
+        })
+      )
+
+      const validClients = clientData.filter(c => c !== null)
+      console.log("Clients valides :", validClients)
+
+      const processed = processAnalyticsData(validClients)
+      setAnalytics(processed)
+    }
+
+    fetchData()
+  }, [merchant])
 
   const processAnalyticsData = (clients) => {
     if (clients.length === 0) return [];

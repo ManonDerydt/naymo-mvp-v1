@@ -12,19 +12,55 @@ import {
   CartesianGrid,
   Legend
 } from 'recharts'
+import { useAuth } from '@/components/firebase/useAuth'
+import { useEffect, useState } from 'react'
+import { collection, onSnapshot, query, where } from 'firebase/firestore'
+import { db } from '@/components/firebase/firebaseConfig'
 
 const Dashboard = () => {
+  const { merchant } = useAuth()
+  const [clientsFideles, setClientsFideles] = useState(0)
+  const [totalPoints, setTotalPoints] = useState(0)
+
+  useEffect(() => {
+    if (!merchant) return
+
+    const q = query(
+      collection(db, "fidelisation"),
+      where("merchantId", "==", merchant.uid)
+    )
+
+    // Récupération des données en temps réel
+    const unsubscribe = onSnapshot(q, (snap) => {
+      let totalPts = 0
+      const docs = snap.docs
+
+      docs.forEach(doc => {
+        const data = doc.data()
+        totalPts += data.points || 0
+      })
+
+      setClientsFideles(docs.length)
+      setTotalPoints(totalPts)
+    })
+
+    return () => unsubscribe()
+  }, [merchant])
+
+  // Conversion des points en euros (1 point = 1 €)
+  const chiffreAffaires = totalPoints
+
   const stats = [
     {
       icon: <Users className="w-6 h-6 text-blue-500" />,
       title: "Clients fidèles",
-      value: "0",
+      value: clientsFideles.toString() || "0",
       trend: "+0%"
     },
     {
       icon: <Activity className="w-6 h-6 text-green-500" />,
       title: "Chiffre d'affaires",
-      value: "0 €",
+      value: `${chiffreAffaires.toLocaleString()} €` || "0 €",
       trend: "+0%"
     },
     {
@@ -36,7 +72,7 @@ const Dashboard = () => {
     {
       icon: <Gift className="w-6 h-6 text-purple-500" />,
       title: "Points distribués",
-      value: "0,000",
+      value: totalPoints.toLocaleString() || "0,000",
       trend: "+0%"
     }
   ]

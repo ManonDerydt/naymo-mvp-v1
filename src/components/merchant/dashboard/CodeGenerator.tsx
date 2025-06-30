@@ -8,7 +8,10 @@ import {
   doc,
   updateDoc,
   increment,
+  addDoc,
+  serverTimestamp
 } from "firebase/firestore";
+import { useAuth } from "@/components/firebase/useAuth";
 
 function Modal({ isOpen, onClose, children }) {
   useEffect(() => {
@@ -45,6 +48,8 @@ export default function CodeGenerator() {
   const [addingPoints, setAddingPoints] = useState(false);
   const [pointsAdded, setPointsAdded] = useState(false);
   const [addedAmount, setAddedAmount] = useState(0);
+
+  const { merchant } = useAuth();
 
   // Log customer pour debug
   useEffect(() => {
@@ -94,6 +99,33 @@ export default function CodeGenerator() {
       await updateDoc(customerRef, {
         points: increment(pointsToAdd),
       });
+
+      // 🔁 Enregistrer dans la collection "fidelisation"
+      const fidelisationRef = query(
+        collection(db, "fidelisation"),
+        where("merchantId", "==", merchant?.uid),
+        where("customerId", "==", customer.id)
+      );
+      const fidelisationSnap = await getDocs(fidelisationRef);
+
+      if (fidelisationSnap.empty) {
+        // ➕ Créer une nouvelle entrée
+        await addDoc(collection(db, "fidelisation"), {
+          merchantId: merchant?.uid,
+          customerId: customer.id,
+          points: pointsToAdd,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        // 🔁 Incrémenter les points existants
+        const existingDoc = fidelisationSnap.docs[0];
+        await updateDoc(existingDoc.ref, {
+          points: increment(pointsToAdd),
+          updatedAt: serverTimestamp(),
+        });
+      }
+
       // Recharge le client pour afficher le nouveau solde
       const updatedSnap = await getDocs(
         query(

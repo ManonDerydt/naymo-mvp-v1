@@ -53,12 +53,13 @@ const CustomerDashboard = () => {
   const otherOffers = filteredOffers.filter(offer => !topMomentOffer.some(mo => mo.id === offer.id));
 
   // Variables fictives pour l'exemple, à remplacer par tes vraies données
-  const address = customerData?.address || "Torvegade 49, 1400 Copenhagen, Denmark";
-  const level = customerData?.level || 4;
+  const address = customerData?.city || "Torvegade 49, 1400 Copenhagen, Denmark";
   const points = customerData?.points || 127;
+  const level = Math.floor(points / 100) || 4;
   const challengesLeft = customerData?.challengesLeft || 2;
-  const coupons = customerData?.coupons || 3;
-  const discount = customerData?.discount || 2;
+  const coupons = Math.floor(points / 100) || 3;
+  const discount = coupons * 10 || 2;
+  const progress = points % 100
 
   // Fonction pour choisir une image différente pour chaque offre
   const getOfferImg = (idx) => foodImages[idx % foodImages.length];
@@ -100,7 +101,7 @@ const CustomerDashboard = () => {
               <div className="relative w-full h-3 bg-gray-200 rounded-full">
                 <div
                   className="absolute left-0 top-0 h-3 bg-[#7ebd07] rounded-full"
-                  style={{ width: "60%" }}
+                  style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
@@ -111,7 +112,7 @@ const CustomerDashboard = () => {
           </div>
           <div className="flex items-center justify-between mt-2">
             <span className="text-base text-gray-900 font-semibold">
-              {coupons} Coupons • {discount}% Discount
+              {coupons} Coupon{coupons > 1 ? "s" : ""} • {discount}% Discount
             </span>
             <button className="bg-[#032313] text-white px-5 py-2 rounded-full font-semibold text-sm shadow hover:bg-gray-900 transition">
               Get It

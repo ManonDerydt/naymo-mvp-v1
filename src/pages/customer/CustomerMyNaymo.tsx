@@ -3,9 +3,31 @@ import logo from "../../assets/Logo.png"
 import BarChartSecteurs from "@/components/charts/BarChartSecteurs"
 import BarChartEngagements from "@/components/charts/BarChartEngagements"
 import { useAuth } from "@/components/firebase/useAuth"
+import { useEffect, useState } from "react"
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/components/firebase/firebaseConfig"
 
 const CustomerMyNaymo = () => {
   const { customer, customerData } = useAuth()
+  const [points, setPoints] = useState<number | null>(null)
+
+  useEffect(() => {
+    const fetchPoints = async () => {
+      if (customer?.uid) {
+        const docRef = doc(db, "customer", customer.uid)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          setPoints(data.points || 0)
+        } else {
+          console.warn("Aucun document trouvé pour l'utilisateur")
+          setPoints(0)
+        }
+      }
+    }
+
+    fetchPoints()
+  }, [customer])
   
   return (
     <div className="min-h-screen bg-gray-50 pb-28">
@@ -35,7 +57,9 @@ const CustomerMyNaymo = () => {
                 <div className="bg-purple-500 w-3 h-3 rounded-full"></div>
                 <p className="text-purple-700 font-semibold text-lg">Nombre de points</p>
               </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">1234</p>
+              <p className="text-4xl font-extrabold text-gray-900 mt-1">
+                {points !== null ? points : "Chargement..."}
+              </p>
               <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
                 <div 
                   className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full" 

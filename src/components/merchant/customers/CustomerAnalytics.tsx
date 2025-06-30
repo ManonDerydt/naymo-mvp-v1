@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { BarChart3, MapPin, Users, Heart } from "lucide-react";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase"; // <-- adapte ce chemin selon ton projet
+import { db } from "@/components/firebase/firebaseConfig";
+// import { db } from "../firebase"; // <-- adapte ce chemin selon ton projet
 
 const CustomerAnalytics = () => {
   const [analytics, setAnalytics] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const snapshot = await getDocs(collection(db, "clients"));
+      const snapshot = await getDocs(collection(db, "customer"));
       const clients = snapshot.docs.map(doc => doc.data());
 
       const processed = processAnalyticsData(clients);

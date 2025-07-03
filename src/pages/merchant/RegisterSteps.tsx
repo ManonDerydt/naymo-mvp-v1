@@ -264,28 +264,33 @@ const RegisterSteps = () => {
 
   const handleFileChange = (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => {
     const newErrors: FormErrors = { ...errors }
-    files.forEach(file => {
+
+    // Validate files
+    for (const file of files) {
       if (!file.type.startsWith('image/')) {
-        newErrors[type] = 'Seuls les fichiers image sont acceptés'
-        return
+        newErrors[type] = 'Seuls les fichiers image sont acceptés';
+        setErrors(newErrors);
+        return;
       }
-      if (file.size > 5 * 1024 * 1024) { // 5 Mo
-        newErrors[type] = 'La taille du fichier ne doit pas dépasser 5 Mo'
-        return
+      if (file.size > 5 * 1024 * 1024) {
+        // 5 MB
+        newErrors[type] = 'La taille du fichier ne doit pas dépasser 5 Mo';
+        setErrors(newErrors);
+        return;
       }
-    })
-    if (newErrors[type]) {
-      setErrors(newErrors)
-      return
     }
+
+    // Update formData
     setFormData({
       ...formData,
       media: {
         ...formData.media,
-        [type]: type === 'store_photos' ? files : files[0],
+        [type]: type === 'store_photos' ? files : files[0] || null,
       },
-    })
-    setErrors({ ...errors, [type]: undefined })
+    });
+
+    // Clear error for this field
+    setErrors({ ...newErrors, [type]: undefined });
   }
 
   const nextStep = () => {

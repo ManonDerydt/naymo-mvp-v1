@@ -97,6 +97,14 @@ const VipProgram = () => {
         promo_vip_id: promoVipDoc.id
       })
 
+      const newPromo: PromoVip = {
+        id: promoVipDoc.id,
+        frequency: formData.frequency,
+        reward: formData.reward,
+        value: formData.value
+      }
+      setPromosVip((prevPromosVip) => [...prevPromosVip, newPromo])
+
       console.log("Promo VIP enregistré avec succès !")
       setStep('success')
     } catch (err: any) {
@@ -141,6 +149,12 @@ const VipProgram = () => {
       }
   
       await updateDoc(doc(db, "promo_vip", selectedPromoVipId), formData)
+
+      setPromosVip((prevPromosVip) =>
+        prevPromosVip.map((promo) =>
+          promo.id === selectedPromoVipId ? { ...promo, ...formData } : promo
+        )
+      )
   
       console.log("Données mises à jour !")
       setStep('success')

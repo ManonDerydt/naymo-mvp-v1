@@ -151,3 +151,5 @@ const LoyaltyProgram = () => {
     </div>
   )
 }
+
+export default LoyaltyProgram

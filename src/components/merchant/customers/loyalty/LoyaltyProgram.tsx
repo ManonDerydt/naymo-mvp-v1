@@ -4,7 +4,7 @@ import LoyaltyOverview from './LoyaltyOverview'
 import LoyaltyTutorial from './LoyaltyTutorial'
 import SuccessMessage from '../shared/SuccessMessage'
 import { auth, db } from '@/components/firebase/firebaseConfig'
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where, writeBatch } from 'firebase/firestore'
 import { useAuth } from '@/components/firebase/useAuth'
 
 type Step = 'overview' | 'form' | 'success'
@@ -103,33 +103,29 @@ const LoyaltyProgram = () => {
 
   const [loyaltyPrograms, setLoyaltyPrograms] = useState<any[]>([]);  // Ajout de l'état pour gérer la liste des programmes
 
-  const handleDelete = async (loyaltyProgramId: string) => {
-    try {
-      if (!merchant) {
-        console.error("Utilisateur non connecté !");
-        return;
-      }
-  
-      // Étape 1 : Récupérer le document dans "merchant_has_loyalty_program"
-      const merchantLoyaltyProgramsRef = collection(db, "merchant_has_loyalty_program");
-      const q = query(merchantLoyaltyProgramsRef, where("loyalty_program_id", "==", loyaltyProgramId));
-      const querySnapshot = await getDocs(q);
-  
-      if (!querySnapshot.empty) {
-        // Suppression des documents correspondants dans "merchant_has_loyalty_program"
-        await Promise.all(querySnapshot.docs.map(doc => deleteDoc(doc.ref)));
-      }
-  
-      // Étape 2 : Suppression du document dans "loyalty_program"
-      await deleteDoc(doc(db, "loyalty_program", loyaltyProgramId));
+  const [refreshKey, setRefreshKey] = useState(0); // Clé pour forcer le rafraîchissement
 
-      // Mise à jour de l'état pour enlever le programme de fidélité supprimé
-      setLoyaltyPrograms(prevLoyaltyPrograms => prevLoyaltyPrograms.filter(loyaltyProgram => loyaltyProgram.id !== loyaltyProgramId));
-  
-      console.log("Programme de fidélité supprimé avec succès :", loyaltyProgramId);
-  
+  const handleDelete = async (id: string) => {
+    try {
+      // Supprimer de Firestore
+      await deleteDoc(doc(db, 'loyalty_program', id))
+
+      // Supprimer aussi la relation dans merchant_has_loyalty_program
+      const querySnapshot = await getDocs(query(
+        collection(db, 'merchant_has_loyalty_program'),
+        where('loyalty_program_id', '==', id),
+        where('merchant_id', '==', merchant?.uid || '')
+      ))
+      const batch = writeBatch(db)
+      querySnapshot.forEach(doc => batch.delete(doc.ref))
+      await batch.commit()
+
+      // Mise à jour de l’état local
+      setLoyaltyPrograms(prev => prev.filter(program => program.id !== id))
+
+      setRefreshKey(prev => prev + 1) // Incrémenter la clé pour forcer le rafraîchissement
     } catch (error) {
-      console.error("Erreur lors de la suppression du programme de fidélité :", error);
+      console.error("Erreur lors de la suppression :", error)
     }
   }
 
@@ -189,7 +185,8 @@ const LoyaltyProgram = () => {
       </div>
 
       {activeSubTab === 'program' ? (
-        <LoyaltyOverview 
+        <LoyaltyOverview
+        key={refreshKey} 
         onAdd={() => {
           setFormData({ frequency: '', reward: '', value: '' })
           setMode('create')

@@ -48,6 +48,16 @@ export default function CodeGenerator() {
   const [addingPoints, setAddingPoints] = useState(false);
   const [pointsAdded, setPointsAdded] = useState(false);
   const [addedAmount, setAddedAmount] = useState(0);
+  const [couponsToApply, setCouponsToApply] = useState(0);
+
+  const maxCoupons =  customer ? Math.floor((customer.points ?? 0) / 100) : 0;
+
+  const numericAmount = parseFloat(amount);
+  const discountPercentage = couponsToApply * 10;
+  const totalAfterDiscount = 
+    numericAmount && couponsToApply
+      ? numericAmount * (1 - discountPercentage / 100)
+      : numericAmount || 0;
 
   const { merchant } = useAuth();
 
@@ -88,16 +98,25 @@ export default function CodeGenerator() {
   // Ajoute les points au client
   const handleAddPoints = async () => {
     if (!customer || !amount) return;
-    const pointsToAdd = Number(amount);
-    if (isNaN(pointsToAdd) || pointsToAdd <= 0) {
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
       alert("Veuillez entrer un montant valide (> 0)");
       return;
     }
+    if (couponsToApply > maxCoupons) {
+      alert("Nombre de bons dépasse les bons disponibles");
+      return;
+    }
+    
     setAddingPoints(true);
     try {
+      const pointsToAdd = Math.floor(totalAfterDiscount);
+      const pointsToDeduct = couponsToApply * 100;
+      const netPointsChange = pointsToAdd - pointsToDeduct;
+
       const customerRef = doc(db, "customer", customer.id);
       await updateDoc(customerRef, {
-        points: increment(pointsToAdd),
+        points: increment(netPointsChange),
       });
 
       // 🔁 Enregistrer dans la collection "fidelisation"
@@ -113,7 +132,7 @@ export default function CodeGenerator() {
         await addDoc(collection(db, "fidelisation"), {
           merchantId: merchant?.uid,
           customerId: customer.id,
-          points: pointsToAdd,
+          points: netPointsChange,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -121,7 +140,7 @@ export default function CodeGenerator() {
         // 🔁 Incrémenter les points existants
         const existingDoc = fidelisationSnap.docs[0];
         await updateDoc(existingDoc.ref, {
-          points: increment(pointsToAdd),
+          points: increment(netPointsChange),
           updatedAt: serverTimestamp(),
         });
       }
@@ -139,6 +158,7 @@ export default function CodeGenerator() {
       }
       setAddedAmount(pointsToAdd);
       setAmount("");
+      setCouponsToApply(0);
       setPointsAdded(true);
     } catch (e) {
       alert("Erreur lors de l'ajout des points");
@@ -213,6 +233,7 @@ export default function CodeGenerator() {
                   <p><span className="font-semibold">Email :</span> {customer.email}</p>
                   <p><span className="font-semibold">Téléphone :</span> {customer.phone_number}</p>
                   <p><span className="font-semibold">Points actuels :</span> {customer.points ?? 0}</p>
+                  <p><span className="font-semibold">Bons disponibles :</span> {maxCoupons}</p>
                   <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Montant de l'achat (€) = points à ajouter
@@ -225,14 +246,39 @@ export default function CodeGenerator() {
                       placeholder="Ex : 55"
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
-                    <button
-                      onClick={handleAddPoints}
-                      className="w-full mt-3 py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 disabled:opacity-50"
-                      disabled={addingPoints}
-                    >
-                      {addingPoints ? "Ajout..." : "Ajouter les points"}
-                    </button>
                   </div>
+                    
+                  {/* Bons à appliquer */}
+                  {maxCoupons > 0 && (
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Bons à appliquer (1 bon = -10%)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max={maxCoupons}
+                        value={couponsToApply}
+                        onChange={e => setCouponsToApply(Number(e.target.value))}
+                        className="w-full px-4 py-2 border border-yellow-300 rounded-md"
+                      />
+                    </div>
+                  )}
+
+                  {/* Résumé */}
+                  <div className="mt-4 text-sm text-gray-800">
+                    <p><span className="font-semibold">Réduction :</span> {discountPercentage}%</p>
+                    <p><span className="font-semibold">Montant après réduction :</span> {totalAfterDiscount.toFixed(2)} €</p>
+                  </div>
+
+                  {/* Ajouter les points */}
+                  <button
+                    onClick={handleAddPoints}
+                    className="w-full mt-3 py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                    disabled={addingPoints}
+                  >
+                    {addingPoints ? "Ajout..." : "Ajouter les points"}
+                  </button>
                 </div>
               ) : (
                 <div className="bg-red-50 rounded-md p-4 text-center text-red-700 font-semibold">

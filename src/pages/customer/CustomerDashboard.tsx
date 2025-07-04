@@ -54,12 +54,12 @@ const CustomerDashboard = () => {
 
   // Variables fictives pour l'exemple, à remplacer par tes vraies données
   const address = customerData?.city || "Torvegade 49, 1400 Copenhagen, Denmark";
-  const points = customerData?.points || 127;
-  const level = Math.floor(points / 100) || 4;
-  const challengesLeft = customerData?.challengesLeft || 2;
-  const coupons = Math.floor(points / 100) || 3;
-  const discount = coupons * 10 || 2;
-  const progress = points % 100
+  const points = customerData?.points || 0;
+  const level = Math.floor(points / 100) || 0; // Niveau basé sur les points (1 niveau par tranche de 100 points)
+  const challengesLeft = customerData?.challengesLeft || 0;
+  const coupons = Math.floor(points / 100) || 0; // 1 coupon par tranche de 100 points
+  const discount = coupons * 10 || 0; // 10% de réduction par coupon
+  const progress = points % 100 // Pourcentage de progression dans le niveau actuel
 
   // Fonction pour choisir une image différente pour chaque offre
   const getOfferImg = (idx) => foodImages[idx % foodImages.length];
@@ -68,6 +68,14 @@ const CustomerDashboard = () => {
   const toggleOffers = () => {
     setShowAllOffers(!showAllOffers);
   };
+
+  // État pour gérer l'affichage des coupons
+  const [showCoupons, setShowCoupons] = useState(false);
+
+  // Fonction pour toggle l'affichage des coupons
+  const toggleCoupons = () => {
+    setShowCoupons(!showCoupons);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -114,10 +122,29 @@ const CustomerDashboard = () => {
             <span className="text-base text-gray-900 font-semibold">
               {coupons} Coupon{coupons > 1 ? "s" : ""} • {discount}% Discount
             </span>
-            <button className="bg-[#032313] text-white px-5 py-2 rounded-full font-semibold text-sm shadow hover:bg-gray-900 transition">
+            <button 
+              onClick={toggleCoupons}
+              className="bg-[#032313] text-white px-5 py-2 rounded-full font-semibold text-sm shadow hover:bg-gray-900 transition"
+            >
               Get It
             </button>
           </div>
+            {showCoupons && (
+              <div className="mt-4 bg-white border border-gray-200 rounded-lg shadow p-4">
+                <h3 className="text-sm font-semibold mb-2 text-gray-700">Bons de 10% disponibles :</h3>
+                {coupons > 0 ? (
+                  <ul className="mt-2 text-sm text-gray-700 space-y-1">
+                    {[...Array(coupons)].map((_, idx) => (
+                      <li key={idx} className="bg-green-100 rounded px-3 py-2">
+                        🎁 Bon de réduction : {discount / coupons}% (valeur 10%)
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-gray-500 mt-2">Aucun bon disponible pour l'instant.</p>
+                )}
+              </div>
+            )}
         </div>
       </div>
 

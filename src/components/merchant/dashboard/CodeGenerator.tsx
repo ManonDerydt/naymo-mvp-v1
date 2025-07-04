@@ -133,6 +133,7 @@ export default function CodeGenerator() {
           merchantId: merchant?.uid,
           customerId: customer.id,
           points: netPointsChange,
+          totalRevenue: totalAfterDiscount,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });

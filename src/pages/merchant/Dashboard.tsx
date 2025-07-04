@@ -17,13 +17,24 @@ import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 
+/** Formate un montant : entier → « 48 », décimal → « 43,20 » */
+const formatCurrency = (amount: number) =>
+  Number.isInteger(amount)
+    ? amount.toLocaleString("fr-FR", { minimumFractionDigits: 0 })
+    : amount.toLocaleString("fr-FR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
 const Dashboard = () => {
   const { merchant } = useAuth()
+
   const [clientsFideles, setClientsFideles] = useState(0)
   const [totalPoints, setTotalPoints] = useState(0)
+  const [totalRevenue, setTotalRevenue] = useState(0)
 
   useEffect(() => {
-    if (!merchant) return
+    if (!merchant?.uid) return
 
     const q = query(
       collection(db, "fidelisation"),
@@ -32,23 +43,27 @@ const Dashboard = () => {
 
     // Récupération des données en temps réel
     const unsubscribe = onSnapshot(q, (snap) => {
-      let totalPts = 0
+      let points = 0;
+      let revenue = 0;
+
       const docs = snap.docs
 
-      docs.forEach(doc => {
-        const data = doc.data()
-        totalPts += data.points || 0
-      })
+      snap.docs.forEach((doc) => {
+        const data = doc.data();
+        points += data.points || 0;
+        revenue += data.totalRevenue || 0; // ← additionne le CA du doc
+      });
 
       setClientsFideles(docs.length)
-      setTotalPoints(totalPts)
+      setTotalPoints(points)
+      setTotalRevenue(revenue)
     })
 
     return () => unsubscribe()
   }, [merchant])
 
   // Conversion des points en euros (1 point = 1 €)
-  const chiffreAffaires = totalPoints
+  // const chiffreAffaires = totalPoints
 
   const stats = [
     {
@@ -60,7 +75,7 @@ const Dashboard = () => {
     {
       icon: <Activity className="w-6 h-6 text-green-500" />,
       title: "Chiffre d'affaires",
-      value: `${chiffreAffaires.toLocaleString()} €` || "0 €",
+      value: `${formatCurrency(totalRevenue)} €`,
       trend: "+0%"
     },
     {

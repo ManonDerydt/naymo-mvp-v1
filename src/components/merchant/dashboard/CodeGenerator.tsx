@@ -141,6 +141,7 @@ export default function CodeGenerator() {
         const existingDoc = fidelisationSnap.docs[0];
         await updateDoc(existingDoc.ref, {
           points: increment(netPointsChange),
+          totalRevenue: increment(totalAfterDiscount),
           updatedAt: serverTimestamp(),
         });
       }

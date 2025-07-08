@@ -62,8 +62,6 @@ const Dashboard = () => {
     return () => unsubscribe()
   }, [merchant])
 
-  // Conversion des points en euros (1 point = 1 €)
-  // const chiffreAffaires = totalPoints
 
   const stats = [
     {

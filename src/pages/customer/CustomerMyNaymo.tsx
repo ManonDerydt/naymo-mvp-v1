@@ -1,15 +1,17 @@
 import { Bell } from "lucide-react"
 import logo from "../../assets/Logo.png"
-import BarChartSecteurs from "@/components/charts/BarChartSecteurs"
-import BarChartEngagements from "@/components/charts/BarChartEngagements"
 import { useAuth } from "@/components/firebase/useAuth"
 import { useEffect, useState } from "react"
-import { doc, getDoc } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
 
 const CustomerMyNaymo = () => {
   const { customer, customerData } = useAuth()
   const [points, setPoints] = useState<number | null>(null)
+  const [favMerchant, setFavMerchant] = useState<{id: string; name: string; points: number} | null>(null)
+  const [usedBons, setUsedBons] = useState<number>(0)
+
+  const bonsRestants = points !== null ? Math.floor(points / 100) : 0
 
   useEffect(() => {
     const fetchPoints = async () => {
@@ -27,6 +29,69 @@ const CustomerMyNaymo = () => {
     }
 
     fetchPoints()
+  }, [customer])
+
+  useEffect(() => {
+    const fetchFavMerchant = async () => {
+      if (!customer?.uid) return
+
+      const q = query(collection(db, "fidelisation"), where("customerId", "==", customer.uid))
+      const snap = await getDocs(q)
+
+      const pointsByMerchant: Record<string, number> = {}
+
+      snap.forEach(doc => {
+        const data = doc.data()
+        const merchantId = data.merchantId
+        const pts = data.points || 0
+
+        pointsByMerchant[merchantId] = (pointsByMerchant[merchantId] || 0) + pts
+      })
+
+      const entries = Object.entries(pointsByMerchant)
+      if (entries.length === 0) {
+        setFavMerchant(null)
+        return
+      }
+
+      // Trouver le commerçant avec le plus de points
+      const [topMerchantId, topPoints] = entries.reduce((acc, curr) =>
+        curr[1] > acc[1] ? curr : acc
+      )
+
+      // Récupérer le nom du commerçant
+      const merchantDoc = await getDoc(doc(db, "merchant", topMerchantId))
+      const merchantName = merchantDoc.exists() ? merchantDoc.data().owner_name : "Commerçant inconnu"
+
+      setFavMerchant({ id: topMerchantId, name: merchantName, points: topPoints})
+    }
+
+    fetchFavMerchant()
+  }, [customer])
+
+  useEffect(() => {
+    const fetchUsedBons = async () => {
+      if (!customer?.uid) return
+
+      try {
+        const q = query(collection(db, "fidelisation"), where("customerId", "==", customer.uid))
+        const snap = await getDocs(q)
+
+        let totalUsedBons = 0
+
+        snap.forEach(doc => {
+          const data = doc.data()
+          const bons = data.usedBons || 0
+          totalUsedBons += bons
+        })
+
+        setUsedBons(totalUsedBons)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des usedBons :", error)
+      }
+    }
+
+    fetchUsedBons()
   }, [customer])
   
   return (
@@ -67,6 +132,48 @@ const CustomerMyNaymo = () => {
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-2">Prochain niveau: 200 points</p>
+            </div>
+
+            {/* Carte Bons Restants */}
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-blue-100">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="bg-blue-500 w-3 h-3 rounded-full"></div>
+                <p className="text-blue-700 font-semibold text-lg">Bons restants</p>
+              </div>
+              <p className="text-4xl font-extrabold text-gray-900 mt-1">
+                {bonsRestants}
+              </p>
+              <p className="text-xs text-gray-500 mt-2">1 bon = 100 points</p>
+            </div>
+
+            {/* Carte Bons utilisés */}
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-blue-100">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="bg-blue-500 w-3 h-3 rounded-full"></div>
+                <p className="text-blue-700 font-semibold text-lg">Bons utilisés</p>
+              </div>
+              <p className="text-4xl font-extrabold text-gray-900 mt-1">
+                {usedBons > 0 ? usedBons : "Aucun bon utilisé"}
+              </p>
+            </div>
+
+            {/* Carte Commerçant préféré */}
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-green-100">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="bg-green-600 w-3 h-3 rounded-full" />
+                <p className="text-green-700 font-semibold text-lg">Votre commerçant préféré</p>
+              </div>
+
+              {favMerchant ? (
+                <>
+                  <p className="text-2xl font-bold text-gray-900">{favMerchant.name}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {favMerchant.points} points cumulés
+                  </p>
+                </>
+              ) : (
+                <p className="text-gray-500 italic">Aucun point attribué pour l’instant</p>
+              )}
             </div>
 
             {/* Carte Vues */}

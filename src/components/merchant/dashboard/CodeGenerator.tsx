@@ -134,6 +134,7 @@ export default function CodeGenerator() {
           customerId: customer.id,
           points: netPointsChange,
           totalRevenue: totalAfterDiscount,
+          usedbons: couponsToApply,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });
@@ -143,6 +144,7 @@ export default function CodeGenerator() {
         await updateDoc(existingDoc.ref, {
           points: increment(netPointsChange),
           totalRevenue: increment(totalAfterDiscount),
+          usedBons: increment(couponsToApply),
           updatedAt: serverTimestamp(),
         });
       }

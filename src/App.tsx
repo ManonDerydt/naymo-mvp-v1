@@ -16,6 +16,7 @@ import CustomerSearch from './pages/customer/CustomerSearch'
 import CustomerSettings from './pages/customer/CustomerSettings'
 import CustomerMyNaymo from './pages/customer/CustomerMyNaymo'
 import ResetPassword from './pages/auth/ResetPassword'
+import CustomerHistory from './pages/customer/CustomerHistory'
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
         <Route element={<CustomerLayout />}>
           <Route path="/customer/dashboard" element={<CustomerDashboard />} />
           <Route path="/customer/myNaymo" element={<CustomerMyNaymo />} />
+          <Route path="/customer/history" element={<CustomerHistory />} />
           <Route path="/customer/search" element={<CustomerSearch />} />
           <Route path="/customer/settings" element={<CustomerSettings />} />
         </Route>

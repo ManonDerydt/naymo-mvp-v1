@@ -1,4 +1,4 @@
-import { Home, Search, Settings, User } from "lucide-react"
+import { History, Home, Search, Settings, User } from "lucide-react"
 import { Link, Outlet, useLocation } from "react-router-dom"
 
 const CustomerLayout = () => {
@@ -7,6 +7,7 @@ const CustomerLayout = () => {
     const navItems = [
         { path: '/customer/dashboard', icon: <Home size={24} />, label: "Accueil" },
         { path: '/customer/myNaymo', icon: <User size={24} />, label: "Profil" },
+        { path: '/customer/history', icon: <History size={24} />, label: "Historique" },
         { path: '/customer/search', icon: <Search size={24} />, label: "Recherche" },
         { path: '/customer/settings', icon: <Settings size={24} />, label: "Paramètres" }
     ]

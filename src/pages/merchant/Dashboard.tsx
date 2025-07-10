@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [clientsFideles, setClientsFideles] = useState(0)
   const [totalPoints, setTotalPoints] = useState(0)
   const [totalRevenue, setTotalRevenue] = useState(0)
+  const [averageRating, setAverageRating] = useState(0)
 
   useEffect(() => {
     if (!merchant?.uid) return
@@ -45,18 +46,26 @@ const Dashboard = () => {
     const unsubscribe = onSnapshot(q, (snap) => {
       let points = 0;
       let revenue = 0;
+      let ratingTotal = 0;
+      let ratingCount = 0;
 
       const docs = snap.docs
 
       snap.docs.forEach((doc) => {
         const data = doc.data();
         points += data.points || 0;
-        revenue += data.totalRevenue || 0; // ← additionne le CA du doc
+        revenue += data.totalRevenue || 0;
+        
+        if (typeof data.rating === "number") {
+          ratingTotal += data.rating;
+          ratingCount += 1;
+        }
       });
 
       setClientsFideles(docs.length)
       setTotalPoints(points)
       setTotalRevenue(revenue)
+      setAverageRating(ratingCount > 0 ? ratingTotal / ratingCount : 0)
     })
 
     return () => unsubscribe()
@@ -79,7 +88,7 @@ const Dashboard = () => {
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
-      value: "0.0/5",
+      value: `${averageRating}/5`,
       trend: "+0"
     },
     {

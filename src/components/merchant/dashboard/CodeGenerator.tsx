@@ -149,6 +149,16 @@ export default function CodeGenerator() {
         });
       }
 
+      // ➕ Ajouter une entrée dans la collection "pointsHistory"
+      await addDoc(collection(db, "pointsHistory"), {
+        merchantId: merchant?.uid,
+        customerId: customer.id,
+        points: netPointsChange,
+        totalRevenue: totalAfterDiscount,
+        usedBons: couponsToApply,
+        createdAt: serverTimestamp(),
+      });
+
       // Recharge le client pour afficher le nouveau solde
       const updatedSnap = await getDocs(
         query(

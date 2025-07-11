@@ -16,6 +16,7 @@ import { useAuth } from '@/components/firebase/useAuth'
 import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
+import { startOfWeek, endOfWeek, subWeeks, format } from 'date-fns'
 
 /** Formate un montant : entier → « 48 », décimal → « 43,20 » */
 const formatCurrency = (amount: number) =>
@@ -33,7 +34,9 @@ const Dashboard = () => {
   const [totalPoints, setTotalPoints] = useState(0)
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [averageRating, setAverageRating] = useState(0)
+  const [barChartData, setBarChartData] = useState<{ name: string; semaineActuelle: number; semainePrecedente: number }[]>([])
 
+  // 1. Statistiques générales (fidelisation)
   useEffect(() => {
     if (!merchant?.uid) return
 
@@ -42,30 +45,91 @@ const Dashboard = () => {
       where("merchantId", "==", merchant.uid)
     )
 
-    // Récupération des données en temps réel
     const unsubscribe = onSnapshot(q, (snap) => {
       let points = 0;
       let revenue = 0;
       let ratingTotal = 0;
       let ratingCount = 0;
 
-      const docs = snap.docs
-
       snap.docs.forEach((doc) => {
         const data = doc.data();
         points += data.points || 0;
         revenue += data.totalRevenue || 0;
-        
         if (typeof data.rating === "number") {
           ratingTotal += data.rating;
           ratingCount += 1;
         }
       });
 
-      setClientsFideles(docs.length)
+      setClientsFideles(snap.docs.length)
       setTotalPoints(points)
       setTotalRevenue(revenue)
       setAverageRating(ratingCount > 0 ? ratingTotal / ratingCount : 0)
+    })
+
+    return () => unsubscribe()
+  }, [merchant])
+
+  // 2. Graphique (pointsHistory)
+  useEffect(() => {
+    if (!merchant?.uid) return
+
+    const q = query(
+      collection(db, "pointsHistory"),
+      where("merchantId", "==", merchant.uid)
+    )
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      // Initialiser les données pour les jours de la semaine actuelle et de la semaine précédente
+      const currentWeekPoints: Record<string, number> = {};
+      const previousWeekPoints: Record<string, number> = {};
+      const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+      days.forEach(day => {
+        currentWeekPoints[day] = 0;
+        previousWeekPoints[day] = 0;
+      });
+
+      const today = new Date();
+      // 
+      const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
+      const endOfCurrentWeek = endOfWeek(today, { weekStartsOn: 1 });
+
+      const startOfPreviousWeek = subWeeks(startOfCurrentWeek, 1);
+      const endOfPreviousWeek = subWeeks(endOfCurrentWeek, 1);
+
+      snap.docs.forEach((doc) => {
+        const data = doc.data();
+        const timestamp = data.createdAt?.toDate?.() || null;
+        const pointsAttribues = data.points || 0;
+
+        if (timestamp instanceof Date) {
+          const dayMap: { [key: string]: string } = {
+            Mon: 'Lun',
+            Tue: 'Mar',
+            Wed: 'Mer',
+            Thu: 'Jeu',
+            Fri: 'Ven',
+            Sat: 'Sam',
+            Sun: 'Dim'
+          };
+          const dayEn = format(timestamp, 'EEE');
+          const jour = dayMap[dayEn] || dayEn;
+
+          if (timestamp >= startOfCurrentWeek && timestamp <= endOfCurrentWeek) {
+            currentWeekPoints[jour] += pointsAttribues;
+          } else if (timestamp >= startOfPreviousWeek && timestamp <= endOfPreviousWeek) {
+            previousWeekPoints[jour] += pointsAttribues;
+          }
+        }
+      });
+
+      const charData = days.map(day => ({
+        name: day,
+        semaineActuelle: currentWeekPoints[day],
+        semainePrecedente: previousWeekPoints[day],
+      }));
+
+      setBarChartData(charData)
     })
 
     return () => unsubscribe()
@@ -88,25 +152,15 @@ const Dashboard = () => {
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
-      value: `${averageRating}/5`,
+      value: `${averageRating.toFixed(2)}/5`,
       trend: "+0"
     },
     {
       icon: <Gift className="w-6 h-6 text-purple-500" />,
       title: "Points distribués",
-      value: totalPoints.toLocaleString() || "0,000",
+      value: totalPoints ? totalPoints.toLocaleString() : "0",
       trend: "+0%"
     }
-  ]
-
-  const barChartData = [
-    { name: 'Lun', semaineActuelle: 120, semainePrecedente: 90 },
-    { name: 'Mar', semaineActuelle: 180, semainePrecedente: 160 },
-    { name: 'Mer', semaineActuelle: 90, semainePrecedente: 100 },
-    { name: 'Jeu', semaineActuelle: 140, semainePrecedente: 130 },
-    { name: 'Ven', semaineActuelle: 100, semainePrecedente: 80 },
-    { name: 'Sam', semaineActuelle: 200, semainePrecedente: 180 },
-    { name: 'Dim', semaineActuelle: 80, semainePrecedente: 70 },
   ]
 
   return (

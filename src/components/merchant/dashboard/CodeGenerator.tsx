@@ -134,7 +134,7 @@ export default function CodeGenerator() {
           customerId: customer.id,
           points: netPointsChange,
           totalRevenue: totalAfterDiscount,
-          usedbons: couponsToApply,
+          usedBons: couponsToApply,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         });

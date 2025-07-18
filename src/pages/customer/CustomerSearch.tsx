@@ -103,7 +103,7 @@ const CustomerSearch = () => {
                 <div className="flex-1 flex justify-end">
                     <div className="relative">
                         <Bell size={24} className="text-green-500 fill-current" />
-                        <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">3</span>
+                        <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
                     </div>
                 </div>
             </div>

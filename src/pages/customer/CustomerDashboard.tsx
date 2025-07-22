@@ -1,6 +1,6 @@
 import { db } from "@/components/firebase/firebaseConfig";
 import { useAuth } from "@/components/firebase/useAuth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import logo from '../../assets/Logo.png'
 import { Bell, Star } from "lucide-react";
@@ -77,6 +77,28 @@ const CustomerDashboard = () => {
     setShowCoupons(!showCoupons);
   }
 
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openOfferModal = async (offer) => {
+    setSelectedOffer(offer);
+    setIsModalOpen(true);
+
+    try {
+      const offerRef = doc(db, "offer", offer.id);
+      await updateDoc(offerRef, {
+        views: increment(1)
+      });
+    } catch (error) {
+      console.error("Eerreur lors de l'incrémentation des vues de l'offre :", error);
+    }
+  };
+
+  const closeOfferModal = () => {
+    setIsModalOpen(false);
+    setSelectedOffer(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* HEADER */}
@@ -150,7 +172,10 @@ const CustomerDashboard = () => {
 
       {/* SECTION OFFRE DU MOMENT */}
       <div className="flex justify-center mb-4 px-2">
-        <div className="w-full max-w-md bg-gray-100 rounded-2xl shadow p-5 flex items-center justify-between">
+        <div 
+          className="w-full max-w-md bg-gray-100 rounded-2xl shadow p-5 flex items-center justify-between"
+          onClick={() => openOfferModal(topMomentOffer[0])}
+        >
           {topMomentOffer.length > 0 ? (
             <>
               <div>
@@ -209,6 +234,7 @@ const CustomerDashboard = () => {
               <div
                 key={offer.id}
                 className="bg-gray-100 rounded-2xl shadow flex items-center justify-between p-5"
+                onClick={() => openOfferModal(offer)}
               >
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
@@ -246,6 +272,7 @@ const CustomerDashboard = () => {
                   <div
                     key={offer.id}
                     className="relative min-w-[280px] max-w-[300px] bg-white rounded-2xl shadow-lg p-5 flex-shrink-0 border-2 border-yellow-200"
+                    onClick={() => openOfferModal(offer)}
                   >
                     {/* Étoile en haut à droite */}
                     <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-2 shadow-lg">
@@ -289,7 +316,46 @@ const CustomerDashboard = () => {
           display: none;
         }
       `}</style>
+
+      {isModalOpen && selectedOffer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-6 relative">
+            <button
+              onClick={closeOfferModal}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold"
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-bold mb-2">{selectedOffer.name}</h2>
+            <p className="text-sm text-gray-600 mb-2">{selectedOffer.description}</p>
+            <p className="text-sm text-gray-500">Durée : {selectedOffer.duration} mois</p>
+
+            {/* Nouvelle ligne pour createdAt */}
+            {selectedOffer.createdAt && (
+              <p className="text-sm text-gray-400 mt-1">
+                Publiée le :{" "}
+                {selectedOffer.createdAt.toDate
+                  ? selectedOffer.createdAt.toDate().toLocaleDateString("fr-FR", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })
+                  : "Date inconnue"}
+              </p>
+            )}
+
+            <div className="mt-4">
+              <img
+                src={getOfferImg(0)} // tu peux aussi faire un mapping indexé plus précis si besoin
+                alt="offer"
+                className="w-20 h-20 object-contain mx-auto"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 };
 

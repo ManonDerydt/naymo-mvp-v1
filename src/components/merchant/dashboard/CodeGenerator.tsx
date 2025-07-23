@@ -153,7 +153,9 @@ export default function CodeGenerator() {
       await addDoc(collection(db, "pointsHistory"), {
         merchantId: merchant?.uid,
         customerId: customer.id,
-        points: netPointsChange,
+        pointsAdded: pointsToAdd,
+        pointsDeducted: pointsToDeduct,
+        netPoints: netPointsChange,
         totalRevenue: totalAfterDiscount,
         usedBons: couponsToApply,
         createdAt: serverTimestamp(),

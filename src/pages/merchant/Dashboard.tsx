@@ -62,7 +62,6 @@ const Dashboard = () => {
       });
 
       setClientsFideles(snap.docs.length)
-      setTotalPoints(points)
       setTotalRevenue(revenue)
       setAverageRating(ratingCount > 0 ? ratingTotal / ratingCount : 0)
     })
@@ -80,6 +79,8 @@ const Dashboard = () => {
     )
 
     const unsubscribe = onSnapshot(q, (snap) => {
+      let totalPointsSum = 0;
+
       // Initialiser les données pour les jours de la semaine actuelle et de la semaine précédente
       const currentWeekPoints: Record<string, number> = {};
       const previousWeekPoints: Record<string, number> = {};
@@ -90,7 +91,6 @@ const Dashboard = () => {
       });
 
       const today = new Date();
-      // 
       const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 });
       const endOfCurrentWeek = endOfWeek(today, { weekStartsOn: 1 });
 
@@ -99,8 +99,12 @@ const Dashboard = () => {
 
       snap.docs.forEach((doc) => {
         const data = doc.data();
+        const pointsAdded = data.pointsAdded || 0;
+
+        // Somme totale de pointsAdded
+        totalPointsSum += pointsAdded;
+
         const timestamp = data.createdAt?.toDate?.() || null;
-        const pointsAttribues = data.points || 0;
 
         if (timestamp instanceof Date) {
           const dayMap: { [key: string]: string } = {
@@ -116,12 +120,14 @@ const Dashboard = () => {
           const jour = dayMap[dayEn] || dayEn;
 
           if (timestamp >= startOfCurrentWeek && timestamp <= endOfCurrentWeek) {
-            currentWeekPoints[jour] += pointsAttribues;
+            currentWeekPoints[jour] += pointsAdded;
           } else if (timestamp >= startOfPreviousWeek && timestamp <= endOfPreviousWeek) {
-            previousWeekPoints[jour] += pointsAttribues;
+            previousWeekPoints[jour] += pointsAdded;
           }
         }
       });
+
+      setTotalPoints(totalPointsSum);
 
       const charData = days.map(day => ({
         name: day,

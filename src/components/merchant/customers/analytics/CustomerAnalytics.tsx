@@ -46,7 +46,7 @@ const CustomerAnalytics = () => {
       )
 
       const validClients = clientData.filter(c => c !== null)
-      console.log("Clients valides :", validClients)
+      // console.log("Clients valides :", validClients)
 
       const processed = processAnalyticsData(validClients)
       setAnalytics(processed)

@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import { db } from '@/components/firebase/firebaseConfig'
-import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { useAuth } from '@/components/firebase/useAuth'
 
 interface EditOfferModalProps {
@@ -78,7 +78,8 @@ const EditOfferModal = ({ onClose, initialData }: EditOfferModalProps) => {
           duration: formData.duration,
           isBoosted: formData.isBoosted,
           name: formData.name,
-          target: formData.target
+          target: formData.target,
+          updatedAt: serverTimestamp(),
         };
     
         await updateDoc(doc(db, "offer", offerId), updatedData);

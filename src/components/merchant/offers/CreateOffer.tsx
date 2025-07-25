@@ -13,6 +13,7 @@ const CreateOffer = () => {
     duration: 0,
     target: '',
     description: '',
+    discount: '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -34,11 +35,20 @@ const CreateOffer = () => {
       }
 
       const offerRef = collection(db, "offer")
-      const offerDoc = await addDoc(offerRef, {
+      const offerData: any = {
         ...formData,
-        isBoosted: false, // champ ajouté ici
-        createdAt: serverTimestamp(), // Ajout du champ createdAt
-      })
+        isBoosted: false,
+        createdAt: serverTimestamp(),
+      }
+
+      // Supprimer le champ discount s'il est vide
+      if (formData.discount !== '') {
+        offerData.discount = Number(formData.discount)
+      } else {
+        delete offerData.discount
+      }
+
+      const offerDoc = await addDoc(offerRef, offerData)
 
       const merchantHasOfferRef = collection(db, "merchant_has_offer")
       await addDoc(merchantHasOfferRef, {
@@ -70,7 +80,7 @@ const CreateOffer = () => {
         </p>
         <Button
           onClick={() => {
-            setFormData({ name: '', duration: 0, target: '', description: '' })
+            setFormData({ name: '', duration: 0, target: '', description: '', discount: '' })
             setStep('form')
           }}
           className="mt-6"
@@ -101,6 +111,10 @@ const CreateOffer = () => {
           <div>
             <p className="text-sm font-medium text-gray-500">Description</p>
             <p className="mt-1">{formData.description}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Réduction (%)</p>
+            <p className="mt-1">{formData.discount ? `${formData.discount}%` : "Aucune"}</p>
           </div>
         </div>
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
@@ -172,6 +186,22 @@ const CreateOffer = () => {
           required
         />
       </div>
+
+      <Input
+        label="Réduction (%)"
+        type="number"
+        value={formData.discount}
+        onChange={(e) => {
+          // On autorise vide ou un nombre positif
+          const value = e.target.value;
+          if (value === "" || (Number(value) >= 0 && Number(value) <= 100)) {
+            setFormData({ ...formData, discount: value });
+          }
+        }}
+        placeholder="Ex: 10"
+        min={0}
+        max={100}
+      />
 
       <div className="flex justify-end">
         <Button type="submit">

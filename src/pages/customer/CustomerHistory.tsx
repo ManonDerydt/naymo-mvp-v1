@@ -43,6 +43,7 @@ const StarRating: React.FC<StarRatingProps> = ({ rating, onRate }) => {
 const CustomerHistory = () => {
     const { customer } = useAuth()
     const [history, setHistory] = useState<MerchantHistory[]>([])
+    const [activeOffers, setActiveOffers] = useState<any[]>([])
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -85,8 +86,29 @@ const CustomerHistory = () => {
                     logo: merchantInfo.logo
                 })
             }
-
+            
             setHistory(merchantData)
+
+
+            const customerRef = doc(db, "customer", customer.uid);
+            const customerSnap = await getDoc(customerRef);
+            const customerData = customerSnap.exists() ? customerSnap.data() : null;
+
+            if (customerData?.offers?.length > 0) {
+                const offerRefs = customerData.offers;
+                const offerPromises = offerRefs.map((id: string) => getDoc(doc(db, "offer", id)));
+                const offerDocs = await Promise.all(offerPromises);
+
+                const offers = offerDocs
+                    .filter(doc => doc.exists())
+                    .map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                setActiveOffers(offers);
+            } else {
+                setActiveOffers([]);
+            }
         }
 
         fetchHistory()
@@ -130,6 +152,7 @@ const CustomerHistory = () => {
 
             {/* CONTENU */}
             <div className="pt-20 px-4 space-y-4">
+                {/* SECTION : Historique de vos commerçants */}
                 <h2 className="text-xl font-semibold">Historique de vos commerçants</h2>
                     {history.length === 0 ? (
                         <p className="text-gray-600">Aucun commerçant visité pour le moment.</p>
@@ -163,6 +186,33 @@ const CustomerHistory = () => {
                             </div>
                         ))
                     )}
+                {/* SECTION : Offres en cours */}
+                <div className="mt-10">
+                    <h2 className="text-xl font-semibold">Offres en cours</h2>
+
+                    {activeOffers.length === 0 ? (
+                        <p className="text-gray-600">Aucune offre en cours.</p>
+                    ) : (
+                        <div className="space-y-4 mt-4">
+                            {activeOffers.map((offer) => (
+                                <div key={offer.id} className="bg-white rounded-xl shadow p-4">
+                                    <div className="flex justify-between items-center">
+                                        <div>
+                                            <h3 className="text-lg font-bold text-gray-900">{offer.name}</h3>
+                                            <p className="text-sm text-gray-600">{offer.description}</p>
+                                            <p className="text-xs text-gray-500 mt-1">Durée : {offer.duration} mois</p>
+                                        </div>
+                                        <img
+                                            src="https://img.icons8.com/color/96/000000/discount.png"
+                                            alt="icon"
+                                            className="w-10 h-10 object-contain"
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     )

@@ -1,6 +1,6 @@
 import { db } from "@/components/firebase/firebaseConfig";
 import { useAuth } from "@/components/firebase/useAuth";
-import { collection, doc, getDocs, increment, updateDoc } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, increment, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import logo from '../../assets/Logo.png'
 import { Bell, Star } from "lucide-react";
@@ -98,6 +98,34 @@ const CustomerDashboard = () => {
     setIsModalOpen(false);
     setSelectedOffer(null);
   };
+
+  const addOfferToCustomer = async (offerId) => {
+    if (!customer) return;
+
+    const customerRef = doc(db, "customer", customer.uid);
+
+    try {
+      const customerSnap = await getDoc(customerRef);
+      const currentOffers = customerSnap.data()?.offers || [];
+
+      if (currentOffers.includes(offerId)) {
+        alert("Vous avez déjà cette offre !");
+        return;
+      }
+
+      await updateDoc(customerRef, {
+        offers: arrayUnion(offerId),
+      });
+
+      alert("Offre ajoutée avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'offre :", error);
+    }
+  }
+
+  const hasAddedOffer = (offerId) => {
+    return customerData?.offers?.includes(offerId);
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
@@ -350,6 +378,19 @@ const CustomerDashboard = () => {
                 alt="offer"
                 className="w-20 h-20 object-contain mx-auto"
               />
+            </div>
+
+            <div className="mt-6 text-center">
+              {hasAddedOffer(selectedOffer.id) ? (
+                <p className="text-green-600 font-semibold">✅ Offre déjà ajoutée</p>
+              ) : (
+                <button
+                  onClick={() => addOfferToCustomer(selectedOffer.id)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold"
+                >
+                  Ajouter cette offre
+                </button>
+              )}
             </div>
           </div>
         </div>

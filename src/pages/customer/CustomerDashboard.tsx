@@ -210,9 +210,11 @@ const CustomerDashboard = () => {
                 <h2 className="font-bold text-lg text-gray-900 mb-1">
                   {topMomentOffer[0].name}
                   <br />
-                  <span className="font-semibold">
-                    {topMomentOffer[0].discount || "5%"} Discount
-                  </span>
+                  {topMomentOffer[0].discount && (
+                    <span className="font-semibold">
+                      {topMomentOffer[0].discount}% Discount
+                    </span>
+                  )}
                 </h2>
                 <p className="text-gray-7 text-sm">
                   {topMomentOffer[0].description}
@@ -275,6 +277,11 @@ const CustomerDashboard = () => {
                   </h3>
                   <p className="text-gray-700 text-sm mb-1">{offer.description}</p>
                   <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
+                  {offer.discount && (
+                    <p className="text-xs text-green-600 font-semibold">
+                      Réduction : {offer.discount}%
+                    </p>
+                  )}
                 </div>
                 <div className="ml-4 flex-shrink-0">
                   <img
@@ -312,9 +319,11 @@ const CustomerDashboard = () => {
                         <h3 className="text-lg font-bold text-gray-900 mb-1">
                           {offer.name}
                         </h3>
-                        <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block">
-                          {offer.discount || "5%"} OFF
-                        </div>
+                        {offer.discount && (
+                          <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block">
+                            {offer.discount}% de réduction
+                          </div>
+                        )}
                         <p className="text-gray-700 text-sm mb-2">{offer.description}</p>
                         <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
                       </div>

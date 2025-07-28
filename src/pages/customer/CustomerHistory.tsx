@@ -201,6 +201,9 @@ const CustomerHistory = () => {
                                             <h3 className="text-lg font-bold text-gray-900">{offer.name}</h3>
                                             <p className="text-sm text-gray-600">{offer.description}</p>
                                             <p className="text-xs text-gray-500 mt-1">Durée : {offer.duration} mois</p>
+                                            {offer.discount && (
+                                                <p className="text-xs text-green-600 font-semibold">Réduction : {offer.discount}%</p>
+                                            )}
                                         </div>
                                         <img
                                             src="https://img.icons8.com/color/96/000000/discount.png"

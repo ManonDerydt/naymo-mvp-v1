@@ -158,7 +158,7 @@ const Dashboard = () => {
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
-      value: `${averageRating.toFixed(2)}/5`,
+      value: `${averageRating.toFixed(1)}/5`,
       trend: "+0"
     },
     {

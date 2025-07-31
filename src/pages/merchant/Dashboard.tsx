@@ -36,38 +36,40 @@ const Dashboard = () => {
   const [averageRating, setAverageRating] = useState(0)
   const [barChartData, setBarChartData] = useState<{ name: string; semaineActuelle: number; semainePrecedente: number }[]>([])
 
-  // 1. Statistiques générales (fidelisation)
+  // 1. Statistiques générales (à partir de pointsHistory)
   useEffect(() => {
-    if (!merchant?.uid) return
+    if (!merchant?.uid) return;
 
     const q = query(
-      collection(db, "fidelisation"),
+      collection(db, "pointsHistory"),
       where("merchantId", "==", merchant.uid)
-    )
+    );
 
     const unsubscribe = onSnapshot(q, (snap) => {
-      let points = 0;
+      let totalPoints = 0;
       let revenue = 0;
-      let ratingTotal = 0;
-      let ratingCount = 0;
+      const clientsSet = new Set();
 
       snap.docs.forEach((doc) => {
         const data = doc.data();
-        points += data.points || 0;
+
+        totalPoints += data.netPoints || 0;
         revenue += data.totalRevenue || 0;
-        if (typeof data.rating === "number") {
-          ratingTotal += data.rating;
-          ratingCount += 1;
+
+        if (data.customerId) {
+          clientsSet.add(data.customerId);
         }
       });
 
-      setClientsFideles(snap.docs.length)
-      setTotalRevenue(revenue)
-      setAverageRating(ratingCount > 0 ? ratingTotal / ratingCount : 0)
-    })
+      setClientsFideles(clientsSet.size); // nombre de clients uniques
+      setTotalRevenue(revenue);           // chiffre d’affaires cumulé
+      setAverageRating(0);               // pas de champ "rating" ici, donc valeur fixe
+      // Ajoute une ligne si tu veux afficher le total de points :
+      // setTotalPoints(totalPoints);
+    });
 
-    return () => unsubscribe()
-  }, [merchant])
+    return () => unsubscribe();
+  }, [merchant]);
 
   // 2. Graphique (pointsHistory)
   useEffect(() => {

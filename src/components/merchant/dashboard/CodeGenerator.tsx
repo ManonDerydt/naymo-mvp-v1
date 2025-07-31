@@ -9,7 +9,8 @@ import {
   updateDoc,
   increment,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from "firebase/firestore";
 import { useAuth } from "@/components/firebase/useAuth";
 
@@ -49,6 +50,12 @@ export default function CodeGenerator() {
   const [pointsAdded, setPointsAdded] = useState(false);
   const [addedAmount, setAddedAmount] = useState(0);
   const [couponsToApply, setCouponsToApply] = useState(0);
+  const [offers, setOffers] = useState([]);
+
+  const [selectedOfferId, setSelectedOfferId] = useState(null);
+  const [offerAmount, setOfferAmount] = useState('');
+  const [reducedAmount, setReducedAmount] = useState(null);
+
 
   const maxCoupons =  customer ? Math.floor((customer.points ?? 0) / 100) : 0;
 
@@ -83,7 +90,26 @@ export default function CodeGenerator() {
       const snap = await getDocs(q);
       if (!snap.empty) {
         const docSnap = snap.docs[0];
-        setCustomer({ id: docSnap.id, ...docSnap.data() });
+        const customerData = { id: docSnap.id, ...docSnap.data() };
+        setCustomer(customerData);
+
+        // ✅ Récupérer les offres depuis les IDs stockés dans customerData.offers
+        if (customerData.offers && Array.isArray(customerData.offers)) {
+          const offerDocs = await Promise.all(
+            customerData.offers.map(async (offerId) => {
+              const offerRef = doc(db, "offer", offerId);
+              const offerSnap = await getDoc(offerRef);
+              if (offerSnap.exists()) {
+                return { id: offerSnap.id, ...offerSnap.data() };
+              }
+              return null;
+            })
+          );
+          const filteredOffers = offerDocs.filter(Boolean); // retire les nulls
+          setOffers(filteredOffers);
+        } else {
+          setOffers([]);
+        }
       } else {
         setCustomer(null);
       }
@@ -118,36 +144,6 @@ export default function CodeGenerator() {
       await updateDoc(customerRef, {
         points: increment(netPointsChange),
       });
-
-      // 🔁 Enregistrer dans la collection "fidelisation"
-      const fidelisationRef = query(
-        collection(db, "fidelisation"),
-        where("merchantId", "==", merchant?.uid),
-        where("customerId", "==", customer.id)
-      );
-      const fidelisationSnap = await getDocs(fidelisationRef);
-
-      if (fidelisationSnap.empty) {
-        // ➕ Créer une nouvelle entrée
-        await addDoc(collection(db, "fidelisation"), {
-          merchantId: merchant?.uid,
-          customerId: customer.id,
-          points: netPointsChange,
-          totalRevenue: totalAfterDiscount,
-          usedBons: couponsToApply,
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      } else {
-        // 🔁 Incrémenter les points existants
-        const existingDoc = fidelisationSnap.docs[0];
-        await updateDoc(existingDoc.ref, {
-          points: increment(netPointsChange),
-          totalRevenue: increment(totalAfterDiscount),
-          usedBons: increment(couponsToApply),
-          updatedAt: serverTimestamp(),
-        });
-      }
 
       // ➕ Ajouter une entrée dans la collection "pointsHistory"
       await addDoc(collection(db, "pointsHistory"), {
@@ -188,6 +184,68 @@ export default function CodeGenerator() {
     setCustomer(null);
     setPointsAdded(false);
     setIsModalOpen(false);
+  };
+
+  const handleApplyOffer = async () => {
+    if (!customer || !selectedOfferId || !offerAmount) return;
+
+    const numericAmount = parseFloat(offerAmount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      alert("Veuillez entrer un montant valide pour l'offre");
+      return;
+    }
+
+    // Calcul du montant après réduction de l'offre
+    const discount = offers.find(offer => offer.id === selectedOfferId)?.discount ?? 0;
+    const reducedAmount = numericAmount * (1 - discount / 100);
+
+    // Ajouter ou ajuster les points en fonction du montant réduit
+    const pointsToAdd = Math.floor(reducedAmount);
+    const pointsToDeduct = couponsToApply * 100;
+
+    if (pointsToAdd <= 0) {
+      alert("Le montant réduit ne suffit pas pour ajouter des points.");
+      return;
+    }
+
+    // Mettre à jour les points du client
+    const customerRef = doc(db, "customer", customer.id);
+    await updateDoc(customerRef, {
+      points: increment(pointsToAdd - pointsToDeduct),
+    });
+
+    // Ajouter l'historique de points (facultatif)
+    await addDoc(collection(db, "pointsHistory"), {
+      merchantId: merchant?.uid,
+      customerId: customer.id,
+      pointsAdded: pointsToAdd,
+      pointsDeducted: pointsToDeduct,
+      netPoints: pointsToAdd - pointsToDeduct,
+      totalRevenue: reducedAmount,
+      usedBons: couponsToApply,
+      createdAt: serverTimestamp(),
+    });
+
+    // Recharge le client pour afficher le nouveau solde
+    const updatedSnap = await getDocs(
+      query(
+        collection(db, "customer"),
+        where("phone_number", "==", customer.phone_number)
+      )
+    );
+    if (!updatedSnap.empty) {
+      const updatedDoc = updatedSnap.docs[0];
+      setCustomer({ id: updatedDoc.id, ...updatedDoc.data() });
+    }
+
+    setAddedAmount(pointsToAdd);
+
+    setPointsAdded(true);
+
+    // Réinitialisation des champs de l'offre après application
+    setOfferAmount('');
+    setReducedAmount(null);
+    setSelectedOfferId(null);
   };
 
   return (
@@ -250,6 +308,72 @@ export default function CodeGenerator() {
                   <p><span className="font-semibold">Téléphone :</span> {customer.phone_number}</p>
                   <p><span className="font-semibold">Points actuels :</span> {customer.points ?? 0}</p>
                   <p><span className="font-semibold">Bons disponibles :</span> {maxCoupons}</p>
+                  {/* Offres associées au client */}
+                  <ul className="space-y-2">
+                    {offers.map((offer) => {
+                      const isSelected = selectedOfferId === offer.id;
+                      const discount = offer.discount ?? 0;
+                      const hasDiscount = discount > 0;
+
+                      return (
+                        <li key={offer.id} className="bg-blue-50 p-3 rounded-md text-sm text-gray-800">
+                          <p className="font-semibold">{offer.title}</p>
+                          <p>{offer.name}</p>
+
+                          {hasDiscount && (
+                            <>
+                              <p className="text-xs text-green-600">Réduction : {discount}%</p>
+                              <button
+                                onClick={() =>
+                                  setSelectedOfferId(isSelected ? null : offer.id)
+                                }
+                                className="mt-2 text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs"
+                              >
+                                {isSelected ? 'Annuler' : 'Appliquer l’offre'}
+                              </button>
+                            </>
+                          )}
+
+                          {isSelected && (
+                            <div className="mt-2 space-y-1">
+                              <label className="block text-xs text-gray-700">
+                                Montant d’achat (€) :
+                              </label>
+                              <input
+                                type="number"
+                                min="0"
+                                value={offerAmount}
+                                onChange={(e) => {
+                                  const value = parseFloat(e.target.value);
+                                  setOfferAmount(e.target.value);
+                                  setReducedAmount(
+                                    isNaN(value) ? null : (value * (1 - discount / 100)).toFixed(2)
+                                  );
+                                }}
+                                className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                placeholder="Ex : 50"
+                              />
+
+                              {reducedAmount && (
+                                <p className="text-sm text-blue-800">
+                                  Montant après réduction : <strong>{reducedAmount} €</strong>
+                                </p>
+                              )}
+
+                              {/* Bouton pour appliquer l'offre */}
+                              <button
+                                onClick={handleApplyOffer}
+                                className="mt-2 w-full text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                                disabled={!offerAmount}
+                              >
+                                Appliquer la réduction et ajouter les points
+                              </button>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
                   <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Montant de l'achat (€) = points à ajouter

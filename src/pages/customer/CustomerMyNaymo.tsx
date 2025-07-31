@@ -33,48 +33,62 @@ const CustomerMyNaymo = () => {
 
   useEffect(() => {
     const fetchFavMerchant = async () => {
-      if (!customer?.uid) return
+      if (!customer?.uid) return;
 
-      const q = query(collection(db, "fidelisation"), where("customerId", "==", customer.uid))
-      const snap = await getDocs(q)
+      try {
+        // Requête pour récupérer les documents de pointsHistory pour le client
+        const q = query(
+          collection(db, "pointsHistory"),
+          where("customerId", "==", customer.uid)
+        );
+        const snap = await getDocs(q);
 
-      const pointsByMerchant: Record<string, number> = {}
+        // Cumuler les pointsAdded par merchantId
+        const pointsByMerchant: Record<string, number> = {};
 
-      snap.forEach(doc => {
-        const data = doc.data()
-        const merchantId = data.merchantId
-        const pts = data.points || 0
+        snap.forEach((doc) => {
+          const data = doc.data();
+          const merchantId = data.merchantId;
+          const pointsAdded = data.pointsAdded || 0;
 
-        pointsByMerchant[merchantId] = (pointsByMerchant[merchantId] || 0) + pts
-      })
+          pointsByMerchant[merchantId] = (pointsByMerchant[merchantId] || 0) + pointsAdded;
+        });
 
-      const entries = Object.entries(pointsByMerchant)
-      if (entries.length === 0) {
-        setFavMerchant(null)
-        return
+        // Si aucun point n'a été trouvé, définir favMerchant à null
+        const entries = Object.entries(pointsByMerchant);
+        if (entries.length === 0) {
+          setFavMerchant(null);
+          return;
+        }
+
+        // Trouver le commerçant avec le plus de points
+        const [topMerchantId, topPoints] = entries.reduce((acc, curr) =>
+          curr[1] > acc[1] ? curr : acc
+        );
+
+        // Récupérer le nom du commerçant
+        const merchantDoc = await getDoc(doc(db, "merchant", topMerchantId));
+        const merchantName = merchantDoc.exists()
+          ? merchantDoc.data().owner_name || "Commerçant inconnu"
+          : "Commerçant inconnu";
+
+        // Mettre à jour l'état favMerchant
+        setFavMerchant({ id: topMerchantId, name: merchantName, points: topPoints });
+      } catch (error) {
+        console.error("Erreur lors de la récupération du commerçant préféré :", error);
+        setFavMerchant(null);
       }
+    };
 
-      // Trouver le commerçant avec le plus de points
-      const [topMerchantId, topPoints] = entries.reduce((acc, curr) =>
-        curr[1] > acc[1] ? curr : acc
-      )
-
-      // Récupérer le nom du commerçant
-      const merchantDoc = await getDoc(doc(db, "merchant", topMerchantId))
-      const merchantName = merchantDoc.exists() ? merchantDoc.data().owner_name : "Commerçant inconnu"
-
-      setFavMerchant({ id: topMerchantId, name: merchantName, points: topPoints})
-    }
-
-    fetchFavMerchant()
-  }, [customer])
+    fetchFavMerchant();
+  }, [customer]);
 
   useEffect(() => {
     const fetchUsedBons = async () => {
       if (!customer?.uid) return
 
       try {
-        const q = query(collection(db, "fidelisation"), where("customerId", "==", customer.uid))
+        const q = query(collection(db, "pointsHistory"), where("customerId", "==", customer.uid))
         const snap = await getDocs(q)
 
         let totalUsedBons = 0

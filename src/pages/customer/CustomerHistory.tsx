@@ -44,97 +44,143 @@ const CustomerHistory = () => {
     const { customer } = useAuth()
     const [history, setHistory] = useState<MerchantHistory[]>([])
     const [activeOffers, setActiveOffers] = useState<any[]>([])
+    console.log(history)
 
     useEffect(() => {
         const fetchHistory = async () => {
-            if (!customer?.uid) return
+            if (!customer?.uid) return;
 
-            const q = query(collection(db, "fidelisation"), where("customerId", "==", customer.uid))
-            const snap = await getDocs(q)
+            // 1. Récupère tous les documents pour ce client dans pointsHistory
+            const pointsSnap = await getDocs(
+                query(
+                    collection(db, "pointsHistory"),
+                    where("customerId", "==", customer.uid)
+                )
+            );
 
-            const merchantData: MerchantHistory[] = []
+            const merchantPointsMap = new Map<string, number>();
 
-            for (const docSnap of snap.docs) {
-                const data = docSnap.data() as DocumentData & { merchantId?: string; points?: number; rating?: number }
-                if (!data.merchantId) continue
+            pointsSnap.forEach(docSnap => {
+                const data = docSnap.data() as { merchantId?: string; pointsAdded?: number };
+                if (!data.merchantId) return;
 
-                const merchantDoc = await getDoc(doc(db, "merchant", data.merchantId))
-                const merchantInfo = merchantDoc.exists() 
-                    ? merchantDoc.data() as { 
-                        owner_name?: string
-                        address?: string
-                        city?: string,
-                        postal_code?: string,
-                        email?: string
-                        business_type?: string,
-                        company_name?: string,
-                        logo?: string
-                      } 
-                    : {}
+                const total = merchantPointsMap.get(data.merchantId) ?? 0;
+                merchantPointsMap.set(data.merchantId, total + (data.pointsAdded ?? 0));
+            });
+
+            // 2. Récupère toutes les notes du client dans fidelisation
+            const ratingSnap = await getDocs(
+                query(
+                    collection(db, "fidelisation"),
+                    where("customerId", "==", customer.uid)
+                )
+            );
+
+            const merchantRatingMap = new Map<string, number>();
+
+            ratingSnap.forEach(docSnap => {
+                const data = docSnap.data() as { merchantId?: string; rating?: number };
+                if (data.merchantId && data.rating !== undefined) {
+                    merchantRatingMap.set(data.merchantId, data.rating);
+                }
+            });
+
+            // 3. Pour chaque merchantId, récupère les infos du commerçant
+            const merchantData: MerchantHistory[] = [];
+
+            for (const merchantId of new Set([
+                ...merchantPointsMap.keys(),
+                ...merchantRatingMap.keys(),
+            ])) {
+                const merchantDoc = await getDoc(doc(db, "merchant", merchantId));
+                const merchantInfo = merchantDoc.exists()
+                    ? merchantDoc.data()
+                    : {};
 
                 merchantData.push({
-                    id: data.merchantId,
+                    id: merchantId,
                     name: merchantInfo.owner_name ?? "Inconnu",
-                    points: data.points ?? 0,
-                    rating: data.rating ?? 0,
+                    points: merchantPointsMap.get(merchantId) ?? 0,
+                    rating: merchantRatingMap.get(merchantId) ?? 0,
                     address: merchantInfo.address,
                     city: merchantInfo.city,
                     postal_code: merchantInfo.postal_code,
                     email: merchantInfo.email,
                     business_type: merchantInfo.business_type,
                     company_name: merchantInfo.company_name,
-                    logo: merchantInfo.logo
-                })
+                    logo: merchantInfo.logo,
+                });
             }
-            
-            setHistory(merchantData)
 
+            setHistory(merchantData);
 
+            // 4. Récupération des offres actives
             const customerRef = doc(db, "customer", customer.uid);
             const customerSnap = await getDoc(customerRef);
             const customerData = customerSnap.exists() ? customerSnap.data() : null;
 
             if (customerData?.offers?.length > 0) {
-                const offerRefs = customerData.offers;
-                const offerPromises = offerRefs.map((id: string) => getDoc(doc(db, "offer", id)));
+                const offerPromises = customerData.offers.map((id: string) =>
+                    getDoc(doc(db, "offer", id))
+                );
                 const offerDocs = await Promise.all(offerPromises);
 
                 const offers = offerDocs
                     .filter(doc => doc.exists())
-                    .map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    }));
+                    .map(doc => ({ id: doc.id, ...doc.data() }));
+
                 setActiveOffers(offers);
             } else {
                 setActiveOffers([]);
             }
-        }
+        };
 
-        fetchHistory()
-    }, [customer])
+        fetchHistory();
+    }, [customer]);
 
     const handleRating = async (merchantId: string, rating: number) => {
-        // Ajoute ou met à jour la note dans Firestore
+        if (!customer?.uid) return;
+
+        // Requête vers le doc fidelisation spécifique au client et au commerçant
         const q = query(
             collection(db, "fidelisation"),
-            where("customerId", "==", customer?.uid), 
+            where("customerId", "==", customer.uid),
             where("merchantId", "==", merchantId)
-        )
-        const snap = await getDocs(q)
+        );
+
+        const snap = await getDocs(q);
 
         if (!snap.empty) {
-            const docRef = snap.docs[0].ref
-            await setDoc(docRef, { rating, updatedAt: new Date() }, { merge: true })
+            // On prend le premier doc (logique: un seul couple customerId/merchantId)
+            const docRef = snap.docs[0].ref;
 
-            // MAJ de l'état local
+            // Mise à jour du champ rating uniquement, et un updatedAt facultatif
+            await setDoc(docRef, {
+                rating,
+                updatedAt: new Date(), // facultatif
+            }, { merge: true });
+
+            // Mise à jour de l’état local
             setHistory(prev =>
                 prev.map(item =>
-                    item.id === merchantId ? { ...item, rating } : item
+                    item.id === merchantId
+                        ? { ...item, rating }
+                        : item
                 )
-            )
+            );
+        } else {
+            // Si aucun document n'existe, on peut en créer un nouveau minimaliste
+            const newDocRef = doc(collection(db, "fidelisation"));
+            await setDoc(newDocRef, {
+                customerId: customer.uid,
+                merchantId,
+                rating,
+                createdAt: new Date(),
+            });
+
+            // Optionnel : tu peux aussi ajouter ce nouvel item dans l’état local si besoin
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50 pb-28">

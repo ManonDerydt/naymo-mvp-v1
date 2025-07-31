@@ -125,7 +125,7 @@ const CustomerHistory = () => {
 
         if (!snap.empty) {
             const docRef = snap.docs[0].ref
-            await setDoc(docRef, { rating }, { merge: true })
+            await setDoc(docRef, { rating, updatedAt: new Date() }, { merge: true })
 
             // MAJ de l'état local
             setHistory(prev =>

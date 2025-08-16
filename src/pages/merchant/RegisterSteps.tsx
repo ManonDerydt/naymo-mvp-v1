@@ -80,7 +80,7 @@ const steps = [
     id: 'account',
     title: 'Compte',
     description: 'Créez votre compte pour accéder à la plateforme',
-    fields: ['email', 'password'],
+    fields: ['email', 'password', 'confirmPassword'],
   },
   {
     id: 'details',

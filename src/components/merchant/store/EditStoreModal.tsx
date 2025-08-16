@@ -10,6 +10,7 @@ import { useAuth } from '@/components/firebase/useAuth'
 
 interface EditStoreModalProps {
   onClose: () => void
+  editType?: 'info' | 'description' | 'cover' | 'gallery' | 'engagements'
   initialData: {
     company_name: string
     longDescription: string
@@ -24,9 +25,9 @@ interface EditStoreModalProps {
   }
 }
 
-const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
+const EditStoreModal = ({ onClose, initialData, editType = 'info' }: EditStoreModalProps) => {
   const [formData, setFormData] = useState(initialData)
-  const [step, setStep] = useState<'info' | 'media' | 'success'>('info')
+  const [step, setStep] = useState<'info' | 'description' | 'cover' | 'gallery' | 'engagements' | 'success'>(editType)
   const [mediaFiles, setMediaFiles] = useState({
     logo: [] as File[],
     cover: [] as File[],
@@ -134,6 +135,16 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
     }))
   }
 
+  const getModalTitle = () => {
+    switch (step) {
+      case 'description': return 'Modifier la description'
+      case 'cover': return 'Modifier la photo de couverture'
+      case 'gallery': return 'Modifier la galerie photos'
+      case 'engagements': return 'Modifier les engagements'
+      default: return 'Modifier les informations'
+    }
+  }
+
   if (step === 'success') {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -162,7 +173,7 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-2xl w-full">
         <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="text-lg font-medium text-gray-900">Modifier les informations</h3>
+          <h3 className="text-lg font-medium text-gray-900">{getModalTitle()}</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-500"
@@ -172,7 +183,7 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
         </div>
 
         <div className="p-6">
-          {step === 'info' ? (
+          {step === 'info' && (
             <div className="space-y-6">
               <Input
                 label="Nom du commerce"
@@ -237,7 +248,90 @@ const EditStoreModal = ({ onClose, initialData }: EditStoreModalProps) => {
                 </Button>
               </div>
             </div>
-          ) : (
+          )}
+
+          {step === 'description' && (
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Description complète
+                </label>
+                <textarea
+                  value={formData.longDescription}
+                  onChange={(e) => setFormData({ ...formData, longDescription: e.target.value })}
+                  rows={6}
+                  className="block w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent p-4"
+                  placeholder="Décrivez votre commerce en détail..."
+                />
+              </div>
+              <div className="pt-4 flex justify-end space-x-4">
+                <Button variant="outline" onClick={onClose}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSubmit}>
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 'cover' && (
+            <div className="space-y-6">
+              <FileUpload
+                label="Photo de couverture"
+                onChange={(files) => handleFileChange('cover', files)}
+                maxFiles={1}
+              />
+              <div className="pt-4 flex justify-end space-x-4">
+                <Button variant="outline" onClick={onClose}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSubmit}>
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 'gallery' && (
+            <div className="space-y-6">
+              <FileUpload
+                label="Photos du commerce"
+                multiple
+                maxFiles={5}
+                onChange={(files) => handleFileChange('gallery', files)}
+              />
+              <div className="pt-4 flex justify-end space-x-4">
+                <Button variant="outline" onClick={onClose}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSubmit}>
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 'engagements' && (
+            <div className="space-y-6">
+              <Input
+                label="Pictogrammes d'engagements"
+                value={formData.commitments.join(', ')}
+                onChange={(e) => setFormData({ ...formData, commitments: e.target.value.split(',').map(item => item.trim()) })}
+                placeholder="Ex: Produits 100% locaux, Emballages recyclables"
+              />
+              <div className="pt-4 flex justify-end space-x-4">
+                <Button variant="outline" onClick={onClose}>
+                  Annuler
+                </Button>
+                <Button onClick={handleSubmit}>
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {(step === 'info' || step === 'description' || step === 'cover' || step === 'gallery' || step === 'engagements') && step !== 'info' && step !== 'description' && step !== 'cover' && step !== 'gallery' && step !== 'engagements' && (
             <div className="space-y-6">
               <FileUpload
                 label="Logo"

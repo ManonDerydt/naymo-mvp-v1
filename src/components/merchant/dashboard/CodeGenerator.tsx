@@ -251,7 +251,7 @@ export default function CodeGenerator() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Générer un code client</h1>
+        <h1 className="text-base font-bold text-gray-900">Générer un code client</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm p-6">
@@ -264,7 +264,7 @@ export default function CodeGenerator() {
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
-            className="md:w-auto w-full py-2 px-4 rounded-md text-white font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+            className="md:w-auto w-full py-2 px-4 rounded-md text-white font-medium bg-[#7ebd07] hover:bg-[#589507] disabled:opacity-50"
             onClick={handleOpenModal}
             disabled={loading}
           >

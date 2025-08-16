@@ -308,9 +308,9 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="space-y-4 font-['Inter',_'system-ui',_sans-serif] p-6 max-h-screen overflow-hidden">
+    <div className="space-y-4 font-['Inter',_'system-ui',_sans-serif] p-6 h-screen overflow-hidden flex flex-col">
       <div className="flex justify-between items-center">
-        <h1 className="text-lg font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
 
         <div className="flex items-center space-x-4">
           <span className="text-xs text-gray-600 bg-[#ebffbc] px-2 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
@@ -321,22 +321,22 @@ const Dashboard = () => {
         Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-shrink-0">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-80 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <div className="space-y-4">
           <CodeGenerator />
 
           <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
-            <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
+            <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center">
               <Activity className="w-5 h-5 text-[#7ebd07] mr-2" />
               Comparaison des points attribués
             </h2>
-            <ResponsiveContainer width="100%" height={160}>
+            <ResponsiveContainer width="100%" height={180}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
                 <XAxis dataKey="name" stroke="#374151" />
@@ -357,7 +357,43 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-4">
-          <NewVsReturningCustomers merchant={merchant} />
+          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20 flex-1">
+            <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center">
+              <Users className="w-5 h-5 text-[#7ebd07] mr-2" />
+              Nouveaux vs Anciens clients
+            </h2>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
+                <XAxis dataKey="name" stroke="#374151" />
+                <YAxis stroke="#374151" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#ebffbc', 
+                    border: '1px solid #7ebd07',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="nouveaux" 
+                  stroke="#7ebd07" 
+                  strokeWidth={3}
+                  dot={{ fill: '#7ebd07', strokeWidth: 2, r: 4 }}
+                  name="Nouveaux clients" 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="anciens" 
+                  stroke="#FFCD29" 
+                  strokeWidth={3}
+                  dot={{ fill: '#FFCD29', strokeWidth: 2, r: 4 }}
+                  name="Anciens clients" 
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
           <DailyTip />
         </div>
       </div>

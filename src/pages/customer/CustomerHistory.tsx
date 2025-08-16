@@ -185,7 +185,7 @@ const CustomerHistory = () => {
     return (
         <div className="min-h-screen bg-gray-50 pb-28">
             {/* HEADER */}
-            <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-sm z-50 flex items-center px-4 py-3">
+            <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
                 <div className="flex-1" />
                 <img src={logo} alt="Naymo" className="h-10 mx-auto" />
                 <div className="flex-1 flex justify-end">
@@ -199,12 +199,12 @@ const CustomerHistory = () => {
             {/* CONTENU */}
             <div className="pt-20 px-4 space-y-4">
                 {/* SECTION : Historique de vos commerçants */}
-                <h2 className="text-xl font-semibold">Historique de vos commerçants</h2>
+                <h2 className="text-xl font-bold text-[#396F04]">Historique de vos commerçants</h2>
                     {history.length === 0 ? (
                         <p className="text-gray-600">Aucun commerçant visité pour le moment.</p>
                     ) : (
                         history.map((merchant) => (
-                            <div key={merchant.id} className="bg-white rounded-xl shadow-md p-4 flex flex-col">
+                            <div key={merchant.id} className="bg-white rounded-xl shadow-lg border border-[#7ebd07]/20 p-4 flex flex-col">
                                 <div className="flex items-center mb-2">
                                     <img
                                         src={merchant.logo}
@@ -234,21 +234,21 @@ const CustomerHistory = () => {
                     )}
                 {/* SECTION : Offres en cours */}
                 <div className="mt-10">
-                    <h2 className="text-xl font-semibold">Offres en cours</h2>
+                    <h2 className="text-xl font-bold text-[#396F04]">Offres en cours</h2>
 
                     {activeOffers.length === 0 ? (
                         <p className="text-gray-600">Aucune offre en cours.</p>
                     ) : (
                         <div className="space-y-4 mt-4">
                             {activeOffers.map((offer) => (
-                                <div key={offer.id} className="bg-white rounded-xl shadow p-4">
+                                <div key={offer.id} className="bg-white rounded-xl shadow-lg border border-[#7ebd07]/20 p-4">
                                     <div className="flex justify-between items-center">
                                         <div>
                                             <h3 className="text-lg font-bold text-gray-900">{offer.name}</h3>
                                             <p className="text-sm text-gray-600">{offer.description}</p>
                                             <p className="text-xs text-gray-500 mt-1">Durée : {offer.duration} mois</p>
                                             {offer.discount && (
-                                                <p className="text-xs text-green-600 font-semibold">Réduction : {offer.discount}%</p>
+                                                <p className="text-xs text-[#589507] font-semibold">Réduction : {offer.discount}%</p>
                                             )}
                                         </div>
                                         <img

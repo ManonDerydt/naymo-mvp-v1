@@ -201,7 +201,7 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   return (
     <div className="min-h-screen from-green-50 via-white to-green-100 pb-28 pt-10 px-4">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-lg z-50 flex items-center px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
         <div className="flex-1" />
         <img src={logo} alt="Naymo" className="h-10 mx-auto" />
         <div className="flex-1 flex justify-end">
@@ -215,8 +215,8 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
       <div className="max-w-2xl mx-auto mt-16 space-y-8">
         {/* Profil */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Profil</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Profil</h2>
+          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 space-y-4">
             {customer && customerData ? (
               <>
                 {!isEditingProfile ? (
@@ -323,7 +323,7 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                         </button>
                         <button
                           type="submit"
-                          className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
+                          className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-6 py-3 rounded-2xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
                           disabled={loading}
                         >
                           {loading ? "Sauvegarde..." : "Sauvegarder"}
@@ -339,13 +339,13 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
         {/* Mon compte */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Mon compte</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Mon compte</h2>
+          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 space-y-4">
             <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setShowPasswordForm(true)}>
               <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <Lock className="text-green-600" size={20} />
+                <Lock className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-green-800">Changer mon mot de passe</span>
+              <span className="font-semibold text-[#396F04]">Changer mon mot de passe</span>
             </div>
             {showPasswordForm && (
               <div className="ml-12 space-y-4">
@@ -380,7 +380,7 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                   </button>
                   <button
                     onClick={handleChangePassword}
-                    className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
+                    className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-6 py-3 rounded-2xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
                     disabled={loading || !newPassword || newPassword !== confirmPassword}
                   >
                     {loading ? "Mise à jour..." : "Sauvegarder"}
@@ -390,36 +390,36 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
             )}
             <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setDeleteStep("reason")}>
               <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <Trash2 className="text-green-600" size={20} />
+                <Trash2 className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-green-800">Supprimer mon compte</span>
+              <span className="font-semibold text-[#396F04]">Supprimer mon compte</span>
             </div>
             <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={handleLogout}>
               <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <LogOut className="text-green-600" size={20} />
+                <LogOut className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-green-800">Me déconnecter</span>
+              <span className="font-semibold text-[#396F04]">Me déconnecter</span>
             </div>
           </div>
         </section>
 
         {/* Confidentialité */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Confidentialité</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Confidentialité</h2>
+          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
             <div className="max-w-3xl space-y-8">
               <section className="space-y-4">
-                <h2 className="text-lg font-bold text-gray-900">Documents légaux</h2>
+                <h2 className="text-lg font-bold text-[#396F04]">Documents légaux</h2>
                 <div className="grid gap-6 md:grid-cols-2">
                   {legalDocuments.map((doc) => (
-                    <div key={doc.title} className="p-6 bg-[#f2f8ea] rounded-2xl shadow">
-                      <h3 className="font-bold text-gray-900 mb-3">{doc.title}</h3>
+                    <div key={doc.title} className="p-6 bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20">
+                      <h3 className="font-bold text-[#396F04] mb-3">{doc.title}</h3>
                       <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setSelectedDocument(doc)}
-                        className="border-[#7fbd07] text-green-700"
+                        className="border-[#7ebd07] text-[#589507] hover:bg-[#ebffbc]/50"
                       >
                         Consulter
                       </Button>

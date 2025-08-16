@@ -97,7 +97,7 @@ const CustomerSearch = () => {
     return (
         <div className="min-h-screen to-blue-50 pb-10">
             {/* HEADER */}
-            <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-lg z-50 flex items-center px-4 py-3">
+            <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
                 <div className="flex-1" />
                 <img src={logo} alt="Naymo" className="h-10 mx-auto" />
                 <div className="flex-1 flex justify-end">
@@ -113,31 +113,31 @@ const CustomerSearch = () => {
                 {/* Barre de recherche moderne */}
                 <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Search className="h-5 w-5 text-gray-400" />
+                        <Search className="h-5 w-5 text-[#7ebd07]" />
                     </div>
                     <input 
                         type="text" 
                         placeholder="Rechercher un magasin..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 bg-white border-0 rounded-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-200 text-gray-900 placeholder-gray-500 font-medium"
+                        className="w-full pl-12 pr-4 py-4 bg-white border border-[#7ebd07]/30 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent text-gray-900 placeholder-gray-500 font-medium"
                     />
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                        <MapPin className="h-5 w-5 text-purple-500" />
+                        <MapPin className="h-5 w-5 text-[#589507]" />
                     </div>
                 </div>
 
                 {/* Filtres par type - Style gamifié */}
                 <div className="space-y-3">
-                    <h3 className="text-lg font-bold text-gray-800 px-2">Catégories</h3>
+                    <h3 className="text-lg font-bold text-[#396F04] px-2">Catégories</h3>
                     <div className="flex overflow-x-auto space-x-3 pb-2 px-2">
                         {uniqueTypes.map((type) => (
                             <button
                                 key={type}
                                 className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 rounded-2xl shadow-lg transition-all duration-200 transform ${
                                     selectedType === type 
-                                        ? "bg-[#7ebd07] to-pink-500 text-white scale-105 shadow-xl" 
-                                        : "bg-white text-gray-700 hover:bg-gray-50 hover:scale-105"
+                                        ? "bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white scale-105 shadow-xl" 
+                                        : "bg-white text-gray-700 hover:bg-[#ebffbc]/50 hover:scale-105 border border-[#7ebd07]/20"
                                 }`}
                                 onClick={() => setSelectedType(selectedType === type ? null : type)}
                             >
@@ -150,8 +150,8 @@ const CustomerSearch = () => {
 
                 {/* Carte interactive avec style moderne */}
                 <div className="space-y-3">
-                    <h3 className="text-lg font-bold text-gray-800 px-2">Carte interactive</h3>
-                    <div className="w-full h-96 bg-white rounded-2xl overflow-hidden shadow-lg border border-purple-100">
+                    <h3 className="text-lg font-bold text-[#396F04] px-2">Carte interactive</h3>
+                    <div className="w-full h-96 bg-white rounded-2xl overflow-hidden shadow-lg border border-[#7ebd07]/20">
                         <Map stores={filteredResults} />
                     </div>
                 </div>
@@ -160,13 +160,13 @@ const CustomerSearch = () => {
                 {(searchTerm.length > 0 || selectedType) && !loading && (
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-2">
-                            <h3 className="text-lg font-bold text-gray-800">
+                            <h3 className="text-lg font-bold text-[#396F04]">
                                 Résultats ({filteredResults.length})
                             </h3>
                             {selectedType && (
                                 <button
                                     onClick={() => setSelectedType(null)}
-                                    className="text-sm text-purple-600 font-medium"
+                                    className="text-sm text-[#589507] font-medium hover:text-[#396F04] transition-colors"
                                 >
                                     Effacer les filtres
                                 </button>
@@ -176,7 +176,7 @@ const CustomerSearch = () => {
                         {filteredResults.length > 0 ? (
                             <div className="space-y-3">
                                 {filteredResults.map((result, index) => (
-                                    <div key={index} className="bg-white rounded-2xl shadow-lg p-5 border border-purple-100 hover:shadow-xl transition-all duration-200">
+                                    <div key={index} className="bg-white rounded-2xl shadow-lg p-5 border border-[#7ebd07]/20 hover:shadow-xl transition-all duration-200">
                                         <div className="flex items-start space-x-4">
                                             <div className="relative">
                                                 <img
@@ -197,11 +197,11 @@ const CustomerSearch = () => {
                                                         <h4 className="text-lg font-bold text-gray-900">{result.name}</h4>
                                                         <div className="flex items-center space-x-2 mt-1">
                                                             <span className="text-sm">{getTypeEmoji(result.type)}</span>
-                                                            <span className="text-sm font-medium text-purple-600">{result.type}</span>
+                                                            <span className="text-sm font-medium text-[#589507]">{result.type}</span>
                                                         </div>
                                                     </div>
                                                     {result.hasOffers && (
-                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
+                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-[#FFCD29]/20 text-[#396F04] border border-[#FFCD29]/30">
                                                             Offres disponibles
                                                         </span>
                                                     )}
@@ -230,7 +230,7 @@ const CustomerSearch = () => {
                 {loading && (
                     <div className="text-center py-12">
                         <div className="inline-flex items-center space-x-2">
-                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7ebd07]"></div>
                             <span className="text-gray-600 font-medium">Chargement des magasins...</span>
                         </div>
                     </div>

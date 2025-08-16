@@ -130,7 +130,7 @@ const CustomerDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-sm z-50 flex items-center px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
         <div className="flex-1" />
         <img src={logo} alt="Naymo" className="h-10 mx-auto" />
         <div className="flex-1 flex justify-end">
@@ -143,9 +143,9 @@ const CustomerDashboard = () => {
       
       {/* SECTION PROFIL */}
       <div className="flex justify-center pt-20 px-2">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow p-5 mb-4">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 mb-4">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            Hello, {customerData?.first_name}!
+            Hello {customerData?.first_name} !
           </h1>
           <div className="flex items-center text-gray-500 text-sm mb-2">
             <svg width="16" height="16" fill="none" className="mr-1" viewBox="0 0 24 24">
@@ -174,18 +174,18 @@ const CustomerDashboard = () => {
             </span>
             <button 
               onClick={toggleCoupons}
-              className="bg-[#032313] text-white px-5 py-2 rounded-full font-semibold text-sm shadow hover:bg-gray-900 transition"
+              className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-5 py-2 rounded-full font-semibold text-sm shadow-lg transform hover:scale-105 transition-all duration-200"
             >
               Get It
             </button>
           </div>
             {showCoupons && (
-              <div className="mt-4 bg-white border border-gray-200 rounded-lg shadow p-4">
-                <h3 className="text-sm font-semibold mb-2 text-gray-700">Bons de 10% disponibles :</h3>
+              <div className="mt-4 bg-gradient-to-br from-[#ebffbc]/50 to-white border border-[#7ebd07]/30 rounded-xl shadow-lg p-4">
+                <h3 className="text-sm font-semibold mb-2 text-[#396F04]">Bons de 10% disponibles :</h3>
                 {coupons > 0 ? (
                   <ul className="mt-2 text-sm text-gray-700 space-y-1">
                     {[...Array(coupons)].map((_, idx) => (
-                      <li key={idx} className="bg-green-100 rounded px-3 py-2">
+                      <li key={idx} className="bg-gradient-to-r from-[#7ebd07]/20 to-[#589507]/20 rounded-lg px-3 py-2 border border-[#7ebd07]/30">
                         🎁 Bon de réduction : {discount / coupons}% (valeur 10%)
                       </li>
                     ))}
@@ -201,7 +201,7 @@ const CustomerDashboard = () => {
       {/* SECTION OFFRE DU MOMENT */}
       <div className="flex justify-center mb-4 px-2">
         <div 
-          className="w-full max-w-md bg-gray-100 rounded-2xl shadow p-5 flex items-center justify-between"
+          className="w-full max-w-md bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-5 flex items-center justify-between hover:shadow-xl transition-all duration-200 cursor-pointer"
           onClick={() => openOfferModal(topMomentOffer[0])}
         >
           {topMomentOffer.length > 0 ? (
@@ -211,12 +211,12 @@ const CustomerDashboard = () => {
                   {topMomentOffer[0].name}
                   <br />
                   {topMomentOffer[0].discount && (
-                    <span className="font-semibold">
+                    <span className="font-semibold text-[#589507]">
                       {topMomentOffer[0].discount}% Discount
                     </span>
                   )}
                 </h2>
-                <p className="text-gray-7 text-sm">
+                <p className="text-gray-600 text-sm">
                   {topMomentOffer[0].description}
                 </p>
               </div>
@@ -237,11 +237,11 @@ const CustomerDashboard = () => {
       {/* SECTION OFFRES EN COURS */}
       <div className="flex flex-col items-center px-2 mb-8">
         <div className="flex justify-between items-center w-full max-w-md mb-2">
-          <h2 className="text-xl font-semibold text-gray-800">Les offres en cours</h2>
+          <h2 className="text-xl font-bold text-[#396F04]">Les offres en cours</h2>
           {otherOffers.length > 1 && (
             <button
               onClick={toggleOffers}
-              className="w-8 h-8 rounded-full bg-[#032313] text-white text-lg flex items-center justify-center shadow hover:bg-gray-900 transition"
+              className="w-8 h-8 rounded-full bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white text-lg flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200"
               aria-label={showAllOffers ? "Voir moins d'offres" : "Voir plus d'offres"}
             >
               {showAllOffers ? "−" : "+"}
@@ -253,7 +253,7 @@ const CustomerDashboard = () => {
           placeholder="Rechercher une offre..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full max-w-md p-2 border rounded-lg mb-4"
+          className="w-full max-w-md p-3 border border-[#7ebd07]/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent shadow-sm mb-4"
         />
 
         {otherOffers.length === 0 ? (
@@ -263,14 +263,14 @@ const CustomerDashboard = () => {
             {(showAllOffers ? otherOffers : otherOffers.slice(0, 1)).map((offer, idx) => (
               <div
                 key={offer.id}
-                className="bg-gray-100 rounded-2xl shadow flex items-center justify-between p-5"
+                className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20 flex items-center justify-between p-5 hover:shadow-xl transition-all duration-200 cursor-pointer"
                 onClick={() => openOfferModal(offer)}
               >
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
                     {offer.name}
                     {offer.isBoosted && (
-                      <span className="inline-flex items-center justify-center bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">
+                      <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#FFCD29] to-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full ml-2 shadow-sm">
                         Boostée
                       </span>
                     )}
@@ -278,7 +278,7 @@ const CustomerDashboard = () => {
                   <p className="text-gray-700 text-sm mb-1">{offer.description}</p>
                   <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
                   {offer.discount && (
-                    <p className="text-xs text-green-600 font-semibold">
+                    <p className="text-xs text-[#589507] font-semibold">
                       Réduction : {offer.discount}%
                     </p>
                   )}
@@ -298,19 +298,19 @@ const CustomerDashboard = () => {
 
       {/* SECTION OFFRES BOOSTÉES - PLEINE LARGEUR, FIN DE PAGE */}
       {topBoostedOffers.length > 0 && (
-        <div className="relative left-1/2 w-screen -translate-x-1/2 bg- via-pink-100 to-blue-100 py-8">
+        <div className="relative left-1/2 w-screen -translate-x-1/2 bg-gradient-to-br from-[#ebffbc]/20 via-white to-[#ebffbc]/30 py-8">
           <div className="px-4">
-            <h2 className="text-xl font-bold text-gray-800 mb-6 text-center">⭐ Offres Boostées ⭐</h2>
+            <h2 className="text-xl font-bold text-[#396F04] mb-6 text-center">⭐ Offres Boostées ⭐</h2>
             <div className="overflow-x-auto scrollbar-hide">
               <div className="flex space-x-4 pb-4 px-4" style={{ width: 'max-content' }}>
                 {topBoostedOffers.map((offer, idx) => (
                   <div
                     key={offer.id}
-                    className="relative min-w-[280px] max-w-[300px] bg-white rounded-2xl shadow-lg p-5 flex-shrink-0 border-2 border-yellow-200"
+                    className="relative min-w-[280px] max-w-[300px] bg-white rounded-2xl shadow-xl p-5 flex-shrink-0 border-2 border-[#FFCD29]/50 hover:shadow-2xl transition-all duration-200 cursor-pointer"
                     onClick={() => openOfferModal(offer)}
                   >
                     {/* Étoile en haut à droite */}
-                    <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-2 shadow-lg">
+                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-[#FFCD29] to-yellow-500 rounded-full p-2 shadow-lg">
                       <Star className="w-4 h-4 text-white fill-current" />
                     </div>
                     
@@ -320,7 +320,7 @@ const CustomerDashboard = () => {
                           {offer.name}
                         </h3>
                         {offer.discount && (
-                          <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block">
+                          <div className="bg-gradient-to-r from-[#FFCD29] to-[#7ebd07] text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block shadow-sm">
                             {offer.discount}% de réduction
                           </div>
                         )}
@@ -355,15 +355,15 @@ const CustomerDashboard = () => {
       `}</style>
 
       {isModalOpen && selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-6 relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative border border-[#7ebd07]/20">
             <button
               onClick={closeOfferModal}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all duration-200"
             >
               &times;
             </button>
-            <h2 className="text-xl font-bold mb-2">{selectedOffer.name}</h2>
+            <h2 className="text-xl font-bold mb-2 text-[#396F04]">{selectedOffer.name}</h2>
             <p className="text-sm text-gray-600 mb-2">{selectedOffer.description}</p>
             <p className="text-sm text-gray-500">Durée : {selectedOffer.duration} mois</p>
 
@@ -391,11 +391,11 @@ const CustomerDashboard = () => {
 
             <div className="mt-6 text-center">
               {hasAddedOffer(selectedOffer.id) ? (
-                <p className="text-green-600 font-semibold">✅ Offre déjà ajoutée</p>
+                <p className="text-[#589507] font-semibold bg-[#ebffbc]/50 px-4 py-2 rounded-lg">✅ Offre déjà ajoutée</p>
               ) : (
                 <button
                   onClick={() => addOfferToCustomer(selectedOffer.id)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-6 py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
                 >
                   Ajouter cette offre
                 </button>

@@ -82,7 +82,7 @@ const Store = () => {
               <img
                 src={data.logo || "https://images.unsplash.com/photo-1560472354-b33ff0c44a43"}
                 alt="Logo"
-                className="w-20 h-20 rounded-full border-4 border-white shadow-lg"
+                className="w-20 h-20 rounded-full border-4 border-white shadow-lg object-cover flex-shrink-0"
               />
               <div className="text-white">
                 <h1 className="text-3xl font-bold">{data.company_name}</h1>
@@ -153,11 +153,11 @@ const Store = () => {
               <Award className="w-6 h-6 text-green-600 mr-2" />
               Nos engagements
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {(data.commitments || []).map((commitment: string, index: number) => (
-                <div key={index} className="flex items-center space-x-3 p-4 bg-green-50 rounded-xl border border-green-200">
+                <div key={index} className="flex flex-col items-center space-y-2 p-4 bg-green-50 rounded-xl border border-green-200">
                   <span className="text-2xl">{getEngagementIcon(commitment)}</span>
-                  <span className="text-green-800 font-medium text-sm">{commitment}</span>
+                  <span className="text-green-800 font-medium text-xs text-center">{commitment}</span>
                 </div>
               ))}
             </div>
@@ -170,11 +170,11 @@ const Store = () => {
   return (
     <div className="h-screen overflow-hidden flex flex-col font-['Inter',_'system-ui',_sans-serif]">
       {/* Header */}
-      <div className="flex-shrink-0 bg-white border-b border-gray-200 p-6">
+      <div className="flex-shrink-0 p-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#589507] to-[#396F04] bg-clip-text text-transparent">Mon Magasin</h1>
-            <p className="text-gray-600 mt-2">Gérez et personnalisez la présentation de votre magasin</p>
+            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Mon Magasin</h1>
+            <p className="text-sm text-gray-600 leading-relaxed">Gérez et personnalisez la présentation de votre magasin</p>
           </div>
           <Button 
             onClick={() => setShowPreview(true)}
@@ -312,19 +312,19 @@ const Store = () => {
                   <Edit className="w-4 h-4" />
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {merchant && merchantData && merchantData.commitments
                   ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
-                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center">
+                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-1">
                         <span className="text-2xl mb-1">{getEngagementIcon(commitment || '')}</span>
-                        <span className="text-[#396F04] font-medium text-xs">{commitment}</span>
+                        <span className="text-[#396F04] font-medium text-xs leading-tight">{commitment}</span>
                       </div>
                     ))
                   : (
                     initialStoreData.commitments.map((commitment, index) => (
-                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center">
+                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-1">
                         <span className="text-2xl mb-1">{getEngagementIcon(commitment)}</span>
-                        <span className="text-[#396F04] font-medium text-xs">{commitment}</span>
+                        <span className="text-[#396F04] font-medium text-xs leading-tight">{commitment}</span>
                       </div>
                     ))
                   )}
@@ -342,7 +342,7 @@ const Store = () => {
               <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
                 <iframe
                   className="w-full h-full rounded-lg"
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  src="https://www.youtube.com/embed/zoFnEF-A7kQ"
                   title="Comment optimiser votre page magasin"
                   allowFullScreen
                 />

@@ -110,6 +110,18 @@ const businessTypes = [
   'Autre'
 ]
 
+// Pictogrammes d'engagement disponibles
+const availableCommitments = [
+  { id: 'local', label: 'Produits 100% locaux', icon: '🏠' },
+  { id: 'bio', label: 'Agriculture biologique', icon: '🌱' },
+  { id: 'recyclable', label: 'Emballages recyclables', icon: '♻️' },
+  { id: 'circuit-court', label: 'Circuit court', icon: '🚚' },
+  { id: 'artisanal', label: 'Fabrication artisanale', icon: '👨‍🎨' },
+  { id: 'equitable', label: 'Commerce équitable', icon: '🤝' },
+  { id: 'zero-dechet', label: 'Zéro déchet', icon: '🌍' },
+  { id: 'energie-verte', label: 'Énergie verte', icon: '⚡' },
+]
+
 const RegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
@@ -205,11 +217,23 @@ const RegisterSteps = () => {
       }
     } else if (name === 'keywords') {
       setFormData({ ...formData, keywords: value.split(',').map(item => item.trim()).filter(item => item) })
-    } else if (name === 'commitments') {
-      setFormData({ ...formData, commitments: value.split(',').map(item => item.trim()).filter(item => item) })
     } else {
       setFormData({ ...formData, [name]: value })
     }
+  }
+
+  const handleCommitmentToggle = (commitmentId: string) => {
+    const commitment = availableCommitments.find(c => c.id === commitmentId)
+    if (!commitment) return
+
+    setFormData(prev => {
+      const isSelected = prev.commitments.includes(commitment.label)
+      const newCommitments = isSelected
+        ? prev.commitments.filter(c => c !== commitment.label)
+        : [...prev.commitments, commitment.label]
+      
+      return { ...prev, commitments: newCommitments }
+    })
   }
 
   const handleFileChange = (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => {
@@ -359,7 +383,14 @@ const RegisterSteps = () => {
               <AccountStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 4 && (
-              <DetailsStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
+              <DetailsStep 
+                formData={formData} 
+                onChange={handleInputChange} 
+                onFileChange={handleFileChange} 
+                errors={errors} 
+                setErrors={setErrors}
+                onCommitmentToggle={handleCommitmentToggle}
+              />
             )}
             {currentStep === 5 && (
               <MediaStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
@@ -551,7 +582,11 @@ const AccountStep = ({ formData, onChange, errors }: StepProps) => (
 )
 
 // Étape 5 : Détails
-const DetailsStep = ({ formData, onChange, errors }: StepProps) => (
+interface DetailsStepProps extends StepProps {
+  onCommitmentToggle: (commitmentId: string) => void
+}
+
+const DetailsStep = ({ formData, onChange, errors, onCommitmentToggle }: DetailsStepProps) => (
   <div className="space-y-6">
     <div className="text-center mb-6">
       <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center shadow-xl">
@@ -578,15 +613,30 @@ const DetailsStep = ({ formData, onChange, errors }: StepProps) => (
     </div>
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
-        Engagements (séparés par des virgules)
+        Sélectionnez vos engagements
       </label>
-      <input
-        name="commitments"
-        value={formData.commitments.join(', ')}
-        onChange={onChange}
-        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
-        placeholder="Ex: Produits 100% locaux, Emballages recyclables"
-      />
+      <div className="grid grid-cols-2 gap-3">
+        {availableCommitments.map((commitment) => {
+          const isSelected = formData.commitments.includes(commitment.label)
+          return (
+            <button
+              key={commitment.id}
+              type="button"
+              onClick={() => onCommitmentToggle(commitment.id)}
+              className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                isSelected
+                  ? 'border-[#7ebd07] bg-[#ebffbc] text-[#396F04] shadow-md transform scale-105'
+                  : 'border-gray-200 bg-white text-gray-700 hover:border-[#7ebd07] hover:bg-[#ebffbc]/30'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <span className="text-2xl">{commitment.icon}</span>
+                <span className="text-sm font-medium">{commitment.label}</span>
+              </div>
+            </button>
+          )
+        })}
+      </div>
       {errors.commitments && (
         <p className="text-sm text-red-600">{errors.commitments}</p>
       )}

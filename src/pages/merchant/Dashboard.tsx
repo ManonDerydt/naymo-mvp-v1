@@ -284,16 +284,16 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1">
         <div className="space-y-4">
           <CodeGenerator />
 
-          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
+          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20 flex-1">
             <h2 className="text-base font-bold text-gray-800 mb-3 flex items-center">
               <Activity className="w-5 h-5 text-[#7ebd07] mr-2" />
               Comparaison des points attribués
             </h2>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
                 <XAxis dataKey="name" stroke="#374151" />
@@ -314,12 +314,12 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
+          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20 flex-1">
             <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center">
               <Users className="w-5 h-5 text-[#7ebd07] mr-2" />
               Nouveaux vs Anciens clients
             </h2>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={180}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
                 <XAxis dataKey="name" stroke="#374151" />
@@ -352,7 +352,9 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
           
-          <DailyTip />
+          <div className="flex-1">
+            <DailyTip />
+          </div>
         </div>
       </div>
     </div>

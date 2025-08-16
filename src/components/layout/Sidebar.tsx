@@ -26,9 +26,11 @@ const Sidebar = () => {
         className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-[#032313] text-white hover:bg-green-800"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       >
-        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <div className="space-y-1">
+          <div className="w-5 h-0.5 bg-white"></div>
+          <div className="w-5 h-0.5 bg-white"></div>
+          <div className="w-5 h-0.5 bg-white"></div>
+        </div>
       </button>
 
       {/* Mobile overlay */}
@@ -40,7 +42,7 @@ const Sidebar = () => {
       )}
 
       <div className={`${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col transition-transform duration-300 ease-in-out z-40`}>
-        <div className="flex flex-col flex-grow border-r border-[#7ebd07]/30 bg-gradient-to-b from-[#ebffbc] to-[#d4f5a3] shadow-2xl">
+        <div className="flex flex-col flex-grow border-r border-[#7ebd07]/30 bg-[#ebffbc] shadow-2xl">
         <div className="flex items-center h-16 flex-shrink-0">
          {merchant && merchantData ? 
           <div className="flex justify-center">
@@ -56,7 +58,7 @@ const Sidebar = () => {
           </div>
         }
         </div>
-          <div className="flex-grow flex flex-col p-4">
+          <div className="flex-grow flex flex-col p-6">
             <h3 className="text-[#396F04] mt-10 font-bold tracking-wider text-sm">MENU</h3>
             <nav className="flex-1 space-y-2 mt-6">
             {navigation.map((item) => {
@@ -69,8 +71,8 @@ const Sidebar = () => {
                   className={cn(
                     'group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
-                      ? 'bg-white text-black shadow-lg transform scale-105 border-2 border-[#7ebd07]'
-                      : 'text-black hover:bg-[#d4f5a3]/50 hover:text-black hover:transform hover:scale-105'
+                      ? 'bg-white text-black shadow-lg transform scale-105'
+                      : 'text-black hover:bg-white/50 hover:text-black hover:transform hover:scale-105'
                   )}
                 >
                   <Icon className={cn(
@@ -86,22 +88,22 @@ const Sidebar = () => {
           </nav>
 
 
-          {merchant && merchantData && (
-            <>
-              <hr className="border-[#7ebd07] my-6" />
-              <div className="flex items-center space-x-4">
-                <img
-                  src={merchantData.logo}
-                  alt="Logo du marchand"
-                  className="w-12 h-12 rounded-full object-cover border-2 border-[#7ebd07]"
-                />
-                <div className="text-[#589507]">
-                  <p className="font-semibold text-black">{merchantData.company_name}</p>
-                  <p className="text-sm text-black/80">{merchantData.email}</p>
+            {merchant && merchantData && (
+              <>
+                <hr className="border-[#7ebd07] my-6" />
+                <div className="flex items-center space-x-4 px-2">
+                  <img
+                    src={merchantData.logo}
+                    alt="Logo du marchand"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-[#7ebd07]"
+                  />
+                  <div>
+                    <p className="font-semibold text-black text-sm">{merchantData.company_name}</p>
+                    <p className="text-xs text-black/70">{merchantData.email}</p>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
           
         </div>
       </div>

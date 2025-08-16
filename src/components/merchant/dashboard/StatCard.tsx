@@ -9,10 +9,10 @@ interface StatCardProps {
 
 const StatCard = ({ icon, title, value, trend }: StatCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100 hover:shadow-xl transition-all duration-300 hover:scale-105">
+    <div className="bg-white p-6 rounded-xl shadow-lg border border-[#7ebd07]/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
       <div className="flex items-center justify-between">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-green-50 to-green-100">{icon}</div>
-        <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{trend}</span>
+        <div className="p-3 rounded-xl bg-gradient-to-br from-[#ebffbc] to-[#d4f5a3]">{icon}</div>
+        <span className="text-sm font-semibold text-[#589507] bg-[#ebffbc] px-2 py-1 rounded-full">{trend}</span>
       </div>
       <h3 className="mt-4 text-sm font-semibold text-gray-600 uppercase tracking-wide">{title}</h3>
       <p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>

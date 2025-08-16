@@ -1,671 +1,276 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Eye, EyeOff, Store } from 'lucide-react'
+import { Building2, MapPin, Tags, Pencil, Edit3, Camera, FileText, Play, Eye, Smartphone, Tablet } from 'lucide-react'
 import { Button } from '@/components/ui'
-import { Input, FileUpload } from '@/components/forms'
+import ImageGallery from '@/components/merchant/store/ImageGallery'
+import EditStoreModal from '@/components/merchant/store/EditStoreModal'
+import { useAuth } from '@/components/firebase/useAuth'
 
-import { doc, setDoc } from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth, db, storage } from '@/components/firebase/firebaseConfig'
 
-// Interface pour les erreurs
-interface FormErrors {
-  email?: string
-  password?: string
-  company_name?: string
-  shortDescription?: string
-  business_type?: string
-  keywords?: string
-  commitments?: string
-  owner_name?: string
-  owner_birthdate?: string
-  address?: string
-  city?: string
-  postal_code?: string
-  logo?: string
-  cover_photo?: string
-  store_photos?: string
-  general?: string
-}
+const Store = () => {
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
+  const [showPreview, setShowPreview] = useState(false)
+  
+  const { merchant, merchantData } = useAuth()
+  
+  const storeImages = merchant && merchantData && merchantData.store_photos 
+    ? merchantData.store_photos.map((photo: string | undefined, index: number) => ({
+        src: photo || null, // Affiche null si la photo est absente
+        alt: `Store image ${index + 1}`
+      })) 
+    : [
+        {
+          src: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d",
+          alt: "Store interior"
+        },
+        {
+          src: "https://images.unsplash.com/photo-1534723452862-4c874018d66d",
+          alt: "Products display"
+        },
+        {
+          src: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a",
+          alt: "Store front"
+        }
+      ]
 
-// Définition d'une interface pour le formulaire
-interface FormData {
-  email: string
-  password: string
-  company_name: string
-  shortDescription: string
-  business_type: string
-  keywords: string[]
-  commitments: string[]
-  owner_name: string
-  owner_birthdate: string
-  address: string
-  city: string
-  postal_code: string
-  media: {
-    logo: File | null
-    cover_photo: File | null
-    store_photos: File[]
-  }
-}
-
-// Définition d'un type pour l'événement de changement
-type FieldChangeEvent =
-  | React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  | { target: { name: keyof FormData | 'keywords' | 'commitments'; value: any } }
-
-interface StepProps {
-  formData: FormData
-  onChange: (e: FieldChangeEvent) => void
-  errors: FormErrors
-  setErrors: React.Dispatch<React.SetStateAction<FormErrors>> // Ajout de setErrors
-}
-
-const steps = [
-  {
-    id: 'business',
-    title: 'Information entreprise',
-    fields: ['email', 'password', 'company_name', 'shortDescription', 'business_type', 'keywords', 'commitments'],
-  },
-  {
-    id: 'owner',
-    title: 'Information gérant',
-    fields: ['owner_name', 'owner_birthdate'],
-  },
-  {
-    id: 'location',
-    title: 'Localisation',
-    fields: ['address', 'city', 'postal_code'],
-  },
-  {
-    id: 'media',
-    title: 'Médias',
-    fields: ['logo', 'cover_photo', 'store_photos'],
-  },
-]
-
-const RegisterSteps = () => {
-  const navigate = useNavigate()
-  const [currentStep, setCurrentStep] = useState(0)
-  const [showTooltip, setShowTooltip] = useState<string | null>(null)
-  const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: '',
-    company_name: '',
-    shortDescription: '',
-    business_type: '',
-    keywords: [],
-    commitments: [],
-    owner_name: '',
-    owner_birthdate: '',
-    address: '',
-    city: '',
-    postal_code: '',
-    media: {
-      logo: null,
-      cover_photo: null,
-      store_photos: [],
-    },
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-
-  // Fonction de validation pour chaque étape
-  const validateStep = (stepIndex: number): boolean => {
-    const newErrors: FormErrors = {}
-    const stepFields = steps[stepIndex].fields
-
-    if (stepFields.includes('email')) {
-      if (!formData.email) newErrors.email = 'L\'email est requis'
-      else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email invalide'
-    }
-    if (stepFields.includes('password')) {
-      if (!formData.password) newErrors.password = 'Le mot de passe est requis'
-      else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
-    }
-    if (stepFields.includes('company_name')) {
-      if (!formData.company_name) newErrors.company_name = 'Le nom de l\'entreprise est requis'
-    }
-    if (stepFields.includes('shortDescription')) {
-      if (!formData.shortDescription) newErrors.shortDescription = 'La description est requise'
-      else if (formData.shortDescription.length > 200) newErrors.shortDescription = 'La description ne doit pas dépasser 200 caractères'
-    }
-    if (stepFields.includes('business_type')) {
-      if (!formData.business_type) newErrors.business_type = 'Le type d\'activité est requis'
-    }
-    if (stepFields.includes('keywords')) {
-      if (formData.keywords.length === 0) newErrors.keywords = 'Au moins un mot-clé est requis'
-    }
-    if (stepFields.includes('commitments')) {
-      if (formData.commitments.length === 0) newErrors.commitments = 'Au moins un engagement est requis'
-    }
-    if (stepFields.includes('owner_name')) {
-      if (!formData.owner_name) newErrors.owner_name = 'Le nom du gérant est requis'
-    }
-    if (stepFields.includes('owner_birthdate')) {
-      if (!formData.owner_birthdate) newErrors.owner_birthdate = 'La date de naissance est requise'
-      else {
-        const birthDate = new Date(formData.owner_birthdate)
-        const today = new Date()
-        const age = today.getFullYear() - birthDate.getFullYear()
-        if (age < 18) newErrors.owner_birthdate = 'Le gérant doit avoir au moins 18 ans'
-      }
-    }
-    if (stepFields.includes('address')) {
-      if (!formData.address) newErrors.address = 'L\'adresse est requise'
-    }
-    if (stepFields.includes('city')) {
-      if (!formData.city) newErrors.city = 'La ville est requise'
-    }
-    if (stepFields.includes('postal_code')) {
-      if (!formData.postal_code) newErrors.postal_code = 'Le code postal est requis'
-      else if (!/^\d{5}$/.test(formData.postal_code)) newErrors.postal_code = 'Code postal invalide (5 chiffres requis)'
-    }
-    if (stepFields.includes('logo')) {
-      if (!formData.media.logo) newErrors.logo = 'Le logo est requis'
-    }
-    if (stepFields.includes('cover_photo')) {
-      if (!formData.media.cover_photo) newErrors.cover_photo = 'La photo de couverture est requise'
-    }
-    if (stepFields.includes('store_photos')) {
-      if (formData.media.store_photos.length < 3) newErrors.store_photos = 'Au moins 3 photos du commerce sont requises'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmitRegister = async () => {
-    if (!validateStep(currentStep)) return
-
-    try {
-      // Créer l'utilisateur dans Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-      const user = userCredential.user
-
-      console.log("Utilisateur créé avec UID :", user.uid)
-
-      // Uploader le logo
-      let logoURL: string | null = null
-      if (formData.media.logo) {
-        const logoRef = ref(storage, `logos/${formData.media.logo.name}`)
-        await uploadBytes(logoRef, formData.media.logo)
-        logoURL = await getDownloadURL(logoRef)
-      }
-
-      // Uploader la photo de couverture
-      let coverPhotoURL: string | null = null
-      if (formData.media.cover_photo) {
-        const coverPhotoRef = ref(storage, `cover_photos/${formData.media.cover_photo.name}`)
-        await uploadBytes(coverPhotoRef, formData.media.cover_photo)
-        coverPhotoURL = await getDownloadURL(coverPhotoRef)
-      }
-
-      // Uploader les photos du commerce
-      let storePhotoURLs: string[] = []
-      for (const photo of formData.media.store_photos) {
-        const storePhotoRef = ref(storage, `store_photos/${photo.name}`)
-        await uploadBytes(storePhotoRef, photo)
-        const photoURL = await getDownloadURL(storePhotoRef)
-        storePhotoURLs.push(photoURL)
-      }
-
-      // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
-      await setDoc(doc(db, "merchant", user.uid), {
-        email: formData.email,
-        company_name: formData.company_name,
-        shortDescription: formData.shortDescription,
-        business_type: formData.business_type,
-        keywords: formData.keywords,
-        commitments: formData.commitments,
-        owner_name: formData.owner_name,
-        owner_birthdate: formData.owner_birthdate,
-        address: formData.address,
-        city: formData.city,
-        postal_code: formData.postal_code,
-        logo: logoURL,
-        cover_photo: coverPhotoURL,
-        store_photos: storePhotoURLs
-      })
-
-      console.log("Données du commerçant enregistrées sous l'UID : ", user.uid)
-
-      navigate('/dashboard')
-      
-    } catch (error: any) {
-      console.log("Erreur lors de l'enregistrement des données : ", error)
-      let errorMessage = "Erreur lors de l'enregistrement. Veuillez réessayer."
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = "Cet email est déjà utilisé."
-        setErrors({ ...errors, email: errorMessage })
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = "L'email est invalide."
-        setErrors({ ...errors, email: errorMessage })
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = "Le mot de passe est trop faible."
-        setErrors({ ...errors, password: errorMessage })
-      } else {
-        setErrors({ ...errors, general: errorMessage })
-      }
-    }
-  }
-
-  const handleInputChange = (e: FieldChangeEvent) => {
-    const { name, value } = e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement
-      ? e.target
-      : e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    // Effacer l'erreur du champ modifié
-    setErrors({ ...errors, [name]: undefined });
-  };
-
-  const handleFileChange = (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => {
-    const newErrors: FormErrors = { ...errors }
-
-    // Validate files
-    for (const file of files) {
-      if (!file.type.startsWith('image/')) {
-        newErrors[type] = 'Seuls les fichiers image sont acceptés';
-        setErrors(newErrors);
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        // 5 MB
-        newErrors[type] = 'La taille du fichier ne doit pas dépasser 5 Mo';
-        setErrors(newErrors);
-        return;
-      }
-    }
-
-    // Update formData
-    setFormData({
-      ...formData,
-      media: {
-        ...formData.media,
-        [type]: type === 'store_photos' ? files : files[0] || null,
-      },
-    });
-
-    // Clear error for this field
-    setErrors({ ...newErrors, [type]: undefined });
-  }
-
-  const nextStep = () => {
-    if (validateStep(currentStep)) {
-      if (currentStep === steps.length - 1) {
-        // Submit form and redirect to dashboard
-        handleSubmitRegister()
-      } else {
-        setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1))
-      }
-    }
-  }
-
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0))
-    setErrors({}) // Réinitiliser les erreurs lors du retour en arrière
-  }
-
-  const getTooltipText = (stepId: string) => {
-    switch (stepId) {
-      case 'business':
-        return 'Renseignez les informations de base de votre entreprise'
-      case 'owner':
-        return 'Informations personnelles du gérant de l\'entreprise'
-      case 'location':
-        return 'Adresse et localisation de votre commerce'
-      case 'media':
-        return 'Ajoutez vos photos et logo pour présenter votre commerce'
-      default:
-        return ''
-    }
+  const initialStoreData = {
+    company_name: "Mon entreprise",
+    business_type: "Mon type d'entreprise",
+    longDescription: "Notre boutique est spécialisée dans la vente de produits locaux et artisanaux. Nous travaillons directement avec les producteurs de la région pour vous offrir les meilleurs produits.",
+    shortDescription: "Boutique de produits locaux et artisanaux",
+    address: "123 Rue du Commerce, 75001 Paris",
+    type: "Épicerie fine",
+    keywords: ["Bio", "Local", "Artisanal"],
+    commitments: ["Produits 100% locaux", "Emballages recyclables", "Circuit court"]
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl w-full space-y-8">
-        <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-primary-500" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Créer votre compte commerçant
-          </h2>
-          <div className="relative mt-2">
-            <p 
-              className="text-sm text-gray-600 cursor-help"
-              onMouseEnter={() => setShowTooltip(steps[currentStep].id)}
-              onMouseLeave={() => setShowTooltip(null)}
+    <div className="space-y-8 font-['Inter',_'system-ui',_sans-serif]">
+      <div className="relative h-64 rounded-xl overflow-hidden">
+        
+        <img
+          src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
+          alt={merchant && merchantData ? "" : "Store cover"}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-end">
+          <h1 className="text-4xl font-bold text-white tracking-tight">Mon Magasin</h1>
+          <div className="flex space-x-3">
+            <Button 
+              onClick={() => setShowPreview(true)}
+              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
             >
-              Étape {currentStep + 1} sur {steps.length} - {steps[currentStep].title}
-            </p>
-            {showTooltip === steps[currentStep].id && (
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10 whitespace-nowrap">
-                {getTooltipText(steps[currentStep].id)}
-              </div>
-            )}
+              <Eye className="w-4 h-4" />
+              <span>Prévisualiser</span>
+            </Button>
           </div>
-          {errors.general && (
-            <p className="mt-2 text-sm text-red-600">{errors.general}</p>
-          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          <p className="text-lg text-gray-600 leading-relaxed">
+            Gérez et personnalisez la présentation de votre magasin pour attirer plus de clients.
+          </p>
+          
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">À propos</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                title="Modifier la description"
+              >
+                <FileText className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-gray-600">
+              {merchant && merchantData ? 
+                (merchantData.shortDescription?.length > 300 ? 
+                  merchantData.shortDescription.substring(0, 300) + '...' : 
+                  merchantData.shortDescription
+                ) : 
+                initialStoreData.shortDescription
+              }
+            </p>
+          </section>
+
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Galerie photos</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                title="Modifier les photos"
+              >
+                <Camera className="w-4 h-4" />
+              </button>
+            </div>
+            <ImageGallery images={storeImages} />
+          </section>
+
+          {/* Vidéo explicative */}
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Tutoriel</h2>
+              <Play className="w-5 h-5 text-green-600" />
+            </div>
+            <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+              <iframe
+                className="w-full h-full rounded-lg"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Comment optimiser votre page magasin"
+                allowFullScreen
+              />
+            </div>
+            <p className="mt-3 text-sm text-gray-600">
+              Découvrez comment optimiser votre page magasin pour attirer plus de clients
+            </p>
+          </section>
         </div>
 
-        <div className="bg-gradient-to-br from-white to-green-50 shadow-xl rounded-2xl p-8 border border-green-100">
-          <div className="space-y-6">
-            {currentStep === 0 && (
-              <BusinessInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
-            )}
-            {currentStep === 1 && (
-              <OwnerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors}/>
-            )}
-            {currentStep === 2 && (
-              <LocationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
-            )}
-            {currentStep === 3 && (
-              <MediaStep onFileChange={handleFileChange} errors={errors} />
-            )}
+        <div className="space-y-6">
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Informations</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
+                title="Modifier les informations"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Building2 className="w-5 h-5 text-green-600" />
+                <span>{merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <MapPin className="w-5 h-5 text-red-500" />
+                <span>{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Tags className="w-5 h-5 text-blue-500" />
+                <div className="flex flex-wrap gap-2">
+                {merchant && merchantData && merchantData.keywords 
+                  ? merchantData.keywords.map((keyword: string | undefined, index: number) => (
+                      <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{keyword}</span>
+                    )) 
+                  : (
+                    initialStoreData.keywords.map((keyword, index) => (
+                      <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{keyword}</span>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
 
-            <div className="flex justify-between pt-6">
-              <Button
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 0}
-                className="space-x-2"
-                size="lg"
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Engagements</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-colors"
+                title="Modifier les engagements"
               >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Précédent</span>
-              </Button>
-              <Button
-                onClick={nextStep}
-                className="space-x-2"
-                size="lg"
-              >
-                <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3">
+            {merchant && merchantData && merchantData.commitments
+              ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
+                  <div key={index} className="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
+                    <span className="w-3 h-3 bg-green-500 rounded-full" />
+                    <span className="text-green-800 font-medium">{commitment}</span>
+                  </div>
+                ))
+              : (
+                initialStoreData.commitments.map((commitment, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
+                    <span className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span className="text-green-800 font-medium">{commitment}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Modal de prévisualisation */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h3 className="text-xl font-bold text-gray-900">Prévisualisation</h3>
+              <div className="flex items-center space-x-4">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setPreviewMode('desktop')}
+                    className={`p-2 rounded-lg ${previewMode === 'desktop' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('tablet')}
+                    className={`p-2 rounded-lg ${previewMode === 'tablet' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <Tablet className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('mobile')}
+                    className={`p-2 rounded-lg ${previewMode === 'mobile' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <Smartphone className="w-5 h-5" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="p-6 flex justify-center">
+              <div className={`bg-gray-100 rounded-lg overflow-hidden ${
+                previewMode === 'desktop' ? 'w-full max-w-4xl' :
+                previewMode === 'tablet' ? 'w-96' : 'w-80'
+              }`}>
+                <div className="bg-white p-4 min-h-96">
+                  <h4 className="text-lg font-bold mb-2">
+                    {merchant && merchantData ? merchantData.company_name : "Mon Magasin"}
+                  </h4>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {merchant && merchantData ? merchantData.shortDescription : initialStoreData.shortDescription}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {storeImages.slice(0, 4).map((image, index) => (
+                      <img key={index} src={image.src} alt={image.alt} className="w-full h-20 object-cover rounded" />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  )
-}
+      )}
 
-const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) => {
-  const [newKeyword, setNewKeyword] = useState('')
-  // const [newCommitment, setNewCommitment] = useState('')
-  const [selectedCommitments, setSelectedCommitments] = useState<string[]>(formData.commitments || [])
-
-  const handleAddKeyword = () => {
-    if (newKeyword && !formData.keywords.includes(newKeyword)) {
-      onChange({
-        target: {
-          name: 'keywords',
-          value: [...formData.keywords, newKeyword],
-        },
-      })
-      setNewKeyword('')
-      setErrors({ ...errors, keywords: undefined })
-    }
-  }
-
-  const handleSelectCommitment = (commitment: string) => {
-    if (!selectedCommitments.includes(commitment)) {
-      const newCommitments = [...selectedCommitments, commitment]
-      setSelectedCommitments(newCommitments)
-      onChange({
-        target: { name: 'commitments', value: newCommitments },
-      })
-      setErrors({ ...errors, commitments: undefined })
-    }
-  }
-
-  const pictograms = [
-    { name: 'Accueil', imageUrl: '/src/assets/engagements/Accueil_icon.png' },
-    { name: 'Client', imageUrl: '/src/assets/engagements/Client_icon.png' },
-    { name: 'Humain', imageUrl: '/src/assets/engagements/Humain_icon.png' },
-    { name: 'Magasin', imageUrl: '/src/assets/engagements/Mon_Magasin_icon.png' },
-    { name: 'Environnement', imageUrl: '/src/assets/engagements/Respect_Environnement_icon.png' }
-  ]
-
-  const handleRemoveKeyword = (keywordToRemove: string) => {
-    onChange({
-      target: {
-        name: 'keywords',
-        value: formData.keywords.filter(keyword => keyword !== keywordToRemove),
-      }
-    })
-  }
-
-  const [showPassword, setShowPassword] = useState(false)
-
-  return (
-    <div className="space-y-6">
-      <Input 
-        label="Email"
-        name="email"
-        value={formData.email}
-        onChange={onChange}
-        placeholder="Ex: yourname@mail.com"
-        error={errors.email}
-      />
-      <div className="relative">
-        <Input
-          label="Mot de passe"
-          type={showPassword ? 'text' : 'password'}
-          name="password"
-          value={formData.password}
-          onChange={onChange}
-          placeholder="Ex: mypassword1234"
-          className="pr-10" // Pour laisser de la place à l'œil
-          error={errors.password}
+      {showEditModal && (
+        <EditStoreModal
+          onClose={() => setShowEditModal(false)}
+          initialData={initialStoreData}
         />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-[40px] text-gray-500"
-        >
-          {showPassword ? <EyeOff /> : <Eye />}
-        </button>
-      </div>
-      <Input
-        label="Nom de l'entreprise"
-        name="company_name"
-        value={formData.company_name}
-        onChange={onChange}
-        placeholder="Ex: Ma Boutique"
-        error={errors.company_name}
-      />
-      <Input
-        label="Description courte"
-        name="shortDescription"
-        value={formData.shortDescription}
-        onChange={(e) => {
-          if (e.target.value.length <= 200) {
-            onChange(e)
-          }
-        }}
-        placeholder="Ex: Voici l'entreprise XXX..."
-        error={errors.shortDescription}
-        maxLength={200}
-      />
-      <div className="text-right text-xs text-gray-500">
-        {formData.shortDescription.length}/200 caractères
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Type d'activité</label>
-        <select
-          name="business_type"
-          value={formData.business_type}
-          onChange={onChange}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-        >
-          <option value="">Sélectionnez un type d'activité</option>
-          <option value="Alimentation">Alimentation</option>
-          <option value="Vestimentaire">Vestimentaire</option>
-          <option value="Décoration">Décoration</option>
-          <option value="Artisanat">Artisanat</option>
-          <option value="Restauration">Restauration</option>
-          <option value="Événementiel">Événementiel</option>
-        </select>
-        {errors.business_type && <p className="mt-1 text-sm text-red-600">{errors.business_type}</p>}
-      </div>
-      {/* Ajout des mots-clés */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Mots-clés</label>
-        <div className="flex items-center space-x-2">
-          <input
-            type="text"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            placeholder="Ajoutez un mot-clé"
-            value={newKeyword}
-            onChange={(e) => setNewKeyword(e.target.value)}
-          />
-          <Button type="button" onClick={handleAddKeyword} disabled={!newKeyword}>
-            Ajouter
-          </Button>
-        </div>
-        {errors.keywords && <p className="mt-1 text-sm text-red-600">{errors.keywords}</p>}
-        <ul className="mt-2 space-y-1">
-          {formData.keywords.map((keyword, index) => (
-            <li key={index} className="flex justify-between items-center">
-              <span>{keyword}</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveKeyword(keyword)}
-                className="text-red-500"
-              >
-                Supprimer
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {/* Ajout des pictogrammes d'engagements */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
-        <div className="flex flex-wrap gap-4 mt-2">
-          {pictograms.map((pictogram, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => handleSelectCommitment(pictogram.name)}
-              className={`border p-2 rounded-md ${selectedCommitments.includes(pictogram.name) ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              <img src={pictogram.imageUrl} alt={pictogram.name} className="w-12 h-12" />
-              <p className="mt-1 text-xs text-center">{pictogram.name}</p>
-            </button>
-          ))}
-        </div>
-        {errors.commitments && <p className="mt-1 text-sm text-red-600">{errors.commitments}</p>}
-        <div className="mt-4">
-          <p className="text-sm font-medium text-gray-700">Engagements sélectionnés :</p>
-          <ul className="mt-2 space-y-1">
-            {selectedCommitments.map((commitment, index) => (
-              <li key={index} className="flex justify-between items-center">
-                <span>{commitment}</span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedCommitments(selectedCommitments.filter(c => c !== commitment))}
-                  className="text-red-500"
-                >
-                  Supprimer
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
 
-const OwnerInfoStep = ({ formData, onChange, errors }: StepProps) => (
-  <div className="space-y-6">
-    <Input
-      label="Nom et prénom du gérant"
-      name="owner_name"
-      value={formData.owner_name}
-      onChange={onChange}
-      placeholder="Ex: Jean Dupont"
-      error={errors.owner_name}
-    />
-    <Input
-      label="Date de naissance"
-      name="owner_birthdate"
-      type="date"
-      value={formData.owner_birthdate}
-      onChange={onChange}
-      error={errors.owner_birthdate}
-    />
-  </div>
-)
-
-const LocationStep = ({ formData, onChange, errors }: StepProps) => (
-  <div className="space-y-6">
-    <Input
-      label="Adresse"
-      name="address"
-      value={formData.address}
-      onChange={onChange}
-      placeholder="Ex: 123 rue du Commerce"
-      error={errors.address}
-    />
-    <Input
-      label="Ville"
-      name="city"
-      value={formData.city}
-      onChange={onChange}
-      placeholder="Ex: Paris"
-      error={errors.city}
-    />
-    <Input
-      label="Code postal"
-      name="postal_code"
-      value={formData.postal_code}
-      onChange={(e) => {
-        const onlyDigits = e.target.value.replace(/\D/g, '') // Supprime tout sauf les chiffres
-        if (onlyDigits.length <= 5) {
-          onChange({
-            target: {
-              name: 'postal_code',
-              value: onlyDigits,
-            }
-          })
-        }
-      }}
-      placeholder="Ex: 75001"
-      maxLength={5}
-      pattern="\d{5}"
-      type="text"
-      error={errors.postal_code}
-    />
-  </div>
-)
-
-const MediaStep = ({ onFileChange, errors }: { onFileChange: (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => void, errors: FormErrors }) => (
-  <div className="space-y-8">
-    <FileUpload
-      label="Logo de votre entreprise"
-      onChange={(files) => onFileChange('logo', files)}
-      error={errors.logo}
-    />
-    <FileUpload
-      label="Photo de couverture"
-      onChange={(files) => onFileChange('cover_photo', files)}
-      error={errors.cover_photo}
-    />
-    <FileUpload
-      label="Photos du commerce (min. 3)"
-      multiple
-      maxFiles={5}
-      onChange={(files) => onFileChange('store_photos', files)}
-      error={errors.store_photos}
-    />
-  </div>
-)
-
-export default RegisterSteps
+export default Store

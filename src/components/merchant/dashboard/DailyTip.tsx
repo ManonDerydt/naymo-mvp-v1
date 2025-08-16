@@ -10,7 +10,6 @@ interface Tutorial {
 
 const DailyTip = () => {
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
     const fetchTutorial = async () => {
@@ -18,8 +17,6 @@ const DailyTip = () => {
         const querySnapshot = await getDocs(collection(db, "tutorial"));
         const data = querySnapshot.docs.map(doc => {
           const docData = doc.data() as Omit<Tutorial, "id">;
-          // doc.data() is never undefined for query doc snapshots
-          // console.log(doc.id, " => ", doc.data());
           return {
             id: doc.id,
             ...docData,
@@ -46,17 +43,8 @@ const DailyTip = () => {
     fetchTutorial();
   }, []);
 
-  const filteredTutorials = selectedCategory === "all"
-    ? tutorials
-    : tutorials.filter(tuto => tuto.category === selectedCategory);
-
-  const uniqueCategories = [
-    "all",
-    ...new Set(tutorials.map(tuto => tuto.category)),
-  ]
-  
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+    <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20 max-h-[300px] overflow-hidden">
       <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
         <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -65,30 +53,15 @@ const DailyTip = () => {
         Tuto du jour
       </h2>
 
-      {/* Filtre par catégorie */}
-      <div className="mb-6">
-        <select
-          className="border border-green-200 rounded-lg px-4 py-2 bg-green-50 text-gray-700 focus:ring-2 focus:ring-green-400 focus:border-transparent"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          {uniqueCategories.map((category) => (
-            <option key={category} value={category}>
-              {category === "all" ? "Toutes les catégories" : category}
-            </option>
-          ))}
-        </select>
-      </div>
-
       {/* Liste des vidéos filtrées */}
-      <div className="space-y-4">
-        {filteredTutorials.map((tuto) => (
-          <div key={tuto.id} className="p-4 bg-green-50 rounded-xl border border-green-200">
-            <h3 className="font-semibold text-green-900 capitalize mb-3">
+      <div>
+        {tutorials.map((tuto) => (
+          <div key={tuto.id} className="p-4 bg-[#ebffbc] rounded-xl border border-[#7ebd07]/30">
+            <h3 className="font-semibold text-[#396F04] capitalize mb-3">
               {tuto.category}
             </h3>
             <iframe
-              className="w-full aspect-video rounded-lg shadow-md"
+              className="w-full h-32 rounded-lg shadow-md"
               src={tuto.url.replace("watch?v=", "embed/")}
               title={`Vidéo ${tuto.category}`}
               allowFullScreen

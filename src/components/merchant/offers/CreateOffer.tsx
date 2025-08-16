@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import { auth, db } from '@/components/firebase/firebaseConfig'
-import { addDoc, collection, serverTimestamp, query, where, getDocs, orderBy, limit } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore'
 import { useAuth } from '@/components/firebase/useAuth'
 
 type Step = 'form' | 'summary' | 'success'
@@ -43,7 +43,7 @@ const CreateOffer = () => {
         const recentOffersQuery = query(
           collection(db, 'offer'),
           where('__name__', 'in', offerIds),
-          where('createdAt', '>', thirtyDaysAgo),
+          where('createdAt', '>', Timestamp.fromDate(thirtyDaysAgo)),
           orderBy('createdAt', 'desc'),
           limit(1)
         )
@@ -70,7 +70,7 @@ const CreateOffer = () => {
   }
 
   // Vérifier au chargement du composant
-  React.useEffect(() => {
+  useState(() => {
     checkCanCreateOffer()
   }, [merchant])
 
@@ -124,14 +124,14 @@ const CreateOffer = () => {
 
   if (step === 'success') {
     return (
-      <div className="text-center py-12">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="text-center py-16">
+        <div className="w-24 h-24 bg-gradient-to-br from-[#ebffbc] to-[#d4f5a3] rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl animate-bounce">
+          <svg className="w-12 h-12 text-[#589507]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900">Une offre a été créée !</h3>
-        <p className="mt-2 text-sm text-gray-500">
+        <h3 className="text-2xl font-bold text-[#396F04] mb-4">Offre créée avec succès ! 🎉</h3>
+        <p className="mt-2 text-lg text-gray-700 max-w-md mx-auto">
           Votre offre est maintenant visible par vos clients.
         </p>
         <Button
@@ -139,7 +139,7 @@ const CreateOffer = () => {
             setFormData({ name: '', duration: 0, target: '', description: '', discount: '' })
             setStep('form')
           }}
-          className="mt-6"
+          className="mt-8 bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] px-8 py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
         >
           Créer une nouvelle offre
         </Button>
@@ -150,38 +150,43 @@ const CreateOffer = () => {
   if (step === 'summary') {
     return (
       <div className="max-w-2xl mx-auto">
-        <h3 className="text-lg font-medium text-gray-900 mb-6">Récapitulatif de l'offre</h3>
-        <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+        <h3 className="text-2xl font-bold text-[#396F04] mb-8">Récapitulatif de l'offre</h3>
+        <div className="bg-gradient-to-br from-[#ebffbc]/50 to-white rounded-2xl p-8 space-y-6 border border-[#7ebd07]/30 shadow-xl">
           <div>
-            <p className="text-sm font-medium text-gray-500">Nom de l'offre</p>
-            <p className="mt-1">{formData.name}</p>
+            <p className="text-sm font-bold text-[#589507] uppercase tracking-wider">Nom de l'offre</p>
+            <p className="mt-2 text-xl font-semibold text-gray-900">{formData.name}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Durée (en mois)</p>
-            <p className="mt-1">{formData.duration}</p>
+            <p className="text-sm font-bold text-[#589507] uppercase tracking-wider">Durée (en mois)</p>
+            <p className="mt-2 text-xl font-semibold text-gray-900">{formData.duration}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Cible</p>
-            <p className="mt-1">{formData.target}</p>
+            <p className="text-sm font-bold text-[#589507] uppercase tracking-wider">Cible</p>
+            <p className="mt-2 text-xl font-semibold text-gray-900">{formData.target}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Description</p>
-            <p className="mt-1">{formData.description}</p>
+            <p className="text-sm font-bold text-[#589507] uppercase tracking-wider">Description</p>
+            <p className="mt-2 text-lg text-gray-800 leading-relaxed">{formData.description}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Réduction (%)</p>
-            <p className="mt-1">{formData.discount ? `${formData.discount}%` : "Aucune"}</p>
+            <p className="text-sm font-bold text-[#589507] uppercase tracking-wider">Réduction (%)</p>
+            <p className="mt-2 text-xl font-semibold text-gray-900">{formData.discount ? `${formData.discount}%` : "Aucune"}</p>
           </div>
         </div>
-        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-        <div className="mt-6 flex justify-end space-x-4">
+        {error && <p className="text-red-600 text-sm mt-4 bg-red-50 p-3 rounded-lg">{error}</p>}
+        <div className="mt-8 flex justify-end space-x-4">
           <Button
             variant="outline"
             onClick={() => setStep('form')}
+            className="px-6 py-3 border-[#7ebd07] text-[#589507] hover:bg-[#ebffbc]"
           >
             Modifier
           </Button>
-          <Button onClick={handleConfirm} disabled={loading}>
+          <Button 
+            onClick={handleConfirm} 
+            disabled={loading}
+            className="px-8 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] shadow-lg transform hover:scale-105 transition-all duration-200"
+          >
             {loading ? "Enregistrement..." : "Confirmer"}
           </Button>
         </div>
@@ -192,18 +197,18 @@ const CreateOffer = () => {
   // Afficher le message de restriction si nécessaire
   if (!canCreateOffer) {
     return (
-      <div className="text-center py-16">
-        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center">
-          <svg className="w-12 h-12 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="text-center py-20">
+        <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center shadow-2xl animate-pulse">
+          <svg className="w-16 h-16 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Création d'offre temporairement indisponible</h3>
-        <p className="text-gray-600 mb-6 max-w-md mx-auto">
-          Vous devez attendre <span className="font-bold text-orange-600">{daysToWait} jour{daysToWait > 1 ? 's' : ''}</span> avant de pouvoir créer une nouvelle offre.
+        <h3 className="text-3xl font-bold text-orange-700 mb-4">Création d'offre temporairement indisponible</h3>
+        <p className="text-gray-700 mb-8 max-w-lg mx-auto text-lg leading-relaxed">
+          Vous devez attendre <span className="font-bold text-orange-600 text-2xl">{daysToWait} jour{daysToWait > 1 ? 's' : ''}</span> avant de pouvoir créer une nouvelle offre.
         </p>
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 max-w-md mx-auto">
-          <p className="text-sm text-orange-800">
+        <div className="bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-6 max-w-lg mx-auto shadow-lg">
+          <p className="text-orange-800 font-medium">
             Cette limitation permet de maintenir la qualité et la pertinence des offres sur la plateforme.
           </p>
         </div>
@@ -212,15 +217,15 @@ const CreateOffer = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-8">
+    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
-          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#ebffbc] to-[#d4f5a3] rounded-full flex items-center justify-center shadow-2xl">
+          <svg className="w-10 h-10 text-[#589507]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Créer une nouvelle offre</h2>
-        <p className="text-gray-600 mt-2">Remplissez les informations pour créer votre offre</p>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-[#589507] to-[#396F04] bg-clip-text text-transparent">Créer une nouvelle offre</h2>
+        <p className="text-gray-700 mt-3 text-lg">Remplissez les informations pour créer votre offre</p>
       </div>
 
       <Input
@@ -269,7 +274,7 @@ const CreateOffer = () => {
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={4}
-          className="block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent p-4"
+          className="block w-full rounded-xl border border-[#7ebd07]/30 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent p-4"
           placeholder="Décrivez votre offre en détail..."
           required
         />
@@ -292,7 +297,10 @@ const CreateOffer = () => {
       />
 
       <div className="flex justify-end pt-6">
-        <Button type="submit">
+        <Button 
+          type="submit"
+          className="px-8 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] shadow-lg transform hover:scale-105 transition-all duration-200"
+        >
           Suivant
         </Button>
       </div>

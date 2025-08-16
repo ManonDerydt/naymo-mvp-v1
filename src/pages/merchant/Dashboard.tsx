@@ -91,25 +91,25 @@ const NewVsReturningCustomers = ({ merchant }: { merchant: any }) => {
   }, [merchant])
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+    <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
       <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-        <Users className="w-5 h-5 text-green-600 mr-2" />
+        <Users className="w-5 h-5 text-[#7ebd07] mr-2" />
         Nouveaux vs Anciens clients
       </h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={200}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e0f2e7" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
           <XAxis dataKey="name" stroke="#374151" />
           <YAxis stroke="#374151" />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#f0fdf4', 
-              border: '1px solid #22c55e',
+              backgroundColor: '#ebffbc', 
+              border: '1px solid #7ebd07',
               borderRadius: '8px'
             }}
           />
           <Legend />
-          <Bar dataKey="nouveaux" fill="#22c55e" name="Nouveaux clients" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="nouveaux" fill="#7ebd07" name="Nouveaux clients" radius={[4, 4, 0, 0]} />
           <Bar dataKey="anciens" fill="#7ebd07" name="Anciens clients" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
@@ -306,12 +306,12 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="space-y-8 font-['Inter',_'system-ui',_sans-serif]">
+    <div className="space-y-6 font-['Inter',_'system-ui',_sans-serif] p-6 max-h-screen overflow-hidden">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
 
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
+          <span className="text-sm text-gray-600 bg-[#ebffbc] px-3 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
         </div>
       </div>
 
@@ -325,38 +325,37 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-96 overflow-hidden">
+        <div className="space-y-4">
           <CodeGenerator />
 
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+          <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-              <Activity className="w-5 h-5 text-green-600 mr-2" />
+              <Activity className="w-5 h-5 text-[#7ebd07] mr-2" />
               Comparaison des points attribués
             </h2>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0f2e7" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
                 <XAxis dataKey="name" stroke="#374151" />
                 <YAxis stroke="#374151" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#f0fdf4', 
-                    border: '1px solid #22c55e',
+                    backgroundColor: '#ebffbc', 
+                    border: '1px solid #7ebd07',
                     borderRadius: '8px'
                   }}
                 />
                 <Legend />
                 <Bar dataKey="semaineActuelle" fill="#7ebd07" name="Semaine actuelle" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="semainePrecedente" fill="#ffcd2a" name="Semaine précédente" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="semainePrecedente" fill="#FFCD29" name="Semaine précédente" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
-
-          <NewVsReturningCustomers merchant={merchant} />
         </div>
 
-        <div className="max-h-[600px] overflow-y-auto rounded-xl shadow-lg bg-white p-6 border border-green-100">
+        <div className="space-y-4">
+          <NewVsReturningCustomers merchant={merchant} />
           <DailyTip />
         </div>
       </div>

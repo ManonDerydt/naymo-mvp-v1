@@ -20,119 +20,6 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 import { startOfWeek, endOfWeek, subWeeks, format } from 'date-fns'
 
-// Nouveau graphique pour anciens/nouveaux clients
-const NewVsReturningCustomers = ({ merchant }: { merchant: any }) => {
-  const [chartData, setChartData] = useState<{ name: string; nouveaux: number; anciens: number }[]>([])
-
-  useEffect(() => {
-    if (!merchant?.uid) return
-
-    const q = query(
-      collection(db, "pointsHistory"),
-      where("merchantId", "==", merchant.uid)
-    )
-
-    const unsubscribe = onSnapshot(q, (snap) => {
-      const customerFirstVisit = new Map<string, Date>()
-      const weeklyData = new Map<string, { nouveaux: number; anciens: number }>()
-
-      // Initialiser les 4 dernières semaines
-      for (let i = 3; i >= 0; i--) {
-        const weekStart = subWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), i)
-        const weekKey = format(weekStart, 'dd/MM')
-        weeklyData.set(weekKey, { nouveaux: 0, anciens: 0 })
-      }
-
-      snap.docs.forEach((doc) => {
-        const data = doc.data()
-        const customerId = data.customerId
-        const timestamp = data.createdAt?.toDate?.()
-
-        if (customerId && timestamp instanceof Date) {
-          // Enregistrer la première visite du client
-          if (!customerFirstVisit.has(customerId) || timestamp < customerFirstVisit.get(customerId)!) {
-            customerFirstVisit.set(customerId, timestamp)
-          }
-        }
-      })
-
-      // Analyser chaque transaction pour déterminer si c'est un nouveau ou ancien client
-      snap.docs.forEach((doc) => {
-        const data = doc.data()
-        const customerId = data.customerId
-        const timestamp = data.createdAt?.toDate?.()
-
-        if (customerId && timestamp instanceof Date) {
-          const weekStart = startOfWeek(timestamp, { weekStartsOn: 1 })
-          const weekKey = format(weekStart, 'dd/MM')
-          const firstVisit = customerFirstVisit.get(customerId)
-
-          if (weeklyData.has(weekKey) && firstVisit) {
-            const weekData = weeklyData.get(weekKey)!
-            const isNewCustomer = Math.abs(timestamp.getTime() - firstVisit.getTime()) < 24 * 60 * 60 * 1000 // Moins de 24h
-
-            if (isNewCustomer) {
-              weekData.nouveaux++
-            } else {
-              weekData.anciens++
-            }
-          }
-        }
-      })
-
-      const chartArray = Array.from(weeklyData.entries()).map(([name, data]) => ({
-        name,
-        nouveaux: data.nouveaux,
-        anciens: data.anciens
-      }))
-
-      setChartData(chartArray)
-    })
-
-    return () => unsubscribe()
-  }, [merchant])
-
-  return (
-    <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
-        <Users className="w-5 h-5 text-[#7ebd07] mr-2" />
-        Nouveaux vs Anciens clients
-      </h2>
-      <ResponsiveContainer width="100%" height={180}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
-          <XAxis dataKey="name" stroke="#374151" />
-          <YAxis stroke="#374151" />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#ebffbc', 
-              border: '1px solid #7ebd07',
-              borderRadius: '8px'
-            }}
-          />
-          <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="nouveaux" 
-            stroke="#7ebd07" 
-            strokeWidth={3}
-            dot={{ fill: '#7ebd07', strokeWidth: 2, r: 4 }}
-            name="Nouveaux clients" 
-          />
-          <Line 
-            type="monotone" 
-            dataKey="anciens" 
-            stroke="#FFCD29" 
-            strokeWidth={3}
-            dot={{ fill: '#FFCD29', strokeWidth: 2, r: 4 }}
-            name="Anciens clients" 
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  )
-}
-
 /** Formate un montant : entier → « 48 », décimal → « 43,20 » */
 const formatCurrency = (amount: number) =>
   Number.isInteger(amount)
@@ -150,6 +37,7 @@ const Dashboard = () => {
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [averageRating, setAverageRating] = useState(0)
   const [barChartData, setBarChartData] = useState<{ name: string; semaineActuelle: number; semainePrecedente: number }[]>([])
+  const [chartData, setChartData] = useState<{ name: string; nouveaux: number; anciens: number }[]>([])
   
   
   // Statistiques générales (à partir de pointsHistory)
@@ -288,6 +176,75 @@ const Dashboard = () => {
       }));
 
       setBarChartData(charData)
+    })
+
+    return () => unsubscribe()
+  }, [merchant])
+
+  // Données pour le graphique nouveaux vs anciens clients
+  useEffect(() => {
+    if (!merchant?.uid) return
+
+    const q = query(
+      collection(db, "pointsHistory"),
+      where("merchantId", "==", merchant.uid)
+    )
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const customerFirstVisit = new Map<string, Date>()
+      const weeklyData = new Map<string, { nouveaux: number; anciens: number }>()
+
+      // Initialiser les 4 dernières semaines
+      for (let i = 3; i >= 0; i--) {
+        const weekStart = subWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), i)
+        const weekKey = format(weekStart, 'dd/MM')
+        weeklyData.set(weekKey, { nouveaux: 0, anciens: 0 })
+      }
+
+      snap.docs.forEach((doc) => {
+        const data = doc.data()
+        const customerId = data.customerId
+        const timestamp = data.createdAt?.toDate?.()
+
+        if (customerId && timestamp instanceof Date) {
+          // Enregistrer la première visite du client
+          if (!customerFirstVisit.has(customerId) || timestamp < customerFirstVisit.get(customerId)!) {
+            customerFirstVisit.set(customerId, timestamp)
+          }
+        }
+      })
+
+      // Analyser chaque transaction pour déterminer si c'est un nouveau ou ancien client
+      snap.docs.forEach((doc) => {
+        const data = doc.data()
+        const customerId = data.customerId
+        const timestamp = data.createdAt?.toDate?.()
+
+        if (customerId && timestamp instanceof Date) {
+          const weekStart = startOfWeek(timestamp, { weekStartsOn: 1 })
+          const weekKey = format(weekStart, 'dd/MM')
+          const firstVisit = customerFirstVisit.get(customerId)
+
+          if (weeklyData.has(weekKey) && firstVisit) {
+            const weekData = weeklyData.get(weekKey)!
+            const isNewCustomer = Math.abs(timestamp.getTime() - firstVisit.getTime()) < 24 * 60 * 60 * 1000 // Moins de 24h
+
+            if (isNewCustomer) {
+              weekData.nouveaux++
+            } else {
+              weekData.anciens++
+            }
+          }
+        }
+      })
+
+      const chartArray = Array.from(weeklyData.entries()).map(([name, data]) => ({
+        name,
+        nouveaux: data.nouveaux,
+        anciens: data.anciens
+      }))
+
+      setChartData(chartArray)
     })
 
     return () => unsubscribe()

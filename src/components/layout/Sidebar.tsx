@@ -41,7 +41,7 @@ const Sidebar = () => {
         />
       )}
 
-      <div className={`${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col transition-transform duration-300 ease-in-out z-40`}>
+      <div className={`${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed inset-y-0 lg:flex w-full lg:w-64 lg:flex-col transition-transform duration-300 ease-in-out z-40`}>
         <div className="flex flex-col flex-grow border-r border-[#7ebd07]/30 bg-[#ebffbc] shadow-2xl">
         <div className="flex items-center h-16 flex-shrink-0">
          {merchant && merchantData ? 

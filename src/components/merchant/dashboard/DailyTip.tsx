@@ -44,7 +44,7 @@ const DailyTip = () => {
   }, []);
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20 h-full">
+    <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
       <h2 className="text-base font-bold mb-3 text-gray-800 flex items-center">
         <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -60,7 +60,7 @@ const DailyTip = () => {
             <h3 className="font-semibold text-[#396F04] capitalize mb-3">
               {tuto.category}
             </h3>
-            <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+            <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center h-32">
               <iframe
                 className="w-full h-full rounded-lg shadow-md"
                 src={tuto.url.replace("watch?v=", "embed/")}

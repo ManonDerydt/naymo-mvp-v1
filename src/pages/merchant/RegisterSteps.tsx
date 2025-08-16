@@ -19,6 +19,9 @@ interface FormErrors {
   postal_code?: string
   email?: string
   password?: string
+  shortDescription?: string
+  keywords?: string
+  commitments?: string
   logo?: string
   cover_photo?: string
   store_photos?: string
@@ -36,6 +39,9 @@ interface FormData {
   postal_code: string
   email: string
   password: string
+  shortDescription: string
+  keywords: string[]
+  commitments: string[]
   media: {
     logo: File | null
     cover_photo: File | null
@@ -45,7 +51,7 @@ interface FormData {
 
 interface StepProps {
   formData: FormData
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
   onFileChange: (type: 'logo' | 'cover_photo' | 'store_photos', files: File[]) => void
   errors: FormErrors
   setErrors: React.Dispatch<React.SetStateAction<FormErrors>>
@@ -56,7 +62,7 @@ const steps = [
     id: 'business',
     title: 'Information entreprise',
     description: 'Renseignez les informations de base de votre entreprise',
-    fields: ['company_name', 'business_type'],
+    fields: ['company_name', 'business_type', 'shortDescription'],
   },
   {
     id: 'owner',
@@ -77,11 +83,31 @@ const steps = [
     fields: ['email', 'password'],
   },
   {
+    id: 'details',
+    title: 'Détails',
+    description: 'Mots-clés et engagements de votre commerce',
+    fields: ['keywords', 'commitments'],
+  },
+  {
     id: 'media',
     title: 'Médias',
     description: 'Ajoutez des images pour présenter votre commerce',
     fields: ['logo', 'cover_photo', 'store_photos'],
   },
+]
+
+const businessTypes = [
+  'Restaurant',
+  'Boulangerie',
+  'Épicerie',
+  'Mode',
+  'Beauté',
+  'Sport',
+  'Technologie',
+  'Services',
+  'Santé',
+  'Culture',
+  'Autre'
 ]
 
 const RegisterSteps = () => {
@@ -97,6 +123,9 @@ const RegisterSteps = () => {
     postal_code: '',
     email: '',
     password: '',
+    shortDescription: '',
+    keywords: [],
+    commitments: [],
     media: {
       logo: null,
       cover_photo: null,
@@ -114,6 +143,10 @@ const RegisterSteps = () => {
     }
     if (stepFields.includes('business_type')) {
       if (!formData.business_type) newErrors.business_type = 'Le type d\'entreprise est requis'
+    }
+    if (stepFields.includes('shortDescription')) {
+      if (!formData.shortDescription) newErrors.shortDescription = 'La description courte est requise'
+      else if (formData.shortDescription.length > 200) newErrors.shortDescription = 'La description ne peut pas dépasser 200 caractères'
     }
     if (stepFields.includes('owner_name')) {
       if (!formData.owner_name) newErrors.owner_name = 'Le nom du gérant est requis'
@@ -149,12 +182,18 @@ const RegisterSteps = () => {
       if (!formData.password) newErrors.password = 'Le mot de passe est requis'
       else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
     }
+    if (stepFields.includes('keywords')) {
+      if (formData.keywords.length === 0) newErrors.keywords = 'Au moins un mot-clé est requis'
+    }
+    if (stepFields.includes('commitments')) {
+      if (formData.commitments.length === 0) newErrors.commitments = 'Au moins un engagement est requis'
+    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
 
     setErrors({ ...errors, [name]: undefined }) // Effacer l'erreur du champ modifié
@@ -164,6 +203,10 @@ const RegisterSteps = () => {
       if (onlyDigits.length <= 5) {
         setFormData({ ...formData, [name]: onlyDigits })
       }
+    } else if (name === 'keywords') {
+      setFormData({ ...formData, keywords: value.split(',').map(item => item.trim()).filter(item => item) })
+    } else if (name === 'commitments') {
+      setFormData({ ...formData, commitments: value.split(',').map(item => item.trim()).filter(item => item) })
     } else {
       setFormData({ ...formData, [name]: value })
     }
@@ -224,6 +267,9 @@ const RegisterSteps = () => {
         city: formData.city,
         postal_code: formData.postal_code,
         email: formData.email,
+        shortDescription: formData.shortDescription,
+        keywords: formData.keywords,
+        commitments: formData.commitments,
         logo: logoURL,
         cover_photo: coverPhotoURL,
         store_photos: storePhotoURLs
@@ -313,6 +359,9 @@ const RegisterSteps = () => {
               <AccountStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
             )}
             {currentStep === 4 && (
+              <DetailsStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
+            )}
+            {currentStep === 5 && (
               <MediaStep formData={formData} onChange={handleInputChange} onFileChange={handleFileChange} errors={errors} setErrors={setErrors} />
             )}
 
@@ -360,14 +409,40 @@ const BusinessInfoStep = ({ formData, onChange, errors }: StepProps) => (
       placeholder="Ex: Boulangerie Martin"
       error={errors.company_name}
     />
-    <Input
-      label="Type d'entreprise"
-      name="business_type"
-      value={formData.business_type}
-      onChange={onChange}
-      placeholder="Ex: Boulangerie, Restaurant, Boutique..."
-      error={errors.business_type}
-    />
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">Type d'entreprise</label>
+      <select
+        name="business_type"
+        value={formData.business_type}
+        onChange={onChange}
+        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
+      >
+        <option value="">Sélectionnez un type</option>
+        {businessTypes.map(type => (
+          <option key={type} value={type}>{type}</option>
+        ))}
+      </select>
+      {errors.business_type && (
+        <p className="text-sm text-red-600">{errors.business_type}</p>
+      )}
+    </div>
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        Description courte ({formData.shortDescription.length}/200)
+      </label>
+      <textarea
+        name="shortDescription"
+        value={formData.shortDescription}
+        onChange={onChange}
+        rows={3}
+        maxLength={200}
+        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
+        placeholder="Décrivez brièvement votre commerce..."
+      />
+      {errors.shortDescription && (
+        <p className="text-sm text-red-600">{errors.shortDescription}</p>
+      )}
+    </div>
   </div>
 )
 
@@ -475,7 +550,51 @@ const AccountStep = ({ formData, onChange, errors }: StepProps) => (
   </div>
 )
 
-// Étape 5 : Médias
+// Étape 5 : Détails
+const DetailsStep = ({ formData, onChange, errors }: StepProps) => (
+  <div className="space-y-6">
+    <div className="text-center mb-6">
+      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center shadow-xl">
+        <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd"/>
+        </svg>
+      </div>
+      <h3 className="text-xl font-bold text-[#396F04]">Détails de votre commerce</h3>
+    </div>
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        Mots-clés (séparés par des virgules)
+      </label>
+      <input
+        name="keywords"
+        value={formData.keywords.join(', ')}
+        onChange={onChange}
+        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
+        placeholder="Ex: Bio, Local, Artisanal"
+      />
+      {errors.keywords && (
+        <p className="text-sm text-red-600">{errors.keywords}</p>
+      )}
+    </div>
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">
+        Engagements (séparés par des virgules)
+      </label>
+      <input
+        name="commitments"
+        value={formData.commitments.join(', ')}
+        onChange={onChange}
+        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
+        placeholder="Ex: Produits 100% locaux, Emballages recyclables"
+      />
+      {errors.commitments && (
+        <p className="text-sm text-red-600">{errors.commitments}</p>
+      )}
+    </div>
+  </div>
+)
+
+// Étape 6 : Médias
 const MediaStep = ({ formData, onFileChange, errors }: StepProps) => (
   <div className="space-y-6">
     <div className="text-center mb-6">

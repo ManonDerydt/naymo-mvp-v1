@@ -249,22 +249,27 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-white p-6 rounded-xl shadow-lg border border-[#7ebd07]/20">
       <div className="flex justify-between items-center">
-        <h1 className="text-base font-bold text-gray-900">Générer un code client</h1>
+        <h2 className="text-base font-bold text-gray-800 flex items-center">
+          <svg className="w-5 h-5 text-[#7ebd07] mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+          </svg>
+          Générer un code client
+        </h2>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-gradient-to-r from-[#ebffbc]/30 to-white rounded-lg p-4 border border-[#7ebd07]/20">
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="tel"
             placeholder="Numéro de téléphone"
             value={phone}
             onChange={e => setPhone(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-3 border border-[#7ebd07]/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent shadow-sm"
           />
           <button
-            className="md:w-auto w-full py-2 px-4 rounded-md text-white font-medium bg-[#7ebd07] hover:bg-[#589507] disabled:opacity-50"
+            className="md:w-auto w-full py-3 px-6 rounded-xl text-white font-semibold bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] disabled:opacity-50 shadow-lg transform hover:scale-105 transition-all duration-200"
             onClick={handleOpenModal}
             disabled={loading}
           >
@@ -304,7 +309,6 @@ export default function CodeGenerator() {
                 <div className="bg-gray-50 rounded-md p-4 space-y-2">
                   <p><span className="font-semibold">Nom :</span> {customer.last_name}</p>
                   <p><span className="font-semibold">Prénom :</span> {customer.first_name}</p>
-                  <p><span className="font-semibold">Email :</span> {customer.email}</p>
                   <p><span className="font-semibold">Téléphone :</span> {customer.phone_number}</p>
                   <p><span className="font-semibold">Points actuels :</span> {customer.points ?? 0}</p>
                   <p><span className="font-semibold">Bons disponibles :</span> {maxCoupons}</p>
@@ -384,7 +388,7 @@ export default function CodeGenerator() {
                       value={amount}
                       onChange={e => setAmount(e.target.value)}
                       placeholder="Ex : 55"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 border border-[#7ebd07]/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent shadow-sm"
                     />
                   </div>
                     
@@ -400,7 +404,7 @@ export default function CodeGenerator() {
                         max={maxCoupons}
                         value={couponsToApply}
                         onChange={e => setCouponsToApply(Number(e.target.value))}
-                        className="w-full px-4 py-2 border border-yellow-300 rounded-md"
+                        className="w-full px-4 py-3 border border-[#FFCD29]/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FFCD29] focus:border-transparent shadow-sm"
                       />
                     </div>
                   )}
@@ -414,14 +418,14 @@ export default function CodeGenerator() {
                   {/* Ajouter les points */}
                   <button
                     onClick={handleAddPoints}
-                    className="w-full mt-3 py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                    className="w-full mt-3 py-3 px-6 rounded-xl text-white font-semibold bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] disabled:opacity-50 shadow-lg transform hover:scale-105 transition-all duration-200"
                     disabled={addingPoints}
                   >
                     {addingPoints ? "Ajout..." : "Ajouter les points"}
                   </button>
                 </div>
               ) : (
-                <div className="bg-red-50 rounded-md p-4 text-center text-red-700 font-semibold">
+                <div className="bg-red-50 rounded-xl p-4 text-center text-red-700 font-semibold border border-red-200">
                   Ce numéro n'est pas dans la liste client.
                 </div>
               )}

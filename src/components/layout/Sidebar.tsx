@@ -70,14 +70,14 @@ const Sidebar = () => {
                     'group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
                       ? 'bg-[#e3ffbf] text-[#396F04] shadow-lg transform scale-105 border-2 border-[#7ebd07]'
-                      : 'text-[#589507] hover:bg-[#d4f5a3]/50 hover:text-[#396F04] hover:transform hover:scale-105'
+                      : 'text-white hover:bg-[#d4f5a3]/50 hover:text-[#396F04] hover:transform hover:scale-105'
                   )}
                 >
                   <Icon className={cn(
                     'mr-4 h-5 w-5 flex-shrink-0 transition-colors',
                     location.pathname === item.href
                       ? 'text-[#396F04]'
-                      : 'text-[#7ebd07] group-hover:text-[#396F04]'
+                      : 'text-white group-hover:text-[#396F04]'
                   )} />
                   {item.name}
                 </Link>
@@ -96,8 +96,8 @@ const Sidebar = () => {
                   className="w-12 h-12 rounded-full object-cover border-2 border-[#7ebd07]"
                 />
                 <div className="text-[#589507]">
-                  <p className="font-semibold text-[#396F04]">{merchantData.company_name}</p>
-                  <p className="text-sm text-[#7ebd07]">{merchantData.email}</p>
+                  <p className="font-semibold text-white">{merchantData.company_name}</p>
+                  <p className="text-sm text-white/80">{merchantData.email}</p>
                 </div>
               </div>
             </>

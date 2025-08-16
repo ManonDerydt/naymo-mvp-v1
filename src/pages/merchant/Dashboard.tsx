@@ -3,14 +3,16 @@ import StatCard from '@/components/merchant/dashboard/StatCard'
 import CodeGenerator from '@/components/merchant/dashboard/CodeGenerator'
 import DailyTip from '@/components/merchant/dashboard/DailyTip'
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  Legend
+  Legend,
+  BarChart,
+  Bar
 } from 'recharts'
 import { useAuth } from '@/components/firebase/useAuth'
 import { useEffect, useState } from 'react'
@@ -96,8 +98,8 @@ const NewVsReturningCustomers = ({ merchant }: { merchant: any }) => {
         <Users className="w-5 h-5 text-[#7ebd07] mr-2" />
         Nouveaux vs Anciens clients
       </h2>
-      <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={chartData}>
+      <ResponsiveContainer width="100%" height={180}>
+        <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
           <XAxis dataKey="name" stroke="#374151" />
           <YAxis stroke="#374151" />
@@ -109,9 +111,23 @@ const NewVsReturningCustomers = ({ merchant }: { merchant: any }) => {
             }}
           />
           <Legend />
-          <Bar dataKey="nouveaux" fill="#7ebd07" name="Nouveaux clients" radius={[4, 4, 0, 0]} />
-          <Bar dataKey="anciens" fill="#7ebd07" name="Anciens clients" radius={[4, 4, 0, 0]} />
-        </BarChart>
+          <Line 
+            type="monotone" 
+            dataKey="nouveaux" 
+            stroke="#7ebd07" 
+            strokeWidth={3}
+            dot={{ fill: '#7ebd07', strokeWidth: 2, r: 4 }}
+            name="Nouveaux clients" 
+          />
+          <Line 
+            type="monotone" 
+            dataKey="anciens" 
+            stroke="#FFCD29" 
+            strokeWidth={3}
+            dot={{ fill: '#FFCD29', strokeWidth: 2, r: 4 }}
+            name="Anciens clients" 
+          />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   )
@@ -280,61 +296,47 @@ const Dashboard = () => {
 
   const stats = [
     {
-      icon: <Users className="w-6 h-6 text-blue-500" />,
-      title: "Clients fidèles",
-      value: clientsFideles.toString() || "0",
-      trend: "+0%"
-    },
-    {
       icon: <Activity className="w-6 h-6 text-green-500" />,
       title: "Chiffre d'affaires",
       value: `${formatCurrency(totalRevenue)} €`,
-      trend: "+0%"
     },
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
       value: `${averageRating.toFixed(1)}/5`,
-      trend: "+0"
-    },
-    {
-      icon: <Gift className="w-6 h-6 text-purple-500" />,
-      title: "Points distribués",
-      value: totalPoints ? totalPoints.toLocaleString() : "0",
-      trend: "+0%"
     }
   ]
 
   return (
-    <div className="space-y-6 font-['Inter',_'system-ui',_sans-serif] p-6 max-h-screen overflow-hidden">
+    <div className="space-y-4 font-['Inter',_'system-ui',_sans-serif] p-6 max-h-screen overflow-hidden">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
+        <h1 className="text-lg font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
 
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-600 bg-[#ebffbc] px-3 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
+          <span className="text-xs text-gray-600 bg-[#ebffbc] px-2 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
         </div>
       </div>
 
-      <p className="text-lg text-gray-600 leading-relaxed">
+      <p className="text-sm text-gray-600 leading-relaxed">
         Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-h-96 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-80 overflow-hidden">
         <div className="space-y-4">
           <CodeGenerator />
 
           <div className="bg-white p-4 rounded-xl shadow-lg border border-[#7ebd07]/20">
-            <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <h2 className="text-lg font-bold text-gray-800 mb-3 flex items-center">
               <Activity className="w-5 h-5 text-[#7ebd07] mr-2" />
               Comparaison des points attribués
             </h2>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={160}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ebffbc" />
                 <XAxis dataKey="name" stroke="#374151" />

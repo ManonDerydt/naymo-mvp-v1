@@ -17,14 +17,11 @@ const Offers = () => {
   ]
 
   return (
-    <div className="space-y-8 font-['Inter',_'system-ui',_sans-serif] bg-gradient-to-br from-[#ebffbc]/20 to-white min-h-screen p-6">
+    <div className="space-y-6 font-['Inter',_'system-ui',_sans-serif] p-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#589507] to-[#396F04] bg-clip-text text-transparent tracking-tight">Mes Offres</h1>
-          <div className="flex items-center mt-2">
-            <Gift className="w-5 h-5 text-[#7ebd07] mr-2" />
-            <span className="text-[#589507] font-medium">Gérez vos promotions</span>
-          </div>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Mes Offres</h1>
+          <p className="text-sm text-gray-600 leading-relaxed">Gérez vos promotions et offres spéciales</p>
         </div>
       </div>
 

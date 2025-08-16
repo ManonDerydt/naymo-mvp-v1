@@ -88,6 +88,7 @@ const steps = [
 const RegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
+  const [showTooltip, setShowTooltip] = useState<string | null>(null)
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -309,6 +310,21 @@ const RegisterSteps = () => {
     setErrors({}) // Réinitiliser les erreurs lors du retour en arrière
   }
 
+  const getTooltipText = (stepId: string) => {
+    switch (stepId) {
+      case 'business':
+        return 'Renseignez les informations de base de votre entreprise'
+      case 'owner':
+        return 'Informations personnelles du gérant de l\'entreprise'
+      case 'location':
+        return 'Adresse et localisation de votre commerce'
+      case 'media':
+        return 'Ajoutez vos photos et logo pour présenter votre commerce'
+      default:
+        return ''
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full space-y-8">
@@ -317,15 +333,26 @@ const RegisterSteps = () => {
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Créer votre compte commerçant
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Étape {currentStep + 1} sur {steps.length}
-          </p>
+          <div className="relative mt-2">
+            <p 
+              className="text-sm text-gray-600 cursor-help"
+              onMouseEnter={() => setShowTooltip(steps[currentStep].id)}
+              onMouseLeave={() => setShowTooltip(null)}
+            >
+              Étape {currentStep + 1} sur {steps.length} - {steps[currentStep].title}
+            </p>
+            {showTooltip === steps[currentStep].id && (
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg z-10 whitespace-nowrap">
+                {getTooltipText(steps[currentStep].id)}
+              </div>
+            )}
+          </div>
           {errors.general && (
             <p className="mt-2 text-sm text-red-600">{errors.general}</p>
           )}
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-8">
+        <div className="bg-gradient-to-br from-white to-green-50 shadow-xl rounded-2xl p-8 border border-green-100">
           <div className="space-y-6">
             {currentStep === 0 && (
               <BusinessInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
@@ -456,10 +483,18 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
         label="Description courte"
         name="shortDescription"
         value={formData.shortDescription}
-        onChange={onChange}
+        onChange={(e) => {
+          if (e.target.value.length <= 200) {
+            onChange(e)
+          }
+        }}
         placeholder="Ex: Voici l'entreprise XXX..."
         error={errors.shortDescription}
+        maxLength={200}
       />
+      <div className="text-right text-xs text-gray-500">
+        {formData.shortDescription.length}/200 caractères
+      </div>
       <div>
         <label className="block text-sm font-medium text-gray-700">Type d'activité</label>
         <select

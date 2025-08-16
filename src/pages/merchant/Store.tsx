@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Building2, MapPin, Tags, Pencil } from 'lucide-react'
+import { Building2, MapPin, Tags, Pencil, Edit3, Camera, FileText, Play, Eye, Smartphone, Tablet } from 'lucide-react'
 import { Button } from '@/components/ui'
 import ImageGallery from '@/components/merchant/store/ImageGallery'
 import EditStoreModal from '@/components/merchant/store/EditStoreModal'
@@ -8,6 +8,8 @@ import { useAuth } from '@/components/firebase/useAuth'
 
 const Store = () => {
   const [showEditModal, setShowEditModal] = useState(false)
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
+  const [showPreview, setShowPreview] = useState(false)
   
   const { merchant, merchantData } = useAuth()
   
@@ -43,7 +45,7 @@ const Store = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 font-['Inter',_'system-ui',_sans-serif]">
       <div className="relative h-64 rounded-xl overflow-hidden">
         
         <img
@@ -53,60 +55,112 @@ const Store = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 flex justify-between items-end">
-          <h1 className="text-3xl font-bold text-white">Mon Magasin</h1>
-          <Button 
-            onClick={() => setShowEditModal(true)}
-            className="flex items-center space-x-2"
-          >
-            <Pencil className="w-4 h-4" />
-            <span>Modifier</span>
-          </Button>
+          <h1 className="text-4xl font-bold text-white tracking-tight">Mon Magasin</h1>
+          <div className="flex space-x-3">
+            <Button 
+              onClick={() => setShowPreview(true)}
+              className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+            >
+              <Eye className="w-4 h-4" />
+              <span>Prévisualiser</span>
+            </Button>
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <p className="text-md text-gray-500">
-        Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
-      </p>
-          <section className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">À propos</h2>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            Gérez et personnalisez la présentation de votre magasin pour attirer plus de clients.
+          </p>
+          
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">À propos</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                title="Modifier la description"
+              >
+                <FileText className="w-4 h-4" />
+              </button>
+            </div>
             <p className="text-gray-600">
-              {merchant && merchantData ? merchantData.shortDescription : initialStoreData.shortDescription}
+              {merchant && merchantData ? 
+                (merchantData.shortDescription?.length > 300 ? 
+                  merchantData.shortDescription.substring(0, 300) + '...' : 
+                  merchantData.shortDescription
+                ) : 
+                initialStoreData.shortDescription
+              }
             </p>
           </section>
 
-          <section className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Galerie photos</h2>
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Galerie photos</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                title="Modifier les photos"
+              >
+                <Camera className="w-4 h-4" />
+              </button>
+            </div>
             <ImageGallery images={storeImages} />
+          </section>
+
+          {/* Vidéo explicative */}
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Tutoriel</h2>
+              <Play className="w-5 h-5 text-green-600" />
+            </div>
+            <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+              <iframe
+                className="w-full h-full rounded-lg"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Comment optimiser votre page magasin"
+                allowFullScreen
+              />
+            </div>
+            <p className="mt-3 text-sm text-gray-600">
+              Découvrez comment optimiser votre page magasin pour attirer plus de clients
+            </p>
           </section>
         </div>
 
         <div className="space-y-6">
-          <section className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Informations</h2>
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Informations</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
+                title="Modifier les informations"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <Building2 className="w-5 h-5 text-gray-400" />
+                <Building2 className="w-5 h-5 text-green-600" />
                 <span>{merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}</span>
               </div>
               <div className="flex items-center space-x-3">
-                <MapPin className="w-5 h-5 text-gray-400" />
+                <MapPin className="w-5 h-5 text-red-500" />
                 <span>{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Tags className="w-5 h-5 text-gray-400" />
+                <Tags className="w-5 h-5 text-blue-500" />
                 <div className="flex flex-wrap gap-2">
                 {merchant && merchantData && merchantData.keywords 
                   ? merchantData.keywords.map((keyword: string | undefined, index: number) => (
-                      <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{keyword}</span>
+                      <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{keyword}</span>
                     )) 
                   : (
                     initialStoreData.keywords.map((keyword, index) => (
-                      <div key={index} className="flex items-center space-x-2">
-                        <span className="w-2 h-2 bg-green-500 rounded-full" />
-                        <span>{keyword}</span>
-                      </div>
+                      <span key={index} className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{keyword}</span>
                     ))
                   )}
                 </div>
@@ -114,18 +168,30 @@ const Store = () => {
             </div>
           </section>
 
-          <section className="bg-white p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Engagements</h2>
+          <section className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Engagements</h2>
+              <button 
+                onClick={() => setShowEditModal(true)}
+                className="p-2 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-colors"
+                title="Modifier les engagements"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
             <div className="space-y-3">
             {merchant && merchantData && merchantData.commitments
               ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
-                  <span key={index} className="px-2 py-1 bg-gray-100 rounded-full text-sm">{commitment}</span>
+                  <div key={index} className="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
+                    <span className="w-3 h-3 bg-green-500 rounded-full" />
+                    <span className="text-green-800 font-medium">{commitment}</span>
+                  </div>
                 ))
               : (
                 initialStoreData.commitments.map((commitment, index) => (
-                  <div key={index} className="flex items-center space-x-2">
+                  <div key={index} className="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
                     <span className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>{commitment}</span>
+                    <span className="text-green-800 font-medium">{commitment}</span>
                   </div>
                 ))
               )}
@@ -133,6 +199,69 @@ const Store = () => {
           </section>
         </div>
       </div>
+
+      {/* Modal de prévisualisation */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b">
+              <h3 className="text-xl font-bold text-gray-900">Prévisualisation</h3>
+              <div className="flex items-center space-x-4">
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setPreviewMode('desktop')}
+                    className={`p-2 rounded-lg ${previewMode === 'desktop' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd"/>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('tablet')}
+                    className={`p-2 rounded-lg ${previewMode === 'tablet' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <Tablet className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewMode('mobile')}
+                    className={`p-2 rounded-lg ${previewMode === 'mobile' ? 'bg-blue-100 text-blue-600' : 'text-gray-400'}`}
+                  >
+                    <Smartphone className="w-5 h-5" />
+                  </button>
+                </div>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="p-6 flex justify-center">
+              <div className={`bg-gray-100 rounded-lg overflow-hidden ${
+                previewMode === 'desktop' ? 'w-full max-w-4xl' :
+                previewMode === 'tablet' ? 'w-96' : 'w-80'
+              }`}>
+                <div className="bg-white p-4 min-h-96">
+                  <h4 className="text-lg font-bold mb-2">
+                    {merchant && merchantData ? merchantData.company_name : "Mon Magasin"}
+                  </h4>
+                  <p className="text-gray-600 text-sm mb-4">
+                    {merchant && merchantData ? merchantData.shortDescription : initialStoreData.shortDescription}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {storeImages.slice(0, 4).map((image, index) => (
+                      <img key={index} src={image.src} alt={image.alt} className="w-full h-20 object-cover rounded" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showEditModal && (
         <EditStoreModal

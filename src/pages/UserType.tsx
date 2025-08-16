@@ -17,7 +17,7 @@ const UserType = () => {
 
         <div className="mt-8 space-y-4">
           <Link to="/merchant/login">
-            <Button className="w-full justify-center space-x-2">
+            <Button className="w-full justify-center space-x-2 mb-6">
               <Store className="w-5 h-5" />
               <span>Je suis commerçant</span>
             </Button>

@@ -22,21 +22,21 @@ const UserMenu = () => {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
+        className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-green-400"
       >
-        <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
-          <User className="h-5 w-5 text-gray-400" />
+        <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center border-2 border-green-300">
+          <User className="h-5 w-5 text-green-700" />
         </div>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 z-50 border border-green-200">
           <button
             onClick={() => {
               navigate('/settings')
               setIsOpen(false)
             }}
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition-colors"
           >
             Mon compte
           </button>

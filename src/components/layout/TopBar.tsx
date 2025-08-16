@@ -1,22 +1,18 @@
-import { Menu, Bell } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import UserMenu from './UserMenu'
 
 const TopBar = () => {
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <header className="bg-[#032313] sticky top-0 z-10 shadow-lg">
       <div className="flex items-center justify-between h-16 px-6">
-        <button className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
-          <Menu className="h-6 w-6" />
-        </button>
-
         <div className="flex-1 lg:ml-0" />
 
         <div className="flex items-center gap-4">
-          <button className="p-2 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+          <button className="p-2 rounded-full text-white hover:text-green-300 hover:bg-green-800/30 transition-colors">
             <Bell className="h-5 w-5" />
           </button>
           
-          <div className="h-8 w-px bg-gray-200" />
+          <div className="h-8 w-px bg-green-600" />
           
           <UserMenu />
         </div>

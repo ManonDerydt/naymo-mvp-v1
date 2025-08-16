@@ -2,12 +2,16 @@ import { useState } from 'react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 import { auth, db } from '@/components/firebase/firebaseConfig'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp, query, where, getDocs, orderBy, limit } from 'firebase/firestore'
+import { useAuth } from '@/components/firebase/useAuth'
 
 type Step = 'form' | 'summary' | 'success'
 
 const CreateOffer = () => {
+  const { merchant } = useAuth()
   const [step, setStep] = useState<Step>('form')
+  const [canCreateOffer, setCanCreateOffer] = useState(true)
+  const [daysToWait, setDaysToWait] = useState(0)
   const [formData, setFormData] = useState({
     name: '',
     duration: 0,
@@ -19,8 +23,60 @@ const CreateOffer = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Vérifier si l'utilisateur peut créer une nouvelle offre
+  const checkCanCreateOffer = async () => {
+    if (!merchant?.uid) return
+
+    try {
+      // Récupérer les offres du marchand des 30 derniers jours
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+      const merchantOffersQuery = query(
+        collection(db, 'merchant_has_offer'),
+        where('merchant_id', '==', merchant.uid)
+      )
+      const merchantOffersSnapshot = await getDocs(merchantOffersQuery)
+      const offerIds = merchantOffersSnapshot.docs.map(doc => doc.data().offer_id)
+
+      if (offerIds.length > 0) {
+        const recentOffersQuery = query(
+          collection(db, 'offer'),
+          where('__name__', 'in', offerIds),
+          where('createdAt', '>', thirtyDaysAgo),
+          orderBy('createdAt', 'desc'),
+          limit(1)
+        )
+        const recentOffersSnapshot = await getDocs(recentOffersQuery)
+
+        if (!recentOffersSnapshot.empty) {
+          const lastOffer = recentOffersSnapshot.docs[0]
+          const lastOfferDate = lastOffer.data().createdAt?.toDate()
+          
+          if (lastOfferDate) {
+            const daysSinceLastOffer = Math.floor((new Date().getTime() - lastOfferDate.getTime()) / (1000 * 60 * 60 * 24))
+            const remainingDays = 30 - daysSinceLastOffer
+            
+            if (remainingDays > 0) {
+              setCanCreateOffer(false)
+              setDaysToWait(remainingDays)
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification:', error)
+    }
+  }
+
+  // Vérifier au chargement du composant
+  React.useEffect(() => {
+    checkCanCreateOffer()
+  }, [merchant])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!canCreateOffer) return
     setStep('summary')
   }
 
@@ -133,8 +189,40 @@ const CreateOffer = () => {
     )
   }
 
+  // Afficher le message de restriction si nécessaire
+  if (!canCreateOffer) {
+    return (
+      <div className="text-center py-16">
+        <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center">
+          <svg className="w-12 h-12 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">Création d'offre temporairement indisponible</h3>
+        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+          Vous devez attendre <span className="font-bold text-orange-600">{daysToWait} jour{daysToWait > 1 ? 's' : ''}</span> avant de pouvoir créer une nouvelle offre.
+        </p>
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 max-w-md mx-auto">
+          <p className="text-sm text-orange-800">
+            Cette limitation permet de maintenir la qualité et la pertinence des offres sur la plateforme.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-8">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center">
+          <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900">Créer une nouvelle offre</h2>
+        <p className="text-gray-600 mt-2">Remplissez les informations pour créer votre offre</p>
+      </div>
+
       <Input
         label="Nom de l'offre"
         value={formData.name}
@@ -181,7 +269,7 @@ const CreateOffer = () => {
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={4}
-          className="block w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="block w-full rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:border-transparent p-4"
           placeholder="Décrivez votre offre en détail..."
           required
         />
@@ -203,7 +291,7 @@ const CreateOffer = () => {
         max={100}
       />
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-6">
         <Button type="submit">
           Suivant
         </Button>

@@ -18,6 +18,105 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 import { startOfWeek, endOfWeek, subWeeks, format } from 'date-fns'
 
+// Nouveau graphique pour anciens/nouveaux clients
+const NewVsReturningCustomers = ({ merchant }: { merchant: any }) => {
+  const [chartData, setChartData] = useState<{ name: string; nouveaux: number; anciens: number }[]>([])
+
+  useEffect(() => {
+    if (!merchant?.uid) return
+
+    const q = query(
+      collection(db, "pointsHistory"),
+      where("merchantId", "==", merchant.uid)
+    )
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const customerFirstVisit = new Map<string, Date>()
+      const weeklyData = new Map<string, { nouveaux: number; anciens: number }>()
+
+      // Initialiser les 4 dernières semaines
+      for (let i = 3; i >= 0; i--) {
+        const weekStart = subWeeks(startOfWeek(new Date(), { weekStartsOn: 1 }), i)
+        const weekKey = format(weekStart, 'dd/MM')
+        weeklyData.set(weekKey, { nouveaux: 0, anciens: 0 })
+      }
+
+      snap.docs.forEach((doc) => {
+        const data = doc.data()
+        const customerId = data.customerId
+        const timestamp = data.createdAt?.toDate?.()
+
+        if (customerId && timestamp instanceof Date) {
+          // Enregistrer la première visite du client
+          if (!customerFirstVisit.has(customerId) || timestamp < customerFirstVisit.get(customerId)!) {
+            customerFirstVisit.set(customerId, timestamp)
+          }
+        }
+      })
+
+      // Analyser chaque transaction pour déterminer si c'est un nouveau ou ancien client
+      snap.docs.forEach((doc) => {
+        const data = doc.data()
+        const customerId = data.customerId
+        const timestamp = data.createdAt?.toDate?.()
+
+        if (customerId && timestamp instanceof Date) {
+          const weekStart = startOfWeek(timestamp, { weekStartsOn: 1 })
+          const weekKey = format(weekStart, 'dd/MM')
+          const firstVisit = customerFirstVisit.get(customerId)
+
+          if (weeklyData.has(weekKey) && firstVisit) {
+            const weekData = weeklyData.get(weekKey)!
+            const isNewCustomer = Math.abs(timestamp.getTime() - firstVisit.getTime()) < 24 * 60 * 60 * 1000 // Moins de 24h
+
+            if (isNewCustomer) {
+              weekData.nouveaux++
+            } else {
+              weekData.anciens++
+            }
+          }
+        }
+      })
+
+      const chartArray = Array.from(weeklyData.entries()).map(([name, data]) => ({
+        name,
+        nouveaux: data.nouveaux,
+        anciens: data.anciens
+      }))
+
+      setChartData(chartArray)
+    })
+
+    return () => unsubscribe()
+  }, [merchant])
+
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+      <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <Users className="w-5 h-5 text-green-600 mr-2" />
+        Nouveaux vs Anciens clients
+      </h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0f2e7" />
+          <XAxis dataKey="name" stroke="#374151" />
+          <YAxis stroke="#374151" />
+          <Tooltip 
+            contentStyle={{ 
+              backgroundColor: '#f0fdf4', 
+              border: '1px solid #22c55e',
+              borderRadius: '8px'
+            }}
+          />
+          <Legend />
+          <Bar dataKey="nouveaux" fill="#22c55e" name="Nouveaux clients" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="anciens" fill="#7ebd07" name="Anciens clients" radius={[4, 4, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
 /** Formate un montant : entier → « 48 », décimal → « 43,20 » */
 const formatCurrency = (amount: number) =>
   Number.isInteger(amount)
@@ -207,16 +306,16 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 font-['Inter',_'system-ui',_sans-serif]">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Tableau de bord</h1>
 
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-500">Dernière mise à jour: aujourd'hui</span>
+          <span className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full">Dernière mise à jour: aujourd'hui</span>
         </div>
       </div>
 
-      <p className="text-md text-gray-500">
+      <p className="text-lg text-gray-600 leading-relaxed">
         Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
       </p>
 
@@ -226,27 +325,38 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <CodeGenerator />
 
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Comparaison des points attribués</h2>
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
+            <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+              <Activity className="w-5 h-5 text-green-600 mr-2" />
+              Comparaison des points attribués
+            </h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0f2e7" />
+                <XAxis dataKey="name" stroke="#374151" />
+                <YAxis stroke="#374151" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#f0fdf4', 
+                    border: '1px solid #22c55e',
+                    borderRadius: '8px'
+                  }}
+                />
                 <Legend />
                 <Bar dataKey="semaineActuelle" fill="#7ebd07" name="Semaine actuelle" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="semainePrecedente" fill="#ffcd2a" name="Semaine précédente" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
+
+          <NewVsReturningCustomers merchant={merchant} />
         </div>
 
-        <div className="max-h-[600px] overflow-y-auto rounded-lg shadow bg-white p-4">
+        <div className="max-h-[600px] overflow-y-auto rounded-xl shadow-lg bg-white p-6 border border-green-100">
           <DailyTip />
         </div>
       </div>

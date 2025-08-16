@@ -19,6 +19,7 @@ interface FormErrors {
   postal_code?: string
   email?: string
   password?: string
+  confirmPassword?: string
   shortDescription?: string
   keywords?: string
   commitments?: string
@@ -80,7 +81,7 @@ const steps = [
     id: 'account',
     title: 'Compte',
     description: 'Créez votre compte pour accéder à la plateforme',
-    fields: ['email', 'password', 'confirmPassword'],
+    fields: ['email', 'password'],
   },
   {
     id: 'details',

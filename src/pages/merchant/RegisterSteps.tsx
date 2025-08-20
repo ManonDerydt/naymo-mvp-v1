@@ -20,6 +20,7 @@ interface FormErrors {
   email?: string
   password?: string
   confirmPassword?: string
+  confirmPassword?: string
   shortDescription?: string
   keywords?: string
   commitments?: string
@@ -40,6 +41,7 @@ interface FormData {
   postal_code: string
   email: string
   password: string
+  confirmPassword: string
   shortDescription: string
   keywords: string[]
   commitments: string[]
@@ -136,6 +138,7 @@ const RegisterSteps = () => {
     postal_code: '',
     email: '',
     password: '',
+    confirmPassword: '',
     shortDescription: '',
     keywords: [],
     commitments: [],
@@ -146,6 +149,7 @@ const RegisterSteps = () => {
     }
   })
   const [errors, setErrors] = useState<FormErrors>({})
+  const [currentKeyword, setCurrentKeyword] = useState('')
 
   const validateStep = (stepIndex: number): boolean => {
     const newErrors: FormErrors = {}
@@ -159,7 +163,7 @@ const RegisterSteps = () => {
     }
     if (stepFields.includes('shortDescription')) {
       if (!formData.shortDescription) newErrors.shortDescription = 'La description courte est requise'
-      else if (formData.shortDescription.length > 200) newErrors.shortDescription = 'La description ne peut pas dépasser 200 caractères'
+      else if (formData.shortDescription.length > 150) newErrors.shortDescription = 'La description ne peut pas dépasser 150 caractères'
     }
     if (stepFields.includes('owner_name')) {
       if (!formData.owner_name) newErrors.owner_name = 'Le nom du gérant est requis'
@@ -195,6 +199,10 @@ const RegisterSteps = () => {
       if (!formData.password) newErrors.password = 'Le mot de passe est requis'
       else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
     }
+    if (stepFields.includes('password') && formData.password) {
+      if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise'
+      else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
+    }
     if (stepFields.includes('keywords')) {
       if (formData.keywords.length === 0) newErrors.keywords = 'Au moins un mot-clé est requis'
     }
@@ -216,13 +224,35 @@ const RegisterSteps = () => {
       if (onlyDigits.length <= 5) {
         setFormData({ ...formData, [name]: onlyDigits })
       }
-    } else if (name === 'keywords') {
-      setFormData({ ...formData, keywords: value.split(',').map(item => item.trim()).filter(item => item) })
     } else {
       setFormData({ ...formData, [name]: value })
     }
   }
 
+  const handleAddKeyword = () => {
+    if (currentKeyword.trim() && !formData.keywords.includes(currentKeyword.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        keywords: [...prev.keywords, currentKeyword.trim()]
+      }))
+      setCurrentKeyword('')
+      setErrors({ ...errors, keywords: undefined })
+    }
+  }
+
+  const handleRemoveKeyword = (keywordToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      keywords: prev.keywords.filter(keyword => keyword !== keywordToRemove)
+    }))
+  }
+
+  const handleKeywordKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAddKeyword()
+    }
+  }
   const handleCommitmentToggle = (commitmentId: string) => {
     const commitment = availableCommitments.find(c => c.id === commitmentId)
     if (!commitment) return
@@ -400,6 +430,11 @@ const RegisterSteps = () => {
                 errors={errors} 
                 setErrors={setErrors}
                 onCommitmentToggle={handleCommitmentToggle}
+                currentKeyword={currentKeyword}
+                setCurrentKeyword={setCurrentKeyword}
+                onAddKeyword={handleAddKeyword}
+                onRemoveKeyword={handleRemoveKeyword}
+                onKeywordKeyPress={handleKeywordKeyPress}
               />
             )}
             {currentStep === 5 && (
@@ -469,14 +504,14 @@ const BusinessInfoStep = ({ formData, onChange, errors }: StepProps) => (
     </div>
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
-        Description courte ({formData.shortDescription.length}/200)
+        Description courte ({formData.shortDescription.length}/150)
       </label>
       <textarea
         name="shortDescription"
         value={formData.shortDescription}
         onChange={onChange}
         rows={3}
-        maxLength={200}
+        maxLength={150}
         className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
         placeholder="Décrivez brièvement votre commerce..."
       />
@@ -588,15 +623,39 @@ const AccountStep = ({ formData, onChange, errors }: StepProps) => (
       placeholder="Minimum 6 caractères"
       error={errors.password}
     />
+    <Input
+      label="Confirmer le mot de passe"
+      name="confirmPassword"
+      type="password"
+      value={formData.confirmPassword}
+      onChange={onChange}
+      placeholder="Confirmez votre mot de passe"
+      error={errors.confirmPassword}
+    />
   </div>
 )
 
 // Étape 5 : Détails
 interface DetailsStepProps extends StepProps {
   onCommitmentToggle: (commitmentId: string) => void
+  currentKeyword: string
+  setCurrentKeyword: (value: string) => void
+  onAddKeyword: () => void
+  onRemoveKeyword: (keyword: string) => void
+  onKeywordKeyPress: (e: React.KeyboardEvent) => void
 }
 
-const DetailsStep = ({ formData, onChange, errors, onCommitmentToggle }: DetailsStepProps) => (
+const DetailsStep = ({ 
+  formData, 
+  onChange, 
+  errors, 
+  onCommitmentToggle, 
+  currentKeyword, 
+  setCurrentKeyword, 
+  onAddKeyword, 
+  onRemoveKeyword, 
+  onKeywordKeyPress 
+}: DetailsStepProps) => (
   <div className="space-y-6">
     <div className="text-center mb-6">
       <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center shadow-xl">
@@ -608,15 +667,50 @@ const DetailsStep = ({ formData, onChange, errors, onCommitmentToggle }: Details
     </div>
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
-        Mots-clés (séparés par des virgules)
+        Ajouter des mots-clés
       </label>
-      <input
-        name="keywords"
-        value={formData.keywords.join(', ')}
-        onChange={onChange}
-        className="block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
-        placeholder="Ex: Bio, Local, Artisanal"
-      />
+      <div className="flex space-x-2">
+        <input
+          type="text"
+          value={currentKeyword}
+          onChange={(e) => setCurrentKeyword(e.target.value)}
+          onKeyPress={onKeywordKeyPress}
+          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
+          placeholder="Ex: Bio"
+        />
+        <button
+          type="button"
+          onClick={onAddKeyword}
+          className="px-4 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white rounded-lg hover:from-[#589507] hover:to-[#396F04] transition-all duration-200 font-medium"
+        >
+          Ajouter
+        </button>
+      </div>
+      
+      {/* Affichage des mots-clés ajoutés */}
+      {formData.keywords.length > 0 && (
+        <div className="mt-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">Mots-clés ajoutés :</p>
+          <div className="flex flex-wrap gap-2">
+            {formData.keywords.map((keyword, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#ebffbc] text-[#396F04] border border-[#7ebd07]/30"
+              >
+                {keyword}
+                <button
+                  type="button"
+                  onClick={() => onRemoveKeyword(keyword)}
+                  className="ml-2 text-[#589507] hover:text-[#396F04] transition-colors"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+      
       {errors.keywords && (
         <p className="text-sm text-red-600">{errors.keywords}</p>
       )}

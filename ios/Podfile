@@ -4,7 +4,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '11.0'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'Naymo' do
+target 'Naymo\' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -25,7 +25,7 @@ target 'Naymo' do
   pod 'GoogleUtilities', :modular_headers => true
   $RNFirebaseAsStaticFramework = true
 
-  target 'NaymoTests' do
+  target 'NaymoTests\' do
     inherit! :complete
   end
 

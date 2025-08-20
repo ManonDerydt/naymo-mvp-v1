@@ -1,70 +1,53 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { 
-  User,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  updateProfile
-} from 'firebase/auth';
-import { 
-  doc, 
-  getDoc, 
-  setDoc, 
-  onSnapshot,
-  Unsubscribe 
-} from 'firebase/firestore';
-import { auth, db } from '../components/firebase/firebaseConfig';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 interface CustomerData {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
-  phone: string;
-  dateOfBirth: string;
+  phone_number: string;
+  birth_date: string;
   city: string;
-  postalCode: string;
+  zip_code: string;
   points: number;
-  level: number;
+  offers?: string[];
   createdAt: any;
 }
 
 interface MerchantData {
   id: string;
-  businessName: string;
+  company_name: string;
+  business_type: string;
+  owner_name: string;
   email: string;
-  phone: string;
   address: string;
   city: string;
-  postalCode: string;
-  category: string;
-  description: string;
-  website?: string;
+  postal_code: string;
+  shortDescription: string;
+  longDescription?: string;
   logo?: string;
-  isVerified: boolean;
+  cover_photo?: string;
+  store_photos?: string[];
+  keywords?: string[];
+  commitments?: string[];
   createdAt: any;
 }
 
 interface AuthContextType {
-  // Auth state
-  user: User | null;
+  customer: any;
   customerData: CustomerData | null;
+  merchant: any;
   merchantData: MerchantData | null;
   loading: boolean;
   error: string | null;
-  
-  // Auth methods
   loginCustomer: (email: string, password: string) => Promise<void>;
   loginMerchant: (email: string, password: string) => Promise<void>;
   registerCustomer: (userData: Partial<CustomerData>, password: string) => Promise<void>;
   registerMerchant: (userData: Partial<MerchantData>, password: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  updateUserProfile: (displayName: string) => Promise<void>;
-  
-  // Utility methods
   isCustomer: boolean;
   isMerchant: boolean;
 }
@@ -84,8 +67,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [customer, setCustomer] = useState<any>(null);
   const [customerData, setCustomerData] = useState<CustomerData | null>(null);
+  const [merchant, setMerchant] = useState<any>(null);
   const [merchantData, setMerchantData] = useState<MerchantData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,24 +84,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Auth state listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = auth().onAuthStateChanged(async (currentUser) => {
       setLoading(true);
       setError(null);
 
       if (currentUser) {
-        setUser(currentUser);
-        
         // Check if user is a customer
         try {
-          const customerDoc = await getDoc(doc(db, 'customers', currentUser.uid));
-          if (customerDoc.exists()) {
+          const customerDoc = await firestore().collection('customer').doc(currentUser.uid).get();
+          if (customerDoc.exists) {
+            setCustomer(currentUser);
             setCustomerData({ id: currentUser.uid, ...customerDoc.data() } as CustomerData);
+            setMerchant(null);
             setMerchantData(null);
           } else {
             // Check if user is a merchant
-            const merchantDoc = await getDoc(doc(db, 'merchants', currentUser.uid));
-            if (merchantDoc.exists()) {
+            const merchantDoc = await firestore().collection('merchant').doc(currentUser.uid).get();
+            if (merchantDoc.exists) {
+              setMerchant(currentUser);
               setMerchantData({ id: currentUser.uid, ...merchantDoc.data() } as MerchantData);
+              setCustomer(null);
               setCustomerData(null);
             } else {
               setError('User data not found');
@@ -128,8 +114,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setError('Failed to load user data');
         }
       } else {
-        setUser(null);
+        setCustomer(null);
         setCustomerData(null);
+        setMerchant(null);
         setMerchantData(null);
       }
 
@@ -139,68 +126,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  // Real-time customer data listener
-  useEffect(() => {
-    let unsubscribe: Unsubscribe | undefined;
-
-    if (user && customerData) {
-      unsubscribe = onSnapshot(
-        doc(db, 'customers', user.uid),
-        (doc) => {
-          if (doc.exists()) {
-            setCustomerData({ id: user.uid, ...doc.data() } as CustomerData);
-          }
-        },
-        (error) => {
-          console.error('Error listening to customer data:', error);
-        }
-      );
-    }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user, customerData?.id]);
-
-  // Real-time merchant data listener
-  useEffect(() => {
-    let unsubscribe: Unsubscribe | undefined;
-
-    if (user && merchantData) {
-      unsubscribe = onSnapshot(
-        doc(db, 'merchants', user.uid),
-        (doc) => {
-          if (doc.exists()) {
-            setMerchantData({ id: user.uid, ...doc.data() } as MerchantData);
-          }
-        },
-        (error) => {
-          console.error('Error listening to merchant data:', error);
-        }
-      );
-    }
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, [user, merchantData?.id]);
-
   const loginCustomer = async (email: string, password: string) => {
     try {
       setError(null);
       setLoading(true);
       
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await auth().signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
       // Verify user is a customer
-      const customerDoc = await getDoc(doc(db, 'customers', user.uid));
-      if (!customerDoc.exists()) {
-        await signOut(auth);
+      const customerDoc = await firestore().collection('customer').doc(user.uid).get();
+      if (!customerDoc.exists) {
+        await auth().signOut();
         throw new Error('Account not found as customer');
       }
     } catch (err: any) {
@@ -216,13 +153,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       setLoading(true);
       
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await auth().signInWithEmailAndPassword(email, password);
       const user = userCredential.user;
       
       // Verify user is a merchant
-      const merchantDoc = await getDoc(doc(db, 'merchants', user.uid));
-      if (!merchantDoc.exists()) {
-        await signOut(auth);
+      const merchantDoc = await firestore().collection('merchant').doc(user.uid).get();
+      if (!merchantDoc.exists) {
+        await auth().signOut();
         throw new Error('Account not found as merchant');
       }
     } catch (err: any) {
@@ -242,30 +179,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('Email is required');
       }
 
-      const userCredential = await createUserWithEmailAndPassword(auth, userData.email, password);
+      const userCredential = await auth().createUserWithEmailAndPassword(userData.email, password);
       const user = userCredential.user;
-
-      // Update profile
-      await updateProfile(user, {
-        displayName: `${userData.firstName} ${userData.lastName}`
-      });
 
       // Save customer data
       const customerData: CustomerData = {
         id: user.uid,
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
+        first_name: userData.first_name || '',
+        last_name: userData.last_name || '',
         email: userData.email,
-        phone: userData.phone || '',
-        dateOfBirth: userData.dateOfBirth || '',
+        phone_number: userData.phone_number || '',
+        birth_date: userData.birth_date || '',
         city: userData.city || '',
-        postalCode: userData.postalCode || '',
+        zip_code: userData.zip_code || '',
         points: 0,
-        level: 1,
-        createdAt: new Date()
+        createdAt: firestore.FieldValue.serverTimestamp()
       };
 
-      await setDoc(doc(db, 'customers', user.uid), customerData);
+      await firestore().collection('customer').doc(user.uid).set(customerData);
     } catch (err: any) {
       setError(err.message || 'Registration failed');
       throw err;
@@ -283,32 +214,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('Email is required');
       }
 
-      const userCredential = await createUserWithEmailAndPassword(auth, userData.email, password);
+      const userCredential = await auth().createUserWithEmailAndPassword(userData.email, password);
       const user = userCredential.user;
-
-      // Update profile
-      await updateProfile(user, {
-        displayName: userData.businessName
-      });
 
       // Save merchant data
       const merchantData: MerchantData = {
         id: user.uid,
-        businessName: userData.businessName || '',
+        company_name: userData.company_name || '',
+        business_type: userData.business_type || '',
+        owner_name: userData.owner_name || '',
         email: userData.email,
-        phone: userData.phone || '',
         address: userData.address || '',
         city: userData.city || '',
-        postalCode: userData.postalCode || '',
-        category: userData.category || '',
-        description: userData.description || '',
-        website: userData.website,
-        logo: userData.logo,
-        isVerified: false,
-        createdAt: new Date()
+        postal_code: userData.postal_code || '',
+        shortDescription: userData.shortDescription || '',
+        createdAt: firestore.FieldValue.serverTimestamp()
       };
 
-      await setDoc(doc(db, 'merchants', user.uid), merchantData);
+      await firestore().collection('merchant').doc(user.uid).set(merchantData);
     } catch (err: any) {
       setError(err.message || 'Registration failed');
       throw err;
@@ -320,7 +243,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     try {
       setError(null);
-      await signOut(auth);
+      await auth().signOut();
     } catch (err: any) {
       setError(err.message || 'Logout failed');
       throw err;
@@ -330,43 +253,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const resetPassword = async (email: string) => {
     try {
       setError(null);
-      await sendPasswordResetEmail(auth, email);
+      await auth().sendPasswordResetEmail(email);
     } catch (err: any) {
       setError(err.message || 'Password reset failed');
       throw err;
     }
   };
 
-  const updateUserProfile = async (displayName: string) => {
-    try {
-      setError(null);
-      if (user) {
-        await updateProfile(user, { displayName });
-      }
-    } catch (err: any) {
-      setError(err.message || 'Profile update failed');
-      throw err;
-    }
-  };
-
   const value: AuthContextType = {
-    // State
-    user,
+    customer,
     customerData,
+    merchant,
     merchantData,
     loading,
     error,
-    
-    // Methods
     loginCustomer,
     loginMerchant,
     registerCustomer,
     registerMerchant,
     logout,
     resetPassword,
-    updateUserProfile,
-    
-    // Computed
     isCustomer: !!customerData,
     isMerchant: !!merchantData,
   };

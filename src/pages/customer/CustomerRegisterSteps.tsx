@@ -17,10 +17,8 @@ interface FormErrors {
   zip_code?: string
   city?: string
   email?: string
-  occupation?: string
   password?: string
   confirmPassword?: string
-  why_naymo?: string
   general?: string
 }
 
@@ -33,11 +31,8 @@ interface FormData {
   zip_code: string
   city: string
   email: string
-  occupation: string
   password: string
   confirmPassword: string
-  newsletter: boolean
-  why_naymo: string[]
 }
 
 interface StepProps {
@@ -51,18 +46,13 @@ const steps = [
   {
     id: 'customer',
     title: 'Information client',
-    fields: ['last_name', 'first_name', 'birth_date', 'phone_number', 'occupation', 'email', 'password'],
+    fields: ['last_name', 'first_name', 'birth_date', 'phone_number', 'email', 'password'],
   },
   {
     id: 'location',
     title: 'Localisation',
     fields: ['city', 'zip_code'],
   },
-  {
-    id: 'preferences',
-    title: 'Préférences',
-    fields: ['newsletter', 'why_naymo']
-  }
 ]
 
 const CustomerRegisterSteps = () => {
@@ -76,11 +66,8 @@ const CustomerRegisterSteps = () => {
     zip_code: '',
     city: '',
     email: '',
-    occupation: '',
     password: '',
     confirmPassword: '',
-    newsletter: false,
-    why_naymo: []
   })
   const [errors, setErrors] = useState<FormErrors>({})
 
@@ -111,9 +98,6 @@ const CustomerRegisterSteps = () => {
       if (!formData.phone_number) newErrors.phone_number = 'Le numéro de téléphone est requis'
       else if (!/^\d{10}$/.test(formData.phone_number)) newErrors.phone_number = 'Numéro de téléphone invalide (10 chiffres requis)'
     }
-    if (stepFields.includes('occupation')) {
-      if (!formData.occupation) newErrors.occupation = 'La profession est requise'
-    }
     if (stepFields.includes('email')) {
       if (!formData.email) newErrors.email = 'L\'email est requis'
       else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email invalide'
@@ -134,9 +118,6 @@ const CustomerRegisterSteps = () => {
       if (!formData.zip_code) newErrors.zip_code = 'Le code postal est requis'
       else if (!/^\d{5}$/.test(formData.zip_code)) newErrors.zip_code = 'Code postal invalide (5 chiffres requis)'
     }
-    if (stepFields.includes('why_naymo')) {
-      if (formData.why_naymo.length === 0) newErrors.why_naymo = 'Au moins une raison est requise'
-    }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -149,8 +130,6 @@ const CustomerRegisterSteps = () => {
 
     if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked })
-    } else if (name === 'why_naymo') {
-      setFormData({ ...formData, [name]: value.split(',').map((item) => item.trim()) })
     } else if (name === 'phone_number') {
       const onlyDigits = value.replace(/\D/g, '') // Supprime tout sauf chiffres
       if (onlyDigits.length <= 10) {
@@ -187,9 +166,6 @@ const CustomerRegisterSteps = () => {
         zip_code: formData.zip_code,
         city: formData.city,
         email: formData.email,
-        occupation: formData.occupation,
-        newsletter: formData.newsletter,
-        why_naymo: formData.why_naymo
       })
 
       console.log("Données du client enregistrées sous l'UID : ", user.uid)
@@ -274,9 +250,6 @@ const CustomerRegisterSteps = () => {
             {currentStep === 1 && (
               <LocationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
-            {currentStep === 2 && (
-              <PreferencesStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
-            )}
 
             <div className="flex justify-between pt-6">
               <Button
@@ -352,14 +325,6 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
         error={errors.phone_number}
       />
       <Input 
-        label="Profession" 
-        name="occupation" 
-        value={formData.occupation} 
-        onChange={onChange} 
-        placeholder="Ex: Fleuriste" 
-        error={errors.occupation}
-      />
-      <Input 
         label="Adresse e-mail" 
         name="email" 
         type="email" 
@@ -418,37 +383,6 @@ const LocationStep = ({ formData, onChange, errors }: StepProps) => (
       maxLength={5}
       type="text"
       error={errors.zip_code}
-    />
-  </div>
-)
-
-// Étape 3
-const PreferencesStep = ({ formData, onChange, errors }: StepProps) => (
-  <div className="space-y-6">
-    <div className="text-center mb-6">
-      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center shadow-xl">
-        <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd"/>
-        </svg>
-      </div>
-      <h3 className="text-xl font-bold text-[#396F04]">Vos préférences</h3>
-    </div>
-    <div className="flex items-center space-x-2">
-      <Input
-        label="S'inscrire à la newsletter"
-        name="newsletter"
-        type="checkbox"
-        checked={formData.newsletter}
-        onChange={onChange}
-      />
-    </div>
-    <Input
-      label="Pourquoi Naymo ?"
-      name="why_naymo"
-      value={formData.why_naymo.join(', ')}
-      onChange={onChange}
-      placeholder="Ex: Visibilité, communauté..."
-      error={errors.why_naymo}
     />
   </div>
 )

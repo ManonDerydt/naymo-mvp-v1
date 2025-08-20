@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Store } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Store, User } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
 
@@ -10,7 +10,6 @@ import { auth, db } from '@/components/firebase/firebaseConfig'
 
 // Interface pour les erreurs
 interface FormErrors {
-  gender?: string
   last_name?: string
   first_name?: string
   birth_date?: string
@@ -20,13 +19,13 @@ interface FormErrors {
   email?: string
   occupation?: string
   password?: string
+  confirmPassword?: string
   why_naymo?: string
   general?: string
 }
 
 // Définition d'une interface pour le formulaire
 interface FormData {
-  gender: string
   last_name: string
   first_name: string
   birth_date: string
@@ -36,6 +35,7 @@ interface FormData {
   email: string
   occupation: string
   password: string
+  confirmPassword: string
   newsletter: boolean
   why_naymo: string[]
 }
@@ -51,7 +51,7 @@ const steps = [
   {
     id: 'customer',
     title: 'Information client',
-    fields: ['gender', 'last_name', 'first_name', 'birth_date', 'phone_number', 'occupation', 'email', 'password',],
+    fields: ['last_name', 'first_name', 'birth_date', 'phone_number', 'occupation', 'email', 'password'],
   },
   {
     id: 'location',
@@ -69,7 +69,6 @@ const CustomerRegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState<FormData>({
-    gender: '',
     last_name: '',
     first_name: '',
     birth_date: '',
@@ -79,6 +78,7 @@ const CustomerRegisterSteps = () => {
     email: '',
     occupation: '',
     password: '',
+    confirmPassword: '',
     newsletter: false,
     why_naymo: []
   })
@@ -88,9 +88,6 @@ const CustomerRegisterSteps = () => {
     const newErrors: FormErrors = {}
     const stepFields = steps[stepIndex].fields
 
-    if (stepFields.includes('gender')) {
-      if (!formData.gender) newErrors.gender = 'Le genre est requis'
-    }
     if (stepFields.includes('first_name')) {
       if (!formData.first_name) newErrors.first_name = 'Le prénom est requis'
     }
@@ -125,6 +122,11 @@ const CustomerRegisterSteps = () => {
       if (!formData.password) newErrors.password = 'Le mot de passe est requis'
       else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
     }
+    if (stepFields.includes('password') && formData.password) {
+      if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise'
+      else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
+    }
+    
     if (stepFields.includes('city')) {
       if (!formData.city) newErrors.city = 'La ville est requise'
     }
@@ -178,7 +180,6 @@ const CustomerRegisterSteps = () => {
 
       // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
       await setDoc(doc(db, "customer", user.uid), {
-        gender: formData.gender,
         last_name: formData.last_name,
         first_name: formData.first_name,
         birth_date: formData.birth_date,
@@ -230,7 +231,7 @@ const CustomerRegisterSteps = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/20 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full space-y-8">
         <div className="flex justify-start">
           <Link 
@@ -242,19 +243,30 @@ const CustomerRegisterSteps = () => {
           </Link>
         </div>
         <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-primary-500" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <div className="mx-auto h-16 w-16 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-2xl mb-6">
+            <User className="h-8 w-8 text-white" />
+          </div>
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#589507] to-[#396F04] bg-clip-text text-transparent">
             Créer votre compte client
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Étape {currentStep + 1} sur {steps.length}
-          </p>
+          <div className="mt-4 flex items-center justify-center space-x-2">
+            <div className="text-sm font-medium text-[#589507] bg-[#ebffbc] px-3 py-1 rounded-full">
+              Étape {currentStep + 1} sur {steps.length}
+            </div>
+            <div className="group relative">
+              <div className="text-sm text-gray-500 cursor-help">
+                {steps[currentStep].title}
+              </div>
+            </div>
+          </div>
           {errors.general && (
-            <p className="mt-2 text-sm text-red-600">{errors.general}</p>
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{errors.general}</p>
+            </div>
           )}
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-8">
+        <div className="bg-white/95 backdrop-blur-lg shadow-2xl rounded-2xl p-8 border border-[#7ebd07]/30">
           <div className="space-y-6">
             {currentStep === 0 && (
               <CustomerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
@@ -271,7 +283,7 @@ const CustomerRegisterSteps = () => {
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="space-x-2"
+                className="flex items-center space-x-2 px-6 py-3 border-[#7ebd07] text-[#589507] hover:bg-[#ebffbc] disabled:opacity-50"
                 size="lg"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -279,7 +291,7 @@ const CustomerRegisterSteps = () => {
               </Button>
               <Button
                 onClick={nextStep}
-                className="space-x-2"
+                className="flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] shadow-lg transform hover:scale-105 transition-all duration-200"
                 size="lg"
               >
                 <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>
@@ -295,33 +307,15 @@ const CustomerRegisterSteps = () => {
 
 // Étape 1
 const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
-
   return (
     <div className="space-y-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
-      {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
-      <div className="flex gap-4">
-        <label className="flex items-center space-x-2">
-          <input
-            type="radio"
-            name="gender"
-            value="Masculin"
-            checked={formData.gender === 'Masculin'}
-            onChange={onChange}
-          />
-          <span>Masculin</span>
-        </label>
-        <label className="flex items-center space-x-2">
-          <input
-            type="radio"
-            name="gender"
-            value="Féminin"
-            checked={formData.gender === 'Féminin'}
-            onChange={onChange}
-          />
-          <span>Féminin</span>
-        </label>
+      <div className="text-center mb-6">
+        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#ebffbc] to-[#d4f5a3] rounded-full flex items-center justify-center shadow-xl">
+          <User className="w-8 h-8 text-[#589507]" />
+        </div>
+        <h3 className="text-xl font-bold text-[#396F04]">Vos informations personnelles</h3>
       </div>
+      
       <Input
         label="Prénom"
         name="first_name"
@@ -383,6 +377,15 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
         placeholder="********"
         error={errors.password} 
       />
+      <Input 
+        label="Confirmer le mot de passe" 
+        name="confirmPassword" 
+        type="password" 
+        value={formData.confirmPassword} 
+        onChange={onChange} 
+        placeholder="********"
+        error={errors.confirmPassword} 
+      />
     </div>
   )
 }
@@ -390,6 +393,14 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
 // Étape 2
 const LocationStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
+    <div className="text-center mb-6">
+      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-xl">
+        <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+        </svg>
+      </div>
+      <h3 className="text-xl font-bold text-[#396F04]">Où habitez-vous ?</h3>
+    </div>
     <Input
       label="Ville"
       name="city"
@@ -414,6 +425,14 @@ const LocationStep = ({ formData, onChange, errors }: StepProps) => (
 // Étape 3
 const PreferencesStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
+    <div className="text-center mb-6">
+      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center shadow-xl">
+        <svg className="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd"/>
+        </svg>
+      </div>
+      <h3 className="text-xl font-bold text-[#396F04]">Vos préférences</h3>
+    </div>
     <div className="flex items-center space-x-2">
       <Input
         label="S'inscrire à la newsletter"

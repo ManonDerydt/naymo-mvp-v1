@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react"
+import { Bell, TrendingUp, Award, Gift, MapPin, Star, User, Calendar, Phone } from "lucide-react"
 import logo from "../../assets/Logo.png"
 import { useAuth } from "@/components/firebase/useAuth"
 import { useEffect, useState } from "react"
@@ -109,129 +109,156 @@ const CustomerMyNaymo = () => {
   }, [customer])
   
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/10 via-white to-[#ebffbc]/20 pb-28">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
-        <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-        <div className="flex-1 flex justify-end">
-          {/* <div className="relative">
-            <Bell size={24} className="text-green-500 fill-current" />
-            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
-          </div> */}
+      <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-[#7ebd07]/20 shadow-xl z-50">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">
+                {customerData?.first_name?.charAt(0) || 'U'}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                Mon profil Naymo
+              </p>
+              <p className="text-xs text-gray-500">Niveau {Math.floor((points || 0) / 100)}</p>
+            </div>
+          </div>
+          <img src={logo} alt="Naymo" className="h-8" />
         </div>
       </div>
 
       {/* Contenu principal */}
-      <div className="pt-24 px-6 space-y-10 max-w-5xl mx-auto">
+      <div className="pt-24 pb-10 px-4 space-y-6">
         
-        {/* Section Points - Nouveau style */}
-        <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 space-y-6">
-          <h2 className="text-3xl font-bold text-[#396F04] text-center mb-4">Vos points</h2>
+        {/* Profil utilisateur */}
+        <section className="bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Carte Points */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#7ebd07] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Nombre de points</p>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-white" />
               </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
-                {points !== null ? points : "Chargement..."}
-              </p>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
-                <div 
-                  className="bg-gradient-to-r from-[#7ebd07] to-[#589507] h-2 rounded-full" 
-                  style={{ width: '75%' }}>
+              <div>
+                <h2 className="text-2xl font-bold">{customerData?.first_name} {customerData?.last_name}</h2>
+                <p className="text-white/80">Membre depuis {new Date().getFullYear()}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-medium">Date de naissance</span>
                 </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">Prochain niveau: 200 points</p>
-            </div>
-
-            {/* Carte Bons Restants */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#589507] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Bons restants</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
-                {bonsRestants}
-              </p>
-              <p className="text-xs text-gray-500 mt-2">1 bon = 100 points</p>
-            </div>
-
-            {/* Carte Bons utilisés */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#396F04] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Bons utilisés</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
-                {usedBons > 0 ? usedBons : "Aucun bon utilisé"}
-              </p>
-            </div>
-
-            {/* Carte Commerçant préféré */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#7ebd07] w-3 h-3 rounded-full" />
-                <p className="text-[#396F04] font-semibold text-lg">Votre commerçant préféré</p>
+                <p className="text-lg font-bold">
+                  {customerData?.birth_date 
+                    ? new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                    : "Non renseignée"}
+                </p>
               </div>
 
-              {favMerchant ? (
-                <>
-                  <p className="text-2xl font-bold text-gray-900">{favMerchant.name}</p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {favMerchant.points} points cumulés
-                  </p>
-                </>
-              ) : (
-                <p className="text-gray-500 italic">Aucun point attribué pour l’instant</p>
-              )}
-            </div>
+              <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Phone className="w-4 h-4" />
+                  <span className="text-sm font-medium">Téléphone</span>
+                </div>
+                <p className="text-lg font-bold">{customerData?.phone_number || "Non renseigné"}</p>
+              </div>
 
-            {/* Carte Vues */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#589507] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Nombre de vues</p>
+              <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center space-x-2 mb-2">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-medium">Ville</span>
+                </div>
+                <p className="text-lg font-bold">{customerData?.city || "Non renseignée"}</p>
               </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">567</p>
-              <div className="mt-4 flex items-center">
-                <span className="text-[#589507] font-semibold">+12%</span>
-                <span className="text-gray-500 text-sm ml-2">vs mois dernier</span>
-              </div>
-            </div>
 
-            {/* Historique */}
-            <div className="bg-gradient-to-br from-[#FFCD29]/20 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#FFCD29]/30 cursor-pointer hover:shadow-xl transition-all duration-200">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#FFCD29] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Historique de points</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-[#FFCD29] mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <p className="text-sm text-[#396F04] font-medium mt-2 underline">Voir détails</p>
-            </div>
-
-            {/* Achats */}
-            <div className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg p-6 flex flex-col items-center justify-center border border-[#7ebd07]/30">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-[#396F04] w-3 h-3 rounded-full"></div>
-                <p className="text-[#396F04] font-semibold text-lg">Nombre d'achats</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">12</p>
-              <div className="mt-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#ebffbc] text-[#396F04]">
-                  Top 20%
-                </span>
+              <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Award className="w-4 h-4" />
+                  <span className="text-sm font-medium">Niveau</span>
+                </div>
+                <p className="text-lg font-bold">Niveau {Math.floor((points || 0) / 100)}</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ... le reste de votre code ... */}
+        {/* Statistiques */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-[#7ebd07]/10 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-[#7ebd07]" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Points totaux</p>
+                <p className="text-2xl font-bold text-gray-900">{points || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <Gift className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Bons disponibles</p>
+                <p className="text-2xl font-bold text-gray-900">{bonsRestants}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                <Award className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Bons utilisés</p>
+                <p className="text-2xl font-bold text-gray-900">{usedBons}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                <Star className="w-5 h-5 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Commerçant préféré</p>
+                <p className="text-sm font-bold text-gray-900">
+                  {favMerchant ? favMerchant.name : "Aucun"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Commerçant préféré détaillé */}
+        {favMerchant && (
+          <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+            <h3 className="text-lg font-bold text-[#396F04] mb-4 flex items-center">
+              <Star className="w-5 h-5 mr-2 text-yellow-500" />
+              Votre commerçant préféré
+            </h3>
+            <div className="bg-gradient-to-r from-[#ebffbc]/30 to-white rounded-xl p-4 border border-[#7ebd07]/20">
+              <h4 className="font-bold text-gray-900 text-lg">{favMerchant.name}</h4>
+              <p className="text-[#589507] font-medium">{favMerchant.points} points cumulés</p>
+            </div>
+          </section>
+        )}
       </div>
     </div>
   )

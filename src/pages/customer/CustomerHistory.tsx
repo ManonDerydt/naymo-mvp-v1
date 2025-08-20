@@ -1,4 +1,4 @@
-import { Bell, Star } from "lucide-react"
+import { Bell, Star, MapPin, Mail, Phone, Award, Calendar, TrendingUp } from "lucide-react"
 import logo from "../../assets/Logo.png"
 import { useEffect, useState } from "react"
 import { collection, doc, getDoc, getDocs, query, setDoc, where, DocumentData } from "firebase/firestore"
@@ -44,7 +44,6 @@ const CustomerHistory = () => {
     const { customer } = useAuth()
     const [history, setHistory] = useState<MerchantHistory[]>([])
     const [activeOffers, setActiveOffers] = useState<any[]>([])
-    console.log(history)
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -183,29 +182,149 @@ const CustomerHistory = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-28">
+        <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/10 via-white to-[#ebffbc]/20 pb-28">
             {/* HEADER */}
-            <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
-                <div className="flex-1" />
-                <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-                <div className="flex-1 flex justify-end">
-                    {/* <div className="relative">
-                        <Bell size={24} className="text-green-500 fill-current" />
-                        <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
-                    </div> */}
+            <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-[#7ebd07]/20 shadow-xl z-50">
+                <div className="flex items-center justify-between px-6 py-4">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-lg">
+                            <Calendar className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-900">Mon historique</p>
+                            <p className="text-xs text-gray-500">Mes achats et offres</p>
+                        </div>
+                    </div>
+                    <img src={logo} alt="Naymo" className="h-8" />
                 </div>
             </div>
 
             {/* CONTENU */}
-            <div className="pt-20 px-4 space-y-4">
-                {/* SECTION : Historique de vos commerçants */}
-                <h2 className="text-xl font-bold text-[#396F04]">Historique de vos commerçants</h2>
+            <div className="pt-24 pb-10 px-4 space-y-6">
+                {/* SECTION : Mes commerçants */}
+                <section>
+                    <div className="flex items-center space-x-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center">
+                            <TrendingUp className="w-4 h-4 text-white" />
+                        </div>
+                        <h2 className="text-xl font-bold text-[#396F04]">Mes commerçants</h2>
+                    </div>
+                    
                     {history.length === 0 ? (
-                        <p className="text-gray-600">Aucun commerçant visité pour le moment.</p>
+                        <div className="text-center py-12 bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20">
+                            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <TrendingUp className="w-8 h-8 text-gray-400" />
+                            </div>
+                            <p className="text-gray-600 font-medium">Aucun commerçant visité</p>
+                            <p className="text-sm text-gray-400 mt-1">Vos achats apparaîtront ici</p>
+                        </div>
                     ) : (
-                        history.map((merchant) => (
-                            <div key={merchant.id} className="bg-white rounded-xl shadow-lg border border-[#7ebd07]/20 p-4 flex flex-col">
-                                <div className="flex items-center mb-2">
+                        <div className="space-y-4">
+                            {history.map((merchant) => (
+                                <div key={merchant.id} className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+                                    <div className="flex items-start space-x-4 mb-4">
+                                        <img
+                                            src={merchant.logo}
+                                            alt={merchant.company_name}
+                                            className="w-16 h-16 rounded-2xl object-cover shadow-md"
+                                        />
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-bold text-gray-900">{merchant.company_name}</h3>
+                                            <p className="text-sm text-[#589507] font-medium">{merchant.business_type}</p>
+                                            <div className="flex items-center space-x-4 mt-2">
+                                                <div className="flex items-center space-x-1">
+                                                    <Award className="w-4 h-4 text-[#7ebd07]" />
+                                                    <span className="text-sm font-medium text-[#396F04]">{merchant.points} pts</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-gray-50 rounded-xl p-4 space-y-3 mb-4">
+                                        {merchant.address && (
+                                            <div className="flex items-center space-x-3">
+                                                <MapPin className="w-4 h-4 text-gray-400" />
+                                                <p className="text-sm text-gray-600">
+                                                    {merchant.address}
+                                                    {merchant.postal_code && `, ${merchant.postal_code}`}
+                                                    {merchant.city && ` - ${merchant.city}`}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {merchant.email && (
+                                            <div className="flex items-center space-x-3">
+                                                <Mail className="w-4 h-4 text-gray-400" />
+                                                <p className="text-sm text-gray-600">{merchant.email}</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">Votre note</p>
+                                            <StarRating
+                                                rating={merchant.rating}
+                                                onRate={(rate) => handleRating(merchant.id, rate)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* SECTION : Offres actives */}
+                <section>
+                    <div className="flex items-center space-x-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-[#FFCD29] to-yellow-500 rounded-full flex items-center justify-center">
+                            <Award className="w-4 h-4 text-white" />
+                        </div>
+                        <h2 className="text-xl font-bold text-[#396F04]">Mes offres actives</h2>
+                    </div>
+
+                    {activeOffers.length === 0 ? (
+                        <div className="text-center py-12 bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20">
+                            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Award className="w-8 h-8 text-yellow-500" />
+                            </div>
+                            <p className="text-gray-600 font-medium">Aucune offre active</p>
+                            <p className="text-sm text-gray-400 mt-1">Découvrez les offres disponibles</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            {activeOffers.map((offer) => (
+                                <div key={offer.id} className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+                                    <div className="flex items-start space-x-4">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-[#FFCD29] to-yellow-500 rounded-xl flex items-center justify-center shadow-md">
+                                            <Award className="w-6 h-6 text-white" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-1">{offer.name}</h3>
+                                            <p className="text-sm text-gray-600 mb-3">{offer.description}</p>
+                                            
+                                            <div className="flex items-center space-x-4">
+                                                <div className="flex items-center space-x-1">
+                                                    <Calendar className="w-4 h-4 text-gray-400" />
+                                                    <span className="text-xs text-gray-500">Durée : {offer.duration} mois</span>
+                                                </div>
+                                                {offer.discount && (
+                                                    <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                                                        <span className="text-xs font-bold">-{offer.discount}%</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
+        </div>
+    )
+}
                                     <img
                                         src={merchant.logo}
                                         alt={merchant.company_name}

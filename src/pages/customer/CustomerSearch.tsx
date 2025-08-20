@@ -1,4 +1,4 @@
-import { Bell, Search, MapPin, Star } from "lucide-react"
+import { Bell, Search, MapPin, Star, Filter, Grid, List } from "lucide-react"
 import logo from "../../assets/Logo.png"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/components/firebase/useAuth"
@@ -9,6 +9,7 @@ import Map from "@/components/map/Map"
 const CustomerSearch = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [stores, setStores] = useState<{ 
         name: string; 
         type: string; 
@@ -95,23 +96,27 @@ const CustomerSearch = () => {
     };
 
     return (
-        <div className="min-h-screen to-blue-50 pb-10">
+        <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/10 via-white to-[#ebffbc]/20 pb-28">
             {/* HEADER */}
-            <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
-                <div className="flex-1" />
-                <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-                <div className="flex-1 flex justify-end">
-                    {/* <div className="relative">
-                        <Bell size={24} className="text-green-500 fill-current" />
-                        <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
-                    </div> */}
+            <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-[#7ebd07]/20 shadow-xl z-50">
+                <div className="flex items-center justify-between px-6 py-4">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-lg">
+                            <Search className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-900">Recherche</p>
+                            <p className="text-xs text-gray-500">Trouvez vos commerces</p>
+                        </div>
+                    </div>
+                    <img src={logo} alt="Naymo" className="h-8" />
                 </div>
             </div>
 
             {/* Contenu principal */}
-            <div className="pt-20 px-4 space-y-6">
+            <div className="pt-24 pb-10 px-4 space-y-6">
                 {/* Barre de recherche moderne */}
-                <div className="relative">
+                <div className="relative bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-1">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <Search className="h-5 w-5 text-[#7ebd07]" />
                     </div>
@@ -120,17 +125,37 @@ const CustomerSearch = () => {
                         placeholder="Rechercher un magasin..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 bg-white border border-[#7ebd07]/30 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent text-gray-900 placeholder-gray-500 font-medium"
+                        className="w-full pl-12 pr-16 py-4 bg-transparent focus:outline-none text-gray-900 placeholder-gray-500 font-medium"
                     />
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
-                        <MapPin className="h-5 w-5 text-[#589507]" />
+                        <div className="flex items-center space-x-2">
+                            <button
+                                onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+                                className="p-2 rounded-lg bg-[#ebffbc]/50 text-[#589507] hover:bg-[#ebffbc] transition-colors"
+                            >
+                                {viewMode === 'list' ? <Grid className="w-4 h-4" /> : <List className="w-4 h-4" />}
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* Filtres par type - Style gamifié */}
-                <div className="space-y-3">
-                    <h3 className="text-lg font-bold text-[#396F04] px-2">Catégories</h3>
-                    <div className="flex overflow-x-auto space-x-3 pb-2 px-2">
+                <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-[#396F04] flex items-center">
+                            <Filter className="w-5 h-5 mr-2" />
+                            Catégories
+                        </h3>
+                        {selectedType && (
+                            <button
+                                onClick={() => setSelectedType(null)}
+                                className="text-sm text-[#589507] font-medium hover:text-[#396F04] transition-colors"
+                            >
+                                Tout afficher
+                            </button>
+                        )}
+                    </div>
+                    <div className="flex overflow-x-auto space-x-3 pb-2">
                         {uniqueTypes.map((type) => (
                             <button
                                 key={type}
@@ -146,72 +171,68 @@ const CustomerSearch = () => {
                             </button>
                         ))}
                     </div>
-                </div>
+                </section>
 
                 {/* Carte interactive avec style moderne */}
-                <div className="space-y-3">
-                    <h3 className="text-lg font-bold text-[#396F04] px-2">Carte interactive</h3>
-                    <div className="w-full h-96 bg-white rounded-2xl overflow-hidden shadow-lg border border-[#7ebd07]/20">
+                <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+                    <h3 className="text-lg font-bold text-[#396F04] mb-4 flex items-center">
+                        <MapPin className="w-5 h-5 mr-2" />
+                        Carte interactive
+                    </h3>
+                    <div className="w-full h-80 bg-gray-100 rounded-xl overflow-hidden">
                         <Map stores={filteredResults} />
                     </div>
-                </div>
+                </section>
 
                 {/* Résultats de la recherche - Style cards modernes */}
                 {(searchTerm.length > 0 || selectedType) && !loading && (
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between px-2">
-                            <h3 className="text-lg font-bold text-[#396F04]">
+                    <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-bold text-[#396F04] flex items-center">
+                                <Search className="w-5 h-5 mr-2" />
                                 Résultats ({filteredResults.length})
                             </h3>
-                            {selectedType && (
-                                <button
-                                    onClick={() => setSelectedType(null)}
-                                    className="text-sm text-[#589507] font-medium hover:text-[#396F04] transition-colors"
-                                >
-                                    Effacer les filtres
-                                </button>
-                            )}
                         </div>
                         
                         {filteredResults.length > 0 ? (
-                            <div className="space-y-3">
+                            <div className={viewMode === 'grid' ? "grid grid-cols-1 sm:grid-cols-2 gap-4" : "space-y-4"}>
                                 {filteredResults.map((result, index) => (
-                                    <div key={index} className="bg-white rounded-2xl shadow-lg p-5 border border-[#7ebd07]/20 hover:shadow-xl transition-all duration-200">
+                                    <div key={index} className="bg-gray-50 rounded-2xl p-5 border border-[#7ebd07]/10 hover:shadow-lg hover:bg-white transition-all duration-200">
                                         <div className="flex items-start space-x-4">
                                             <div className="relative">
                                                 <img
                                                     src={result.logo}
                                                     alt={`${result.name} logo`}
-                                                    className="w-16 h-16 object-cover rounded-2xl shadow-md"
+                                                    className="w-14 h-14 object-cover rounded-2xl shadow-md"
                                                     onError={(e) => { e.currentTarget.src = "/default-logo.png"; }}
                                                 />
                                                 {result.hasOffers && (
-                                                    <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-1 shadow-lg">
+                                                    <div className="absolute -top-1 -right-1 bg-[#FFCD29] rounded-full p-1 shadow-lg">
                                                         <Star className="w-3 h-3 text-white fill-current" />
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="flex-1">
-                                                <div className="flex items-start justify-between">
+                                                <div className="flex items-start justify-between mb-2">
                                                     <div>
-                                                        <h4 className="text-lg font-bold text-gray-900">{result.name}</h4>
-                                                        <div className="flex items-center space-x-2 mt-1">
+                                                        <h4 className="text-base font-bold text-gray-900">{result.name}</h4>
+                                                        <div className="flex items-center space-x-2 mt-1 mb-2">
                                                             <span className="text-sm">{getTypeEmoji(result.type)}</span>
                                                             <span className="text-sm font-medium text-[#589507]">{result.type}</span>
                                                         </div>
                                                     </div>
                                                     {result.hasOffers && (
-                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-[#FFCD29]/20 text-[#396F04] border border-[#FFCD29]/30">
-                                                            Offres disponibles
+                                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#FFCD29] text-white shadow-sm">
+                                                            Offres
                                                         </span>
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-gray-600 mt-2">{result.shortDescription}</p>
-                                                <div className="flex items-center space-x-2 mt-2">
+                                                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{result.shortDescription}</p>
+                                                <div className="flex items-center space-x-2 mb-1">
                                                     <MapPin className="w-3 h-3 text-gray-400" />
                                                     <p className="text-xs text-gray-500">{result.address}</p>
                                                 </div>
-                                                <p className="text-xs text-gray-400 mt-1">Propriétaire : {result.owner_name}</p>
+                                                <p className="text-xs text-gray-400">Gérant : {result.owner_name}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -219,16 +240,18 @@ const CustomerSearch = () => {
                             </div>
                         ) : (
                             <div className="text-center py-12">
-                                <div className="text-6xl mb-4">🔍</div>
-                                <p className="text-gray-500 font-medium">Aucun magasin trouvé</p>
-                                <p className="text-sm text-gray-400">Essayez de modifier vos critères de recherche</p>
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <Search className="w-8 h-8 text-gray-400" />
+                                </div>
+                                <p className="text-gray-600 font-medium">Aucun commerce trouvé</p>
+                                <p className="text-sm text-gray-400 mt-1">Essayez de modifier vos critères</p>
                             </div>
                         )}
-                    </div>
+                    </section>
                 )}
                 
                 {loading && (
-                    <div className="text-center py-12">
+                    <div className="text-center py-12 bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20">
                         <div className="inline-flex items-center space-x-2">
                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7ebd07]"></div>
                             <span className="text-gray-600 font-medium">Chargement des magasins...</span>

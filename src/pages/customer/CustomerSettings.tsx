@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, Edit, HelpCircle, Lock, LogOut, Search, Trash2, User } from "lucide-react";
+import { Bell, Edit, HelpCircle, Lock, LogOut, Search, Trash2, User, Settings as SettingsIcon, Shield, FileText } from "lucide-react";
 import logo from "../../assets/Logo.png";
 import { useAuth } from "@/components/firebase/useAuth";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
@@ -199,51 +199,65 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   ];
 
   return (
-    <div className="min-h-screen from-green-50 via-white to-green-100 pb-28 pt-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/10 via-white to-[#ebffbc]/20 pb-28">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
-        <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-        <div className="flex-1 flex justify-end">
-          {/* <div className="relative">
-            <Bell size={24} className="text-green-500 fill-current" />
-            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
-          </div> */}
+      <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-[#7ebd07]/20 shadow-xl z-50">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-lg">
+              <SettingsIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">Paramètres</p>
+              <p className="text-xs text-gray-500">Mon compte</p>
+            </div>
+          </div>
+          <img src={logo} alt="Naymo" className="h-8" />
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto mt-16 space-y-8">
+      <div className="pt-24 pb-10 px-4 space-y-6">
         {/* Profil */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Profil</h2>
-          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 space-y-4">
+        <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-[#396F04]">Mon profil</h2>
+          </div>
+          
+          <div className="space-y-4">
             {customer && customerData ? (
               <>
                 {!isEditingProfile ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                      <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
                         <User className="text-green-600" size={20} />
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Prénom : <strong>{customerData.first_name}</strong>
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                        <Search className="text-green-600" size={20} />
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Prénom</p>
+                        <p className="text-base font-bold text-gray-900">{customerData.first_name}</p>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Email : <strong>{customerData.email}</strong>
-                      </span>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                    
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                      <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
                         <HelpCircle className="text-green-600" size={20} />
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Date de naissance :{" "}
-                        <strong>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Email</p>
+                        <p className="text-base font-bold text-gray-900">{customerData.email}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                      <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
+                        <User className="text-green-600" size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Date de naissance</p>
+                        <p className="text-base font-bold text-gray-900">
                           {customerData.birth_date
                             ? new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
                                 day: "2-digit",
@@ -251,24 +265,27 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                                 year: "numeric",
                               })
                             : "Non spécifié"}
-                        </strong>
-                      </span>
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+                    
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                      <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
                         <Lock className="text-green-600" size={20} />
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Téléphone : <strong>{customerData.phone_number || "Non spécifié"}</strong>
-                      </span>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Téléphone</p>
+                        <p className="text-base font-bold text-gray-900">{customerData.phone_number || "Non spécifié"}</p>
+                      </div>
                     </div>
-                    <div
-                      className="flex items-center gap-3 p-3 bg-[#7ebd07] rounded-2xl shadow cursor-pointer hover:bg-green-100 w-fit mt-10"
+                    
+                    <button
+                      className="w-full flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-[#7ebd07] to-[#589507] rounded-2xl shadow-lg cursor-pointer hover:from-[#589507] hover:to-[#396F04] transition-all duration-200 transform hover:scale-105"
                       onClick={() => setIsEditingProfile(true)}
                     >
                       <Edit className="text-white" size={20} />
                       <span className="font-semibold text-white">Modifier</span>
-                    </div>
+                    </button>
                   </div>
                 ) : (
                   <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
@@ -338,43 +355,53 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
         </section>
 
         {/* Mon compte */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Mon compte</h2>
-          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 space-y-4">
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setShowPasswordForm(true)}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+        <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center">
+              <Lock className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-[#396F04]">Sécurité</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all" onClick={() => setShowPasswordForm(true)}>
+              <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
                 <Lock className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-[#396F04]">Changer mon mot de passe</span>
+              <div className="flex-1">
+                <p className="font-semibold text-[#396F04]">Changer mon mot de passe</p>
+                <p className="text-sm text-gray-500">Modifiez votre mot de passe</p>
+              </div>
             </div>
+            
             {showPasswordForm && (
-              <div className="ml-12 space-y-4">
+              <div className="bg-white border border-[#7ebd07]/20 rounded-2xl p-6 space-y-4">
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mot de passe actuel"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
+                  className="block border border-gray-300 px-4 py-3 w-full rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
                 />
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Nouveau mot de passe"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
+                  className="block border border-gray-300 px-4 py-3 w-full rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
                 />
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirmer le nouveau mot de passe"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
+                  className="block border border-gray-300 px-4 py-3 w-full rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
                 />
                 <div className="flex justify-end space-x-4">
                   <button
                     type="button"
                     onClick={() => { setShowPasswordForm(false); setPassword(""); setNewPassword(""); setConfirmPassword(""); setError(null); }}
-                    className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl"
+                    className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl hover:bg-gray-300 transition-colors"
                   >
                     Annuler
                   </button>
@@ -388,33 +415,48 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                 </div>
               </div>
             )}
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setDeleteStep("reason")}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+            
+            <div className="flex items-center gap-4 p-4 bg-red-50 hover:bg-red-100 rounded-2xl cursor-pointer transition-all" onClick={() => setDeleteStep("reason")}>
+              <div className="bg-red-100 shadow-sm rounded-full p-3">
                 <Trash2 className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-[#396F04]">Supprimer mon compte</span>
+              <div className="flex-1">
+                <p className="font-semibold text-red-600">Supprimer mon compte</p>
+                <p className="text-sm text-red-500">Action irréversible</p>
+              </div>
             </div>
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={handleLogout}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
+            
+            <div className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-all" onClick={handleLogout}>
+              <div className="bg-[#7ebd07]/20 shadow-sm rounded-full p-3">
                 <LogOut className="text-[#7ebd07]" size={20} />
               </div>
-              <span className="font-semibold text-[#396F04]">Me déconnecter</span>
+              <div className="flex-1">
+                <p className="font-semibold text-[#396F04]">Me déconnecter</p>
+                <p className="text-sm text-gray-500">Fermer ma session</p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Confidentialité */}
-        <section>
-          <h2 className="text-2xl font-bold mb-4 text-[#396F04]">Confidentialité</h2>
-          <div className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
-            <div className="max-w-3xl space-y-8">
-              <section className="space-y-4">
-                <h2 className="text-lg font-bold text-[#396F04]">Documents légaux</h2>
-                <div className="grid gap-6 md:grid-cols-2">
+        <section className="bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6">
+          <div className="flex items-center space-x-3 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center">
+              <Shield className="w-4 h-4 text-white" />
+            </div>
+            <h2 className="text-xl font-bold text-[#396F04]">Confidentialité</h2>
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="text-base font-bold text-[#396F04] flex items-center">
+              <FileText className="w-4 h-4 mr-2" />
+              Documents légaux
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
                   {legalDocuments.map((doc) => (
-                    <div key={doc.title} className="p-6 bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20">
-                      <h3 className="font-bold text-[#396F04] mb-3">{doc.title}</h3>
-                      <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
+                    <div key={doc.title} className="p-4 bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl border border-[#7ebd07]/20">
+                      <h4 className="font-bold text-[#396F04] mb-2">{doc.title}</h4>
+                      <p className="text-sm text-gray-600 mb-3">{doc.description}</p>
                       <Button
                         variant="outline"
                         size="sm"
@@ -425,17 +467,16 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
                       </Button>
                     </div>
                   ))}
-                </div>
-              </section>
-              {selectedDocument && (
-                <LegalDocumentModal
-                  title={selectedDocument.title}
-                  content={selectedDocument.content}
-                  onClose={() => setSelectedDocument(null)}
-                />
-              )}
             </div>
           </div>
+          
+          {selectedDocument && (
+            <LegalDocumentModal
+              title={selectedDocument.title}
+              content={selectedDocument.content}
+              onClose={() => setSelectedDocument(null)}
+            />
+          )}
         </section>
 
         {/* Modals de suppression */}

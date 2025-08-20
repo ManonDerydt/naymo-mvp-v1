@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Eye, Pencil, ShoppingBag, Trash, TrendingUp } from 'lucide-react'
+import { Eye, Pencil, Plus, ShoppingBag, Trash, TrendingUp } from 'lucide-react'
 import { collection, query, where, getDocs, deleteDoc, doc, onSnapshot } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 import { Button } from '@/components/ui'

@@ -159,7 +159,7 @@ const CustomerHistory = () => {
                 updatedAt: new Date(), // facultatif
             }, { merge: true });
 
-            // Mise à jour de l’état local
+            // Mise à jour de l'état local
             setHistory(prev =>
                 prev.map(item =>
                     item.id === merchantId
@@ -177,7 +177,7 @@ const CustomerHistory = () => {
                 createdAt: new Date(),
             });
 
-            // Optionnel : tu peux aussi ajouter ce nouvel item dans l’état local si besoin
+            // Optionnel : tu peux aussi ajouter ce nouvel item dans l'état local si besoin
         }
     };
 
@@ -321,66 +321,6 @@ const CustomerHistory = () => {
                         </div>
                     )}
                 </section>
-            </div>
-        </div>
-    )
-}
-                                    <img
-                                        src={merchant.logo}
-                                        alt={merchant.company_name}
-                                        className="w-12 h-12 rounded-full mr-4 object-cover"
-                                    />
-                                    <div className="flex-1">
-                                        <h3 className="text-lg font-bold">{merchant.company_name}</h3>
-                                        <p className="text-sm text-gray-500">{merchant.business_type}</p>
-                                    </div>
-                                    <span className="text-sm text-gray-500">{merchant.points} pts</span>
-                                </div>
-
-                                <div className="text-sm text-gray-600 space-y-1 mb-2">
-                                    {merchant.address && (
-                                        <p>📍 {merchant.address}{merchant.postal_code && `, ${merchant.postal_code}`} {merchant.city && `- ${merchant.city}`}</p>
-                                    )}
-                                    {merchant.email && <p>✉️ {merchant.email}</p>}
-                                </div>
-
-                                <StarRating
-                                    rating={merchant.rating}
-                                    onRate={(rate) => handleRating(merchant.id, rate)}
-                                />
-                            </div>
-                        ))
-                    )}
-                {/* SECTION : Offres en cours */}
-                <div className="mt-10">
-                    <h2 className="text-xl font-bold text-[#396F04]">Offres en cours</h2>
-
-                    {activeOffers.length === 0 ? (
-                        <p className="text-gray-600">Aucune offre en cours.</p>
-                    ) : (
-                        <div className="space-y-4 mt-4">
-                            {activeOffers.map((offer) => (
-                                <div key={offer.id} className="bg-white rounded-xl shadow-lg border border-[#7ebd07]/20 p-4">
-                                    <div className="flex justify-between items-center">
-                                        <div>
-                                            <h3 className="text-lg font-bold text-gray-900">{offer.name}</h3>
-                                            <p className="text-sm text-gray-600">{offer.description}</p>
-                                            <p className="text-xs text-gray-500 mt-1">Durée : {offer.duration} mois</p>
-                                            {offer.discount && (
-                                                <p className="text-xs text-[#589507] font-semibold">Réduction : {offer.discount}%</p>
-                                            )}
-                                        </div>
-                                        <img
-                                            src="https://img.icons8.com/color/96/000000/discount.png"
-                                            alt="icon"
-                                            className="w-10 h-10 object-contain"
-                                        />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     )

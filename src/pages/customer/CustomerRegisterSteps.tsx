@@ -316,6 +316,14 @@ const CustomerRegisterSteps = () => {
 const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
   return (
     <div className="space-y-6">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-[#ebffbc] to-[#d4f5a3] rounded-full flex items-center justify-center shadow-xl">
+          <User className="w-8 h-8 text-[#589507]" />
+        </div>
+        <h3 className="text-xl font-bold text-[#396F04] mb-2">Vos informations personnelles</h3>
+        <p className="text-sm text-gray-600">Renseignez vos informations de base</p>
+      </div>
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         <Input
           label="Prénom"
@@ -394,6 +402,16 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
 // Étape 2
 const LocationStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
+    <div className="text-center mb-8">
+      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center shadow-xl">
+        <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
+        </svg>
+      </div>
+      <h3 className="text-xl font-bold text-[#396F04] mb-2">Où habitez-vous ?</h3>
+      <p className="text-sm text-gray-600">Ces informations nous aident à vous proposer des commerces près de chez vous</p>
+    </div>
+    
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
       <Input
         label="Ville"

@@ -3,7 +3,7 @@ import { useAuth } from "@/components/firebase/useAuth";
 import { arrayUnion, collection, doc, getDoc, getDocs, increment, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from 'react';
 import logo from '../../assets/Logo.png'
-import { Bell, Star } from "lucide-react";
+import { Bell, Star, Gift, Zap, MapPin, TrendingUp } from "lucide-react";
 
 // Images d'exemple (libres de droits)
 const foodImages = [
@@ -80,6 +80,31 @@ const CustomerDashboard = () => {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // État pour l'animation des points
+  const [animatedPoints, setAnimatedPoints] = useState(0);
+
+  // Animation des points au chargement
+  useEffect(() => {
+    if (points > 0) {
+      const duration = 1000;
+      const steps = 30;
+      const increment = points / steps;
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= points) {
+          setAnimatedPoints(points);
+          clearInterval(timer);
+        } else {
+          setAnimatedPoints(Math.floor(current));
+        }
+      }, duration / steps);
+      
+      return () => clearInterval(timer);
+    }
+  }, [points]);
+
   const openOfferModal = async (offer) => {
     setSelectedOffer(offer);
     setIsModalOpen(true);
@@ -128,274 +153,335 @@ const CustomerDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/10 via-white to-[#ebffbc]/20 overflow-x-hidden">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#ebffbc] border-b border-[#7ebd07]/30 shadow-lg z-50 flex items-center px-4 py-3">
-        <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-        <div className="flex-1 flex justify-end">
-          {/* <div className="relative">
-            <Bell size={24} className="text-green-500 fill-current" />
-            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
-          </div> */}
+      <div className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-[#7ebd07]/20 shadow-xl z-50">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-lg">
+                {customerData?.first_name?.charAt(0) || 'U'}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900">
+                Salut {customerData?.first_name} ! 👋
+              </p>
+              <p className="text-xs text-gray-500">Niveau {level}</p>
+            </div>
+          </div>
+          <img src={logo} alt="Naymo" className="h-8" />
         </div>
       </div>
       
-      {/* SECTION PROFIL */}
-      <div className="flex justify-center pt-20 px-2">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-6 mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            Hello {customerData?.first_name} !
-          </h1>
-          <div className="flex items-center text-gray-500 text-sm mb-2">
-            <svg width="16" height="16" fill="none" className="mr-1" viewBox="0 0 24 24">
-              <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z"/>
-            </svg>
-            {address}
-          </div>
-          <div className="flex items-center mb-1 mt-2">
-            <span className="font-semibold text-gray-900 text-sm">Level {level}</span>
-            <div className="flex-1 mx-3">
-              <div className="relative w-full h-3 bg-gray-200 rounded-full">
-                <div
-                  className="absolute left-0 top-0 h-3 bg-[#7ebd07] rounded-full"
+      {/* CONTENU PRINCIPAL */}
+      <div className="pt-24 pb-28 px-4 space-y-6">
+        
+        {/* CARTE POINTS & NIVEAU */}
+        <div className="bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-3xl p-6 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-white/80 text-sm font-medium">Mes points</p>
+                <p className="text-4xl font-bold">{animatedPoints}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white/80 text-sm font-medium">Niveau</p>
+                <p className="text-2xl font-bold">{level}</p>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <div className="flex justify-between text-sm text-white/80 mb-2">
+                <span>Progression</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-white rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
-            <span className="font-semibold text-gray-900 text-sm">{points} points</span>
-          </div>
-          <div className="text-xs text-gray-500 mt-1 mb-2">
-            {challengesLeft} challenges to next reward
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-base text-gray-900 font-semibold">
-              {coupons} Coupon{coupons > 1 ? "s" : ""} • {discount}% Discount
-            </span>
-            <button 
-              onClick={toggleCoupons}
-              className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-5 py-2 rounded-full font-semibold text-sm shadow-lg transform hover:scale-105 transition-all duration-200"
-            >
-              Get It
-            </button>
-          </div>
-            {showCoupons && (
-              <div className="mt-4 bg-gradient-to-br from-[#ebffbc]/50 to-white border border-[#7ebd07]/30 rounded-xl shadow-lg p-4">
-                <h3 className="text-sm font-semibold mb-2 text-[#396F04]">Bons de 10% disponibles :</h3>
-                {coupons > 0 ? (
-                  <ul className="mt-2 text-sm text-gray-700 space-y-1">
-                    {[...Array(coupons)].map((_, idx) => (
-                      <li key={idx} className="bg-gradient-to-r from-[#7ebd07]/20 to-[#589507]/20 rounded-lg px-3 py-2 border border-[#7ebd07]/30">
-                        🎁 Bon de réduction : {discount / coupons}% (valeur 10%)
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-500 mt-2">Aucun bon disponible pour l'instant.</p>
-                )}
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Gift className="w-5 h-5 text-white" />
+                <span className="text-sm font-medium">{coupons} bon{coupons > 1 ? 's' : ''} disponible{coupons > 1 ? 's' : ''}</span>
               </div>
-            )}
-        </div>
-      </div>
-
-      {/* SECTION OFFRE DU MOMENT */}
-      <div className="flex justify-center mb-4 px-2">
-        <div 
-          className="w-full max-w-md bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20 p-5 flex items-center justify-between hover:shadow-xl transition-all duration-200 cursor-pointer"
-          onClick={() => openOfferModal(topMomentOffer[0])}
-        >
-          {topMomentOffer.length > 0 ? (
-            <>
-              <div>
-                <h2 className="font-bold text-lg text-gray-900 mb-1">
-                  {topMomentOffer[0].name}
-                  <br />
-                  {topMomentOffer[0].discount && (
-                    <span className="font-semibold text-[#589507]">
-                      {topMomentOffer[0].discount}% Discount
-                    </span>
-                  )}
-                </h2>
-                <p className="text-gray-600 text-sm">
-                  {topMomentOffer[0].description}
-                </p>
-              </div>
-              <div className="ml-4 flex-shrink-0">
-                <img
-                  src={foodImages[0]}
-                  alt="burger"
-                  className="w-16 h-16 object-contain"
-                />
-              </div>
-            </>
-          ) : (
-            <p className="text-gray-500">Aucune offre boostée actuellement.</p>
-          )}
-        </div>
-      </div>
-
-      {/* SECTION OFFRES EN COURS */}
-      <div className="flex flex-col items-center px-2 mb-8">
-        <div className="flex justify-between items-center w-full max-w-md mb-2">
-          <h2 className="text-xl font-bold text-[#396F04]">Les offres en cours</h2>
-          {otherOffers.length > 1 && (
-            <button
-              onClick={toggleOffers}
-              className="w-8 h-8 rounded-full bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white text-lg flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-200"
-              aria-label={showAllOffers ? "Voir moins d'offres" : "Voir plus d'offres"}
-            >
-              {showAllOffers ? "−" : "+"}
-            </button>
-          )}
-        </div>
-        <input
-          type="text"
-          placeholder="Rechercher une offre..."
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="w-full max-w-md p-3 border border-[#7ebd07]/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent shadow-sm mb-4"
-        />
-
-        {otherOffers.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune offre disponible pour le moment.</p>
-        ) : (
-          <div className="flex flex-col gap-4 w-full max-w-md">
-            {(showAllOffers ? otherOffers : otherOffers.slice(0, 1)).map((offer, idx) => (
-              <div
-                key={offer.id}
-                className="bg-gradient-to-br from-[#ebffbc]/30 to-white rounded-2xl shadow-lg border border-[#7ebd07]/20 flex items-center justify-between p-5 hover:shadow-xl transition-all duration-200 cursor-pointer"
-                onClick={() => openOfferModal(offer)}
+              <button 
+                onClick={toggleCoupons}
+                className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 backdrop-blur-sm"
               >
-                <div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
-                    {offer.name}
-                    {offer.isBoosted && (
-                      <span className="inline-flex items-center justify-center bg-gradient-to-r from-[#FFCD29] to-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full ml-2 shadow-sm">
-                        Boostée
-                      </span>
-                    )}
-                  </h3>
-                  <p className="text-gray-700 text-sm mb-1">{offer.description}</p>
-                  <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
-                  {offer.discount && (
-                    <p className="text-xs text-[#589507] font-semibold">
-                      Réduction : {offer.discount}%
-                    </p>
-                  )}
+                Voir mes bons
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* MODAL COUPONS */}
+        {showCoupons && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#FFCD29] to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Gift className="w-8 h-8 text-white" />
                 </div>
-                <div className="ml-4 flex-shrink-0">
-                  <img
-                    src={getOfferImg(idx + 1)}
-                    alt="food"
-                    className="w-12 h-12 object-contain"
-                  />
-                </div>
+                <h3 className="text-xl font-bold text-gray-900">Mes bons de réduction</h3>
               </div>
-            ))}
+              
+              {coupons > 0 ? (
+                <div className="space-y-3 mb-6">
+                  {[...Array(coupons)].map((_, idx) => (
+                    <div key={idx} className="bg-gradient-to-r from-[#ebffbc] to-[#d4f5a3] rounded-2xl p-4 border-2 border-dashed border-[#7ebd07]">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-[#396F04]">-10% de réduction</p>
+                          <p className="text-sm text-[#589507]">Valable chez tous nos partenaires</p>
+                        </div>
+                        <div className="text-2xl">🎁</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 mb-2">Aucun bon disponible</p>
+                  <p className="text-sm text-gray-400">Continuez à acheter pour en gagner !</p>
+                </div>
+              )}
+              
+              <button
+                onClick={toggleCoupons}
+                className="w-full bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white py-3 rounded-2xl font-semibold"
+              >
+                Fermer
+              </button>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* SECTION OFFRES BOOSTÉES - PLEINE LARGEUR, FIN DE PAGE */}
-      {topBoostedOffers.length > 0 && (
-        <div className="relative left-1/2 w-screen -translate-x-1/2 bg-gradient-to-br from-[#ebffbc]/20 via-white to-[#ebffbc]/30 py-8">
-          <div className="px-4">
-            <h2 className="text-xl font-bold text-[#396F04] mb-6 text-center">⭐ Offres Boostées ⭐</h2>
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="flex space-x-4 pb-4 px-4" style={{ width: 'max-content' }}>
-                {topBoostedOffers.map((offer, idx) => (
+        {/* STATS RAPIDES */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <MapPin className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Localisation</p>
+                <p className="text-sm font-bold text-gray-900">{customerData?.city || 'Non définie'}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 font-medium">Économies</p>
+                <p className="text-sm font-bold text-gray-900">{discount}% dispo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* OFFRE DU MOMENT */}
+        {topMomentOffer.length > 0 && (
+          <div className="bg-gradient-to-br from-[#FFCD29]/20 to-yellow-100 rounded-3xl p-6 border-2 border-[#FFCD29]/30 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <Zap className="w-6 h-6 text-yellow-600" />
+                <h2 className="text-lg font-bold text-gray-900">Offre du moment</h2>
+              </div>
+              <div className="bg-[#FFCD29] text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                ⭐ BOOSTÉE
+              </div>
+            </div>
+            
+            <div 
+              className="flex items-center space-x-4 cursor-pointer"
+              onClick={() => openOfferModal(topMomentOffer[0])}
+            >
+              <img
+                src={foodImages[0]}
+                alt="offer"
+                className="w-16 h-16 object-contain"
+              />
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900 mb-1">{topMomentOffer[0].name}</h3>
+                <p className="text-sm text-gray-600 mb-2">{topMomentOffer[0].description}</p>
+                {topMomentOffer[0].discount && (
+                  <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold inline-block">
+                    -{topMomentOffer[0].discount}% de réduction
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* RECHERCHE OFFRES */}
+        <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900">Découvrir les offres</h2>
+            {otherOffers.length > 2 && (
+              <button
+                onClick={toggleOffers}
+                className="text-[#7ebd07] text-sm font-semibold"
+              >
+                {showAllOffers ? 'Voir moins' : `Voir tout (${otherOffers.length})`}
+              </button>
+            )}
+          </div>
+          
+          <input
+            type="text"
+            placeholder="Rechercher une offre..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent mb-4"
+          />
+          
+          {otherOffers.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-2">🔍</div>
+              <p className="text-gray-500">Aucune offre trouvée</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {(showAllOffers ? otherOffers : otherOffers.slice(0, 2)).map((offer, idx) => (
+                <div
+                  key={offer.id}
+                  className="bg-gray-50 rounded-2xl p-4 cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() => openOfferModal(offer)}
+                >
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src={getOfferImg(idx + 1)}
+                      alt="offer"
+                      className="w-12 h-12 object-contain"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-1">
+                        <h3 className="font-semibold text-gray-900">{offer.name}</h3>
+                        {offer.isBoosted && (
+                          <span className="bg-[#FFCD29] text-white text-xs px-2 py-1 rounded-full font-bold">
+                            ⭐
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{offer.description}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-500">Durée: {offer.duration} mois</span>
+                        {offer.discount && (
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">
+                            -{offer.discount}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+
+        {/* OFFRES BOOSTÉES */}
+        {topBoostedOffers.length > 1 && (
+          <div className="bg-white rounded-2xl p-4 shadow-lg border border-[#7ebd07]/10">
+            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+              <Star className="w-5 h-5 text-[#FFCD29] mr-2" />
+              Offres premium
+            </h2>
+            <div className="overflow-x-auto">
+              <div className="flex space-x-4 pb-2">
+                {topBoostedOffers.slice(1).map((offer, idx) => (
                   <div
                     key={offer.id}
-                    className="relative min-w-[280px] max-w-[300px] bg-white rounded-2xl shadow-xl p-5 flex-shrink-0 border-2 border-[#FFCD29]/50 hover:shadow-2xl transition-all duration-200 cursor-pointer"
+                    className="min-w-[250px] bg-gradient-to-br from-[#FFCD29]/10 to-yellow-50 rounded-2xl p-4 border border-[#FFCD29]/30 cursor-pointer hover:shadow-lg transition-all"
                     onClick={() => openOfferModal(offer)}
                   >
-                    {/* Étoile en haut à droite */}
-                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-[#FFCD29] to-yellow-500 rounded-full p-2 shadow-lg">
-                      <Star className="w-4 h-4 text-white fill-current" />
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-bold text-gray-900">{offer.name}</h3>
+                      <Star className="w-4 h-4 text-[#FFCD29] fill-current" />
                     </div>
-                    
+                    <p className="text-sm text-gray-600 mb-3">{offer.description}</p>
                     <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">
-                          {offer.name}
-                        </h3>
-                        {offer.discount && (
-                          <div className="bg-gradient-to-r from-[#FFCD29] to-[#7ebd07] text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block shadow-sm">
-                            {offer.discount}% de réduction
-                          </div>
-                        )}
-                        <p className="text-gray-700 text-sm mb-2">{offer.description}</p>
-                        <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <img
-                          src={getOfferImg(idx)}
-                          alt="offer"
-                          className="w-16 h-16 object-contain"
-                        />
-                      </div>
+                      <span className="text-xs text-gray-500">{offer.duration} mois</span>
+                      {offer.discount && (
+                        <span className="bg-[#FFCD29] text-white text-xs px-2 py-1 rounded-full font-bold">
+                          -{offer.discount}%
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Style pour masquer la scrollbar */}
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-
+      {/* MODAL OFFRE */}
       {isModalOpen && selectedOffer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative border border-[#7ebd07]/20">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 relative">
             <button
               onClick={closeOfferModal}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-all duration-200"
+              className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
             >
-              &times;
+              ✕
             </button>
-            <h2 className="text-xl font-bold mb-2 text-[#396F04]">{selectedOffer.name}</h2>
-            <p className="text-sm text-gray-600 mb-2">{selectedOffer.description}</p>
-            <p className="text-sm text-gray-500">Durée : {selectedOffer.duration} mois</p>
-
-            {/* Nouvelle ligne pour createdAt */}
-            {selectedOffer.createdAt && (
-              <p className="text-sm text-gray-400 mt-1">
-                Publiée le :{" "}
-                {selectedOffer.createdAt.toDate
-                  ? selectedOffer.createdAt.toDate().toLocaleDateString("fr-FR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    })
-                  : "Date inconnue"}
-              </p>
-            )}
-
-            <div className="mt-4">
+            
+            <div className="text-center mb-6">
               <img
-                src={getOfferImg(0)} // tu peux aussi faire un mapping indexé plus précis si besoin
+                src={getOfferImg(0)}
                 alt="offer"
-                className="w-20 h-20 object-contain mx-auto"
+                className="w-20 h-20 object-contain mx-auto mb-4"
               />
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{selectedOffer.name}</h2>
+              <p className="text-gray-600 mb-4">{selectedOffer.description}</p>
+              
+              <div className="flex items-center justify-center space-x-4 text-sm text-gray-500 mb-4">
+                <span>Durée: {selectedOffer.duration} mois</span>
+                {selectedOffer.discount && (
+                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">
+                    -{selectedOffer.discount}%
+                  </span>
+                )}
+              </div>
+              
+              {selectedOffer.createdAt && (
+                <p className="text-xs text-gray-400 mb-6">
+                  Publiée le {selectedOffer.createdAt.toDate
+                    ? selectedOffer.createdAt.toDate().toLocaleDateString("fr-FR", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                      })
+                    : "Date inconnue"}
+                </p>
+              )}
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="text-center">
               {hasAddedOffer(selectedOffer.id) ? (
-                <p className="text-[#589507] font-semibold bg-[#ebffbc]/50 px-4 py-2 rounded-lg">✅ Offre déjà ajoutée</p>
+                <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4">
+                  <p className="text-green-800 font-semibold">✅ Offre déjà ajoutée</p>
+                  <p className="text-sm text-green-600">Vous pouvez l'utiliser chez le commerçant</p>
+                </div>
               ) : (
                 <button
                   onClick={() => addOfferToCustomer(selectedOffer.id)}
-                  className="bg-gradient-to-r from-[#7ebd07] to-[#589507] hover:from-[#589507] hover:to-[#396F04] text-white px-6 py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
+                  className="w-full bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all"
                 >
                   Ajouter cette offre
                 </button>
@@ -405,7 +491,6 @@ const CustomerDashboard = () => {
         </div>
       )}
     </div>
-
   );
 };
 

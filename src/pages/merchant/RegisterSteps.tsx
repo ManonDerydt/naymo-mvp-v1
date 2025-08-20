@@ -341,6 +341,15 @@ const RegisterSteps = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#ebffbc]/20 to-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full space-y-8">
+        <div className="flex justify-start">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Retour</span>
+          </Link>
+        </div>
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-gradient-to-br from-[#7ebd07] to-[#589507] rounded-full flex items-center justify-center shadow-2xl mb-6">
             <Store className="h-8 w-8 text-white" />

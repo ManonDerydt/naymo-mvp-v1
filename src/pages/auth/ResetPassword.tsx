@@ -3,6 +3,7 @@ import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from '@/components/firebase/firebaseConfig'
 import { Button } from '@/components/ui'
 import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 
 const ResetPassword = () => {
   const [email, setEmail] = useState('')
@@ -29,6 +30,15 @@ const ResetPassword = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50">
       <div className="max-w-md w-full space-y-8">
+        <div className="flex justify-start">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Retour</span>
+          </Link>
+        </div>
         <div>
           <h2 className="text-center text-3xl font-bold text-gray-900">
             Réinitialiser le mot de passe

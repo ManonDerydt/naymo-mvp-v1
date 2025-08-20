@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, Store } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { Input } from '@/components/forms'
@@ -232,6 +232,15 @@ const CustomerRegisterSteps = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full space-y-8">
+        <div className="flex justify-start">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm">Retour</span>
+          </Link>
+        </div>
         <div className="text-center">
           <Store className="mx-auto h-12 w-12 text-primary-500" />
           <h2 className="mt-6 text-3xl font-bold text-gray-900">

@@ -91,7 +91,11 @@ const Sidebar = () => {
             {merchant && merchantData && (
               <>
                 <hr className="border-[#7ebd07] my-6" />
-                <div className="flex items-center space-x-4 px-2">
+                <Link 
+                  to="/settings"
+                  className="flex items-center space-x-4 px-2 py-2 rounded-xl hover:bg-white/50 transition-all duration-200 cursor-pointer"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   <img
                     src={merchantData.logo}
                     alt="Logo du marchand"
@@ -101,7 +105,7 @@ const Sidebar = () => {
                     <p className="font-semibold text-black text-sm">{merchantData.company_name}</p>
                     <p className="text-xs text-black/70">{merchantData.email}</p>
                   </div>
-                </div>
+                </Link>
               </>
             )}
           

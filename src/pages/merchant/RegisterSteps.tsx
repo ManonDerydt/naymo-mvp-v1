@@ -667,7 +667,7 @@ const DetailsStep = ({
     </div>
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
-        Ajouter des mots-clés
+        Ajouter des mots-clés (max 5)
       </label>
       <div className="flex space-x-2">
         <input
@@ -675,13 +675,15 @@ const DetailsStep = ({
           value={currentKeyword}
           onChange={(e) => setCurrentKeyword(e.target.value)}
           onKeyPress={onKeywordKeyPress}
+          disabled={formData.keywords.length >= 5}
           className="flex-1 px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
-          placeholder="Ex: Bio"
+          placeholder={formData.keywords.length >= 5 ? "Maximum atteint" : "Ex: Bio"}
         />
         <button
           type="button"
           onClick={onAddKeyword}
-          className="px-4 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white rounded-lg hover:from-[#589507] hover:to-[#396F04] transition-all duration-200 font-medium"
+          disabled={formData.keywords.length >= 5 || !currentKeyword.trim()}
+          className="px-4 py-3 bg-gradient-to-r from-[#7ebd07] to-[#589507] text-white rounded-lg hover:from-[#589507] hover:to-[#396F04] transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Ajouter
         </button>
@@ -690,7 +692,7 @@ const DetailsStep = ({
       {/* Affichage des mots-clés ajoutés */}
       {formData.keywords.length > 0 && (
         <div className="mt-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Mots-clés ajoutés :</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">Mots-clés ajoutés ({formData.keywords.length}/5) :</p>
           <div className="flex flex-wrap gap-2">
             {formData.keywords.map((keyword, index) => (
               <span

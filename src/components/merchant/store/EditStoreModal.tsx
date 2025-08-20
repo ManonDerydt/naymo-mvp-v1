@@ -33,6 +33,7 @@ const EditStoreModal = ({ onClose, initialData, editType = 'info' }: EditStoreMo
     cover: [] as File[],
     gallery: [] as File[]
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   const { merchant, merchantData } = useAuth();
 
@@ -55,6 +56,9 @@ const EditStoreModal = ({ onClose, initialData, editType = 'info' }: EditStoreMo
   }, [merchantData]); // Ce useEffect s'exécute lorsque merchantData change
 
   const handleSubmit = async () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
+    
     try {
       // Uploader le logo
       let logoURL: string | null = null;
@@ -124,6 +128,8 @@ const EditStoreModal = ({ onClose, initialData, editType = 'info' }: EditStoreMo
       setStep('success')
     } catch (error) {
       console.log("Erreur lors de la mise à jour des données : ", error)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 

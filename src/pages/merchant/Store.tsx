@@ -312,19 +312,19 @@ const Store = () => {
                   <Edit className="w-4 h-4" />
                 </button>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {merchant && merchantData && merchantData.commitments
                   ? merchantData.commitments.map((commitment: string | undefined, index: number) => (
-                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-1">
+                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-2 min-h-[100px] justify-center">
                         <span className="text-2xl mb-1">{getEngagementIcon(commitment || '')}</span>
-                        <span className="text-[#396F04] font-medium text-xs leading-tight">{commitment}</span>
+                        <span className="text-[#396F04] font-medium text-xs leading-tight text-center break-words hyphens-auto max-w-full">{commitment}</span>
                       </div>
                     ))
                   : (
                     initialStoreData.commitments.map((commitment, index) => (
-                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-1">
+                      <div key={index} className="flex flex-col items-center p-3 bg-[#ebffbc] rounded-lg text-center space-y-2 min-h-[100px] justify-center">
                         <span className="text-2xl mb-1">{getEngagementIcon(commitment)}</span>
-                        <span className="text-[#396F04] font-medium text-xs leading-tight">{commitment}</span>
+                        <span className="text-[#396F04] font-medium text-xs leading-tight text-center break-words hyphens-auto max-w-full">{commitment}</span>
                       </div>
                     ))
                   )}

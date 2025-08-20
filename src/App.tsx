@@ -1,54 +1,37 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Layout from './components/layout/Layout'
-import UserType from './pages/UserType'
-import MerchantLogin from './pages/auth/MerchantLogin'
-import RegisterSteps from './pages/merchant/RegisterSteps'
-import Dashboard from './pages/merchant/Dashboard'
-import Store from './pages/merchant/Store'
-import Offers from './pages/merchant/Offers'
-import Customers from './pages/merchant/Customers'
-import Settings from './pages/merchant/Settings'
-import CustomerRegisterSteps from './pages/customer/CustomerRegisterSteps'
-import CustomerDashboard from './pages/customer/CustomerDashboard'
-import CustomerLogin from './pages/auth/CustomerLogin'
-import CustomerLayout from './components/layout/CustomerLayout'
-import CustomerSearch from './pages/customer/CustomerSearch'
-import CustomerSettings from './pages/customer/CustomerSettings'
-import CustomerMyNaymo from './pages/customer/CustomerMyNaymo'
-import ResetPassword from './pages/auth/ResetPassword'
-import CustomerHistory from './pages/customer/CustomerHistory'
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {StatusBar} from 'react-native';
+import UserTypeScreen from './screens/UserTypeScreen';
+import CustomerLoginScreen from './screens/auth/CustomerLoginScreen';
+import MerchantLoginScreen from './screens/auth/MerchantLoginScreen';
+import CustomerRegisterScreen from './screens/customer/CustomerRegisterScreen';
+import CustomerTabNavigator from './navigation/CustomerTabNavigator';
+import MerchantTabNavigator from './navigation/MerchantTabNavigator';
+import {AuthProvider} from './contexts/AuthContext';
+
+const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<UserType />} />
-        <Route path="/merchant/login" element={<MerchantLogin />} />
-        <Route path="/customer/login" element={<CustomerLogin />} />
-        <Route path="/merchant/register" element={<RegisterSteps />} />
-        <Route path="/customer/register" element={<CustomerRegisterSteps />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        
-        {/* Protected routes - will need authentication later */}
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/store" element={<Store />} />
-          <Route path="/offers" element={<Offers />} />
-          <Route path="/customers" element={<Customers />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
+    <AuthProvider>
+      <NavigationContainer>
+        <StatusBar barStyle="dark-content" backgroundColor="#ebffbc" />
+        <Stack.Navigator
+          initialRouteName="UserType"
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="UserType" component={UserTypeScreen} />
+          <Stack.Screen name="CustomerLogin" component={CustomerLoginScreen} />
+          <Stack.Screen name="MerchantLogin" component={MerchantLoginScreen} />
+          <Stack.Screen name="CustomerRegister" component={CustomerRegisterScreen} />
+          <Stack.Screen name="CustomerApp" component={CustomerTabNavigator} />
+          <Stack.Screen name="MerchantApp" component={MerchantTabNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
+  );
+};
 
-        {/* Partie client */}
-        <Route element={<CustomerLayout />}>
-          <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-          <Route path="/customer/myNaymo" element={<CustomerMyNaymo />} />
-          <Route path="/customer/history" element={<CustomerHistory />} />
-          <Route path="/customer/search" element={<CustomerSearch />} />
-          <Route path="/customer/settings" element={<CustomerSettings />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
-}
-
-export default App
+export default App;

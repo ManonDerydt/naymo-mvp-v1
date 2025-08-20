@@ -5,11 +5,10 @@ import logo from '../assets/Logo.png'
 
 const UserType = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#EBFFBC' }}>
+      <div className="max-w-md w-full space-y-8 p-8" style={{ backgroundColor: '#EBFFBC' }}>
         <div className="text-center">
           <img src={logo} alt="logo" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Bienvenue sur Naymo</h2>
           <p className="mt-2 text-sm text-gray-600">
             Choisissez votre type de compte pour continuer
           </p>
@@ -25,8 +24,7 @@ const UserType = () => {
           
           <Link to="/customer/login">
             <Button 
-              variant="outline" 
-              className="w-full justify-center space-x-2"
+              className="w-full justify-center space-x-2 bg-white text-gray-900 border border-gray-300 hover:bg-gray-50"
             >
               <Users className="w-5 h-5" />
               <span>Je suis client</span>

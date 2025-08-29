@@ -164,6 +164,11 @@ const CustomerRegisterSteps = () => {
     }
   }
 
+  // Générateur de code client
+  const generateCustomerCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Code à 6 chiffres
+  }
+
   const handleSubmitRegister = async () => {
     if (!validateStep(currentStep)) return
 
@@ -174,11 +179,13 @@ const CustomerRegisterSteps = () => {
 
       console.log("Utilisateur créé avec UID :", user.uid)
 
-      
+      // Générer un code client
+      const customerCode = generateCustomerCode();
 
       // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
       await setDoc(doc(db, "customer", user.uid), {
         gender: formData.gender,
+        code: customerCode,
         last_name: formData.last_name,
         first_name: formData.first_name,
         birth_date: formData.birth_date,

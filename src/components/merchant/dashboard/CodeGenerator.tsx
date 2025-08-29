@@ -51,6 +51,7 @@ export default function CodeGenerator() {
   const [addedAmount, setAddedAmount] = useState(0);
   const [couponsToApply, setCouponsToApply] = useState(0);
   const [offers, setOffers] = useState([]);
+  const [clientCode, setClientCode] = useState("");
 
   const [selectedOfferId, setSelectedOfferId] = useState(null);
   const [offerAmount, setOfferAmount] = useState('');
@@ -74,7 +75,7 @@ export default function CodeGenerator() {
   }, [customer]);
 
   const handleOpenModal = async () => {
-    if (phone.trim() === "") {
+    if (clientCode.trim() === "") {
       alert("Veuillez entrer un numéro de téléphone");
       return;
     }
@@ -82,10 +83,10 @@ export default function CodeGenerator() {
     setCustomer(null);
     setPointsAdded(false);
     try {
-      const normalizedPhone = phone.replace(/\D/g, "");
+      const normalizedPhone = clientCode.replace(/\D/g, "");
       const q = query(
         collection(db, "customer"),
-        where("phone_number", "==", normalizedPhone)
+        where("code", "==", normalizedPhone)
       );
       const snap = await getDocs(q);
       if (!snap.empty) {
@@ -161,7 +162,7 @@ export default function CodeGenerator() {
       const updatedSnap = await getDocs(
         query(
           collection(db, "customer"),
-          where("phone_number", "==", customer.phone_number)
+          where("code", "==", customer.code)
         )
       );
       if (!updatedSnap.empty) {
@@ -259,8 +260,8 @@ export default function CodeGenerator() {
           <input
             type="tel"
             placeholder="Numéro de téléphone"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
+            value={clientCode}
+            onChange={e => setClientCode(e.target.value)}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button

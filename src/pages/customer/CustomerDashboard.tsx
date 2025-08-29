@@ -4,15 +4,12 @@ import { arrayUnion, collection, doc, getDoc, getDocs, increment, updateDoc } fr
 import { useEffect, useState } from 'react';
 import logo from '../../assets/Logo.png'
 import { Bell, Star } from "lucide-react";
+import { EMOJI_MAP } from "./emojiMapping";
 
-// Images d'exemple (libres de droits)
-const foodImages = [
-  "https://img.icons8.com/color/96/000000/hamburger.png", // burger
-  "https://img.icons8.com/color/96/000000/pizza.png",     // pizza
-  "https://img.icons8.com/color/96/000000/sushi.png",     // sushi
-  "https://img.icons8.com/color/96/000000/french-fries.png", // frites
-  "https://img.icons8.com/color/96/000000/doughnut.png",  // donut
-];
+const getEmojiForCategory = (category?: string) => {
+  if (!category) return "✨"; // Par défaut si pas de catégorie
+  return EMOJI_MAP[category.toLowerCase()] || "✨";
+};
 
 const CustomerDashboard = () => {
   const { customer, customerData } = useAuth();
@@ -62,7 +59,7 @@ const CustomerDashboard = () => {
   const progress = points % 100 // Pourcentage de progression dans le niveau actuel
 
   // Fonction pour choisir une image différente pour chaque offre
-  const getOfferImg = (idx) => foodImages[idx % foodImages.length];
+  // const getOfferImg = (idx) => foodImages[idx % foodImages.length];
 
   // Fonction pour toggle l'affichage des offres
   const toggleOffers = () => {
@@ -208,7 +205,7 @@ const CustomerDashboard = () => {
             <>
               <div>
                 <h2 className="font-bold text-lg text-gray-900 mb-1">
-                  {topMomentOffer[0].name}
+                  {getEmojiForCategory(topMomentOffer[0].category)} {topMomentOffer[0].name}
                   <br />
                   {topMomentOffer[0].discount && (
                     <span className="font-semibold">
@@ -220,13 +217,13 @@ const CustomerDashboard = () => {
                   {topMomentOffer[0].description}
                 </p>
               </div>
-              <div className="ml-4 flex-shrink-0">
+              {/* <div className="ml-4 flex-shrink-0">
                 <img
                   src={foodImages[0]}
                   alt="burger"
                   className="w-16 h-16 object-contain"
                 />
-              </div>
+              </div> */}
             </>
           ) : (
             <p className="text-gray-500">Aucune offre boostée actuellement.</p>
@@ -268,7 +265,7 @@ const CustomerDashboard = () => {
               >
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
-                    {offer.name}
+                    {getEmojiForCategory(offer.category)} {offer.name}
                     {offer.isBoosted && (
                       <span className="inline-flex items-center justify-center bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">
                         Boostée
@@ -317,7 +314,7 @@ const CustomerDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900 mb-1">
-                          {offer.name}
+                          {getEmojiForCategory(offer.category)} {offer.name}
                         </h3>
                         {offer.discount && (
                           <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block">

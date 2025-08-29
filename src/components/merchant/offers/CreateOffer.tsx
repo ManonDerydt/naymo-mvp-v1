@@ -4,6 +4,32 @@ import { Input } from '@/components/forms'
 import { auth, db } from '@/components/firebase/firebaseConfig'
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
 
+// Liste des types
+const OFFER_TYPES = [
+  { label: "Restauration", value: "food" },
+  { label: "Café / Boissons", value: "coffee" },
+  { label: "Boulangerie", value: "bakery" },
+  { label: "Fruits & légumes", value: "grocery" },
+  { label: "Produits locaux", value: "local" },
+  { label: "Mode & vêtements", value: "fashion" },
+  { label: "Chaussures", value: "shoes" },
+  { label: "Accessoires", value: "accessories" },
+  { label: "Beauté & soins", value: "beauty" },
+  { label: "Parfumerie", value: "perfume" },
+  { label: "Coiffure", value: "hair" },
+  { label: "Santé & pharmacie", value: "health" },
+  { label: "Sport & fitness", value: "sport" },
+  { label: "Loisirs & jeux", value: "leisure" },
+  { label: "High-tech", value: "tech" },
+  { label: "Maison & déco", value: "home" },
+  { label: "Librairie / culture", value: "books" },
+  { label: "Fleurs", value: "flowers" },
+  { label: "Services", value: "services" },
+  { label: "Animaux", value: "pets" },
+  { label: "Événements spéciaux", value: "event" },
+  { label: "Offres exclusives", value: "exclusive" }
+]
+
 type Step = 'form' | 'summary' | 'success'
 
 const CreateOffer = () => {
@@ -14,6 +40,7 @@ const CreateOffer = () => {
     target: '',
     description: '',
     discount: '',
+    type: '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -92,6 +119,7 @@ const CreateOffer = () => {
   }
 
   if (step === 'summary') {
+    const selectedType = OFFER_TYPES.find(t => t.value === formData.type);
     return (
       <div className="max-w-2xl mx-auto">
         <h3 className="text-lg font-medium text-gray-900 mb-6">Récapitulatif de l'offre</h3>
@@ -99,6 +127,10 @@ const CreateOffer = () => {
           <div>
             <p className="text-sm font-medium text-gray-500">Nom de l'offre</p>
             <p className="mt-1">{formData.name}</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">Type d'offre</p>
+            <p className="mt-1">{selectedType?.label || "Non défini"}</p>
           </div>
           <div>
             <p className="text-sm font-medium text-gray-500">Durée (en mois)</p>
@@ -135,6 +167,25 @@ const CreateOffer = () => {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Type d'offre
+        </label>
+        <select
+          value={formData.type}
+          onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+          required
+          className="block w-full rounded-xl border border-[#7ebd07]/30 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent p-4"
+        >
+          <option value="">-- Sélectionner un type --</option>
+          {OFFER_TYPES.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      
       <Input
         label="Nom de l'offre"
         value={formData.name}

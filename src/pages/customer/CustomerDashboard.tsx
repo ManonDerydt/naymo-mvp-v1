@@ -58,9 +58,6 @@ const CustomerDashboard = () => {
   const discount = coupons * 10 || 0; // 10% de réduction par coupon
   const progress = points % 100 // Pourcentage de progression dans le niveau actuel
 
-  // Fonction pour choisir une image différente pour chaque offre
-  // const getOfferImg = (idx) => foodImages[idx % foodImages.length];
-
   // Fonction pour toggle l'affichage des offres
   const toggleOffers = () => {
     setShowAllOffers(!showAllOffers);
@@ -205,7 +202,7 @@ const CustomerDashboard = () => {
             <>
               <div>
                 <h2 className="font-bold text-lg text-gray-900 mb-1">
-                  {getEmojiForCategory(topMomentOffer[0].category)} {topMomentOffer[0].name}
+                  {getEmojiForCategory(topMomentOffer[0].type)} {topMomentOffer[0].name}
                   <br />
                   {topMomentOffer[0].discount && (
                     <span className="font-semibold">
@@ -213,7 +210,7 @@ const CustomerDashboard = () => {
                     </span>
                   )}
                 </h2>
-                <p className="text-gray-7 text-sm">
+                <p className="text-gray-7 text-sm break-all">
                   {topMomentOffer[0].description}
                 </p>
               </div>
@@ -265,27 +262,20 @@ const CustomerDashboard = () => {
               >
                 <div>
                   <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center">
-                    {getEmojiForCategory(offer.category)} {offer.name}
+                    {getEmojiForCategory(offer.type)} {offer.name}
                     {offer.isBoosted && (
                       <span className="inline-flex items-center justify-center bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full ml-2">
                         Boostée
                       </span>
                     )}
                   </h3>
-                  <p className="text-gray-700 text-sm mb-1">{offer.description}</p>
+                  <p className="text-gray-700 text-sm mb-1 break-all">{offer.description}</p>
                   <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
                   {offer.discount && (
                     <p className="text-xs text-green-600 font-semibold">
                       Réduction : {offer.discount}%
                     </p>
                   )}
-                </div>
-                <div className="ml-4 flex-shrink-0">
-                  <img
-                    src={getOfferImg(idx + 1)}
-                    alt="food"
-                    className="w-12 h-12 object-contain"
-                  />
                 </div>
               </div>
             ))}
@@ -314,22 +304,15 @@ const CustomerDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-gray-900 mb-1">
-                          {getEmojiForCategory(offer.category)} {offer.name}
+                          {getEmojiForCategory(offer.type)} {offer.name}
                         </h3>
                         {offer.discount && (
                           <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-1 rounded-full text-sm font-bold mb-2 inline-block">
                             {offer.discount}% de réduction
                           </div>
                         )}
-                        <p className="text-gray-700 text-sm mb-2">{offer.description}</p>
+                        <p className="text-gray-700 text-sm mb-2 break-all">{offer.description}</p>
                         <p className="text-xs text-gray-500">Durée : {offer.duration} mois</p>
-                      </div>
-                      <div className="ml-4 flex-shrink-0">
-                        <img
-                          src={getOfferImg(idx)}
-                          alt="offer"
-                          className="w-16 h-16 object-contain"
-                        />
                       </div>
                     </div>
                   </div>
@@ -361,7 +344,7 @@ const CustomerDashboard = () => {
               &times;
             </button>
             <h2 className="text-xl font-bold mb-2">{selectedOffer.name}</h2>
-            <p className="text-sm text-gray-600 mb-2">{selectedOffer.description}</p>
+            <p className="text-sm text-gray-600 mb-2 break-all">{selectedOffer.description}</p>
             <p className="text-sm text-gray-500">Durée : {selectedOffer.duration} mois</p>
 
             {/* Nouvelle ligne pour createdAt */}
@@ -377,14 +360,6 @@ const CustomerDashboard = () => {
                   : "Date inconnue"}
               </p>
             )}
-
-            <div className="mt-4">
-              <img
-                src={getOfferImg(0)} // tu peux aussi faire un mapping indexé plus précis si besoin
-                alt="offer"
-                className="w-20 h-20 object-contain mx-auto"
-              />
-            </div>
 
             <div className="mt-6 text-center">
               {hasAddedOffer(selectedOffer.id) ? (

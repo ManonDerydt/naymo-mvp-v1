@@ -8,6 +8,17 @@ const CustomerAnalytics = () => {
   const { merchant } = useAuth()
   const [analytics, setAnalytics] = useState([]);
 
+  // Données factices pour simuler des clients
+  const fakeClients = [
+    { age: 22, city: "Paris", points: 15 },
+    { age: 28, city: "Lyon", points: 35 },
+    { age: 34, city: "Marseille", points: 80 },
+    { age: 41, city: "Paris", points: 120 },
+    { age: 55, city: "Toulouse", points: 60 },
+    { age: 62, city: "Bordeaux", points: 45 },
+  ];
+
+
   useEffect(() => {
     if (!merchant) return
 
@@ -48,7 +59,11 @@ const CustomerAnalytics = () => {
       const validClients = clientData.filter(c => c !== null)
       // console.log("Clients valides :", validClients)
 
-      const processed = processAnalyticsData(validClients)
+      // 👉 Si aucun client Firestore, on prend les données fictives
+      const processed = processAnalyticsData(
+        validClients.length > 0 ? validClients : fakeClients
+      );
+      
       setAnalytics(processed)
     }
 

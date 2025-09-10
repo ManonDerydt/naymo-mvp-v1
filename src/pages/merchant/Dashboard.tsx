@@ -36,26 +36,6 @@ const Dashboard = () => {
   const [averageRating, setAverageRating] = useState(0)
   const [barChartData, setBarChartData] = useState<{ name: string; semaineActuelle: number; semainePrecedente: number }[]>([])
   
-  // Données fictives pour le graphique
-  const fakeBarChartData = [
-    { name: "Lun", semaineActuelle: 120, semainePrecedente: 90, ilYA2Semaines: 75 },
-    { name: "Mar", semaineActuelle: 80,  semainePrecedente: 110, ilYA2Semaines: 95 },
-    { name: "Mer", semaineActuelle: 150, semainePrecedente: 130, ilYA2Semaines: 100 },
-    { name: "Jeu", semaineActuelle: 200, semainePrecedente: 170, ilYA2Semaines: 120 },
-    { name: "Ven", semaineActuelle: 180, semainePrecedente: 140, ilYA2Semaines: 150 },
-    { name: "Sam", semaineActuelle: 220, semainePrecedente: 160, ilYA2Semaines: 130 },
-    { name: "Dim", semaineActuelle: 90,  semainePrecedente: 100, ilYA2Semaines: 110 },
-  ]
-
-  // Données fictives pour les stats
-  const fakeStats = {
-    clientsFideles: 48,
-    totalRevenue: 12500,
-    averageRating: 4.3,
-    totalPoints: 8930,
-  }
-
-  
   // Statistiques générales (à partir de pointsHistory)
   useEffect(() => {
     if (!merchant?.uid) return;
@@ -137,16 +117,14 @@ const Dashboard = () => {
     const unsubscribe = onSnapshot(q, (snap) => {
       let totalPointsSum = 0;
 
-      // Initialiser les données pour 3 semaines
+      // Initialiser les données pour les jours de la semaine actuelle et de la semaine précédente
       const currentWeekPoints: Record<string, number> = {};
       const previousWeekPoints: Record<string, number> = {};
-      const twoWeeksAgoPoints: Record<string, number> = {};
       const days = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
       days.forEach(day => {
         currentWeekPoints[day] = 0;
         previousWeekPoints[day] = 0;
-        twoWeeksAgoPoints[day] = 0;
       });
 
       const today = new Date();
@@ -156,13 +134,11 @@ const Dashboard = () => {
       const startOfPreviousWeek = subWeeks(startOfCurrentWeek, 1);
       const endOfPreviousWeek = subWeeks(endOfCurrentWeek, 1);
 
-      const startOfTwoWeeksAgo = subWeeks(startOfCurrentWeek, 2);
-      const endOfTwoWeeksAgo = subWeeks(endOfCurrentWeek, 2);
-
       snap.docs.forEach((doc) => {
         const data = doc.data();
         const pointsAdded = data.pointsAdded || 0;
 
+        // Somme totale de pointsAdded
         totalPointsSum += pointsAdded;
 
         const timestamp = data.createdAt?.toDate?.() || null;
@@ -184,8 +160,6 @@ const Dashboard = () => {
             currentWeekPoints[jour] += pointsAdded;
           } else if (timestamp >= startOfPreviousWeek && timestamp <= endOfPreviousWeek) {
             previousWeekPoints[jour] += pointsAdded;
-          } else if (timestamp >= startOfTwoWeeksAgo && timestamp <= endOfTwoWeeksAgo) {
-            twoWeeksAgoPoints[jour] += pointsAdded;
           }
         }
       });
@@ -196,7 +170,6 @@ const Dashboard = () => {
         name: day,
         semaineActuelle: currentWeekPoints[day],
         semainePrecedente: previousWeekPoints[day],
-        ilYA2Semaines: twoWeeksAgoPoints[day],
       }));
 
       setBarChartData(charData)
@@ -206,30 +179,29 @@ const Dashboard = () => {
   }, [merchant])
 
 
-
   const stats = [
     {
       icon: <Users className="w-6 h-6 text-blue-500" />,
       title: "Clients fidèles",
-      value: (clientsFideles || fakeStats.clientsFideles).toString(),
+      value: clientsFideles.toString() || "0",
       trend: "+0%"
     },
     {
       icon: <Activity className="w-6 h-6 text-green-500" />,
       title: "Chiffre d'affaires",
-      value: `${formatCurrency(totalRevenue || fakeStats.totalRevenue)} €`,
+      value: `${formatCurrency(totalRevenue)} €`,
       trend: "+0%"
     },
     {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
-      value: `${(averageRating || fakeStats.averageRating).toFixed(1)}/5`,
+      value: `${averageRating.toFixed(1)}/5`,
       trend: "+0"
     },
     {
       icon: <Gift className="w-6 h-6 text-purple-500" />,
       title: "Points distribués",
-      value: (totalPoints || fakeStats.totalPoints).toLocaleString(),
+      value: totalPoints ? totalPoints.toLocaleString() : "0",
       trend: "+0%"
     }
   ]
@@ -261,13 +233,7 @@ const Dashboard = () => {
           <div className="bg-white p-4 rounded-lg shadow">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Comparaison des points attribués</h2>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={
-                  barChartData.some(d => d.semaineActuelle > 0 || d.semainePrecedente > 0 || d.ilYA2Semaines > 0)
-                    ? barChartData
-                    : fakeBarChartData
-                }
-              >
+              <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -275,7 +241,6 @@ const Dashboard = () => {
                 <Legend />
                 <Bar dataKey="semaineActuelle" fill="#7ebd07" name="Semaine actuelle" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="semainePrecedente" fill="#ffcd2a" name="Semaine précédente" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="ilYA2Semaines" fill="#8884d8" name="Il y a 2 semaines" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

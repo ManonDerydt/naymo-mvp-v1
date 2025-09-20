@@ -18,7 +18,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '@/components/firebase/firebaseConfig'
 import { startOfWeek, endOfWeek, subWeeks, format } from 'date-fns'
 
-/** Formate un montant : entier → « 48 », décimal → « 43,20 » */
+/** Formate un montant : entier → « 48 », décimal → « 43,20 » */
 const formatCurrency = (amount: number) =>
   Number.isInteger(amount)
     ? amount.toLocaleString("fr-FR", { minimumFractionDigits: 0 })
@@ -62,7 +62,7 @@ const Dashboard = () => {
       });
 
       setClientsFideles(clientsSet.size); // nombre de clients uniques
-      setTotalRevenue(revenue);           // chiffre d’affaires cumulé
+      setTotalRevenue(revenue);           // chiffre d'affaires cumulé
       // Ajoute une ligne si tu veux afficher le total de points :
       // setTotalPoints(totalPoints);
     });
@@ -198,6 +198,12 @@ const Dashboard = () => {
       value: totalPoints ? totalPoints.toLocaleString() : "0",
       trend: "+0%"
     }
+  ]
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Tableau de bord</h1>
         <p className="text-gray-600 leading-relaxed">
           Sur votre tableau de bord Naymo, vous visualisez en un clin d'œil vos chiffres clés et gérez facilement votre activité au quotidien.
         </p>
@@ -270,6 +276,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   )
 }

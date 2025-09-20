@@ -26,7 +26,7 @@ const UserType = () => {
           <Link to="/customer/login">
             <Button 
               variant="outline" 
-              className="w-full justify-center space-x-2  mt-10"
+              className="w-full justify-center space-x-2 mt-5"
             >
               <Users className="w-5 h-5" />
               <span>Je suis client</span>

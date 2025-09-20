@@ -28,7 +28,7 @@ const UserType = () => {
               variant="outline" 
               className="w-full justify-center space-x-2"
             >
-              <Users className="w-5 h-5" />
+              <Users className="w-5 h-5 mt-10" />
               <span>Je suis client</span>
             </Button>
           </Link>

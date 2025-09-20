@@ -52,7 +52,7 @@ const Sidebar = () => {
                     'mt-6 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
                       ? 'bg-[#7fbd07] text-white shadow-md'
-                      : 'bg-white text-[#032313] hover:bg-[#7fbd07] hover:text-white hover:shadow-sm'
+                      : 'text-[#032313] hover:bg-[#7fbd07] hover:text-white hover:shadow-sm'
                   )}
                 >
                   <Icon className={cn(

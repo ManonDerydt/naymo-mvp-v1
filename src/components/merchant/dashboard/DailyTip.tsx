@@ -44,9 +44,9 @@ const DailyTip = () => {
   ]
   
   return (
-    <div className="p-6">
+    <div className="p-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Tuto du jour</h2>
+        <h2 className="text-lg font-bold text-gray-900">Tuto du jour</h2>
         <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
           <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -55,7 +55,7 @@ const DailyTip = () => {
       </div>
 
       {/* Filtre par catégorie */}
-      <div className="mb-6">
+      <div className="mb-4">
         <select
           className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
           value={selectedCategory}
@@ -70,15 +70,15 @@ const DailyTip = () => {
       </div>
 
       {/* Liste des vidéos filtrées */}
-      <div className="space-y-6">
+      <div className="space-y-3">
         {filteredTutorials.map((tuto) => (
-          <div key={tuto.id} className="p-4 bg-gradient-to-br from-[#c9eaad]/10 to-[#7ebd07]/10 rounded-xl border border-[#c9eaad]/20">
-            <h3 className="font-semibold text-[#032313] capitalize mb-3 flex items-center">
+          <div key={tuto.id} className="p-3 bg-gradient-to-br from-[#c9eaad]/10 to-[#7ebd07]/10 rounded-xl border border-[#c9eaad]/20">
+            <h3 className="font-semibold text-[#032313] capitalize mb-2 flex items-center text-sm">
               <span className="w-2 h-2 bg-[#7ebd07] rounded-full mr-2"></span>
               {tuto.category}
             </h3>
             <iframe
-              className="w-full aspect-video rounded-xl shadow-sm"
+              className="w-full h-32 rounded-xl shadow-sm"
               src={tuto.url.replace("watch?v=", "embed/")}
               title={`Vidéo ${tuto.category}`}
               allowFullScreen

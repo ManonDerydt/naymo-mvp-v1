@@ -187,12 +187,6 @@ const Dashboard = () => {
       trend: "+0%"
     },
     {
-      icon: <Activity className="w-6 h-6 text-green-500" />,
-      title: "Chiffre d'affaires",
-      value: `${formatCurrency(totalRevenue)} €`,
-      trend: "+0%"
-    },
-    {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
       value: `${averageRating.toFixed(1)}/5`,
@@ -204,31 +198,25 @@ const Dashboard = () => {
       value: totalPoints ? totalPoints.toLocaleString() : "0",
       trend: "+0%"
     }
-  ]
-
-  return (
-    <div className="space-y-8 bg-gray-50 min-h-screen p-6 -m-6">
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">Tableau de bord</h1>
         <p className="text-gray-600 leading-relaxed">
           Sur votre tableau de bord Naymo, vous visualisez en un clin d'œil vos chiffres clés et gérez facilement votre activité au quotidien.
         </p>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="space-y-6 bg-gray-50 min-h-screen p-4 -m-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="space-y-4">
           <CodeGenerator />
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
-            <div className="flex items-center justify-between mb-6">
+        <div className="space-y-4">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-80">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <div className="w-3 h-3 bg-[#7ebd07] rounded-full"></div>
@@ -237,7 +225,7 @@ const Dashboard = () => {
                 <span>Semaine précédente</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -251,9 +239,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
-            <div className="flex items-center justify-between mb-6">
+        <div className="space-y-4">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-80">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Répartition des clients par âge</h2>
               <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
                 <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -261,7 +249,7 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={[
                 { name: '18-25', clients: 15 },
                 { name: '26-35', clients: 45 },
@@ -277,7 +265,7 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-80 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-64 overflow-y-auto">
             <DailyTip />
           </div>
         </div>

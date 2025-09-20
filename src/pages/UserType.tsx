@@ -9,7 +9,7 @@ const UserType = () => {
       <div className="max-w-md w-full space-y-8 p-8">
         <div className="text-center">
           <img src={logo} alt="logo" />
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Bienvenue sur Naymo</h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Bienvenue</h2>
           <p className="mt-2 text-sm text-gray-600">
             Choisissez votre type de compte pour continuer
           </p>

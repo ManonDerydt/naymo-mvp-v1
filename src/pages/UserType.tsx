@@ -16,20 +16,26 @@ const UserType = () => {
         </div>
 
         <div className="mt-8 space-y-6">
-          <Link to="/merchant/login">
-            <button className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors">
-              <Store className="w-5 h-5" />
-              <span>Je suis commerçant</span>
-            </button>
-          </Link>
-          
-          <Link to="/customer/login">
-            <button className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-[#7fbd07] font-medium bg-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors border-[#7fbd07] mt-5">
-              <Users className="w-5 h-5" />
-              <span>Je suis client</span>
-            </button>
-          </Link>
-        </div>
+      <Link to="/merchant/login">
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+        >
+          <Store className="w-5 h-5" />
+          <span>Je suis commerçant</span>
+        </button>
+      </Link>
+
+      <Link to="/customer/login">
+        <button
+          type="button"
+          className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-[#7fbd07] font-medium bg-white border border-[#7fbd07] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 shadow-lg hover:shadow-xl hover:text-white hover:bg-green-700 shadow-[0_6px_24px_rgba(127,189,7,0.25)]"
+        >
+          <Users className="w-5 h-5" />
+          <span>Je suis client</span>
+        </button>
+      </Link>
+    </div>
       </div>
     </div>
   )

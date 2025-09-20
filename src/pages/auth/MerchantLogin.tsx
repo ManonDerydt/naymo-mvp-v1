@@ -154,7 +154,7 @@ const MerchantLogin = () => {
             <span className="text-gray-600">Nouveau commerçant ? </span>
             <Link 
               to="/merchant/register" 
-              className="font-medium text-green-600 hover:text-green-700"
+              className="font-medium text-[#ebffbc] hover:text-green-700"
             >
               Créer un compte
             </Link>

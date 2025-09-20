@@ -142,7 +142,7 @@ const MerchantLogin = () => {
             {/* Bouton de connexion */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
             >
               <Store className="w-5 h-5 mr-2" />
               Se connecter

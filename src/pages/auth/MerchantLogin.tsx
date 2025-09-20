@@ -57,7 +57,7 @@ const MerchantLogin = () => {
           {/* Icône avec cercle vert */}
           <div className="text-center">
             <div className="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
-              <Store className="w-10 h-10 text-green-600" />
+              <Store className="w-10 h-10" color="#7ebd07" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Connexion Commerçant

@@ -56,8 +56,8 @@ const CustomerLogin = () => {
         <div className="max-w-md w-full space-y-8">
           {/* Icône avec cercle vert */}
           <div className="text-center">
-            <div className="mx-auto w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
-              <Users className="w-10 h-10 text-green-600" />
+            <div className="mx-auto w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mb-8">
+              <Users className="w-10 h-10" color="#7ebd07" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Connexion Client
@@ -77,7 +77,7 @@ const CustomerLogin = () => {
             {/* Email */}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Email
+                Email professionnel
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -89,7 +89,7 @@ const CustomerLogin = () => {
                   type="email"
                   required
                   className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl bg-gray-50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="client@exemple.com"
+                  placeholder="commerce@exemple.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -133,7 +133,7 @@ const CustomerLogin = () => {
             <div className="text-right">
               <Link 
                 to="/reset-password?type=customer" 
-                className="text-green-600 hover:text-green-700 font-medium"
+                className="text-[#7FBD07] hover:text-green-700 font-medium"
               >
                 Mot de passe oublié ?
               </Link>
@@ -142,7 +142,7 @@ const CustomerLogin = () => {
             {/* Bouton de connexion */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
             >
               <Users className="w-5 h-5 mr-2" />
               Se connecter
@@ -154,7 +154,7 @@ const CustomerLogin = () => {
             <span className="text-gray-600">Nouveau client ? </span>
             <Link 
               to="/customer/register" 
-              className="font-medium text-green-600 hover:text-green-700"
+              className="font-medium text-[#7FBD07] hover:text-green-700"
             >
               Créer un compte
             </Link>

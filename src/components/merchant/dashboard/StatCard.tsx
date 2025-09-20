@@ -9,13 +9,13 @@ interface StatCardProps {
 
 const StatCard = ({ icon, title, value, trend }: StatCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
       <div className="flex items-center justify-between">
-        <div className="p-2 rounded-lg bg-gray-50">{icon}</div>
-        <span className="text-sm font-medium text-green-600">{trend}</span>
+        <div className="p-3 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">{icon}</div>
+        <span className="text-sm font-semibold text-[#7ebd07] bg-[#c9eaad]/20 px-3 py-1 rounded-full">{trend}</span>
       </div>
-      <h3 className="mt-4 text-sm font-medium text-gray-600">{title}</h3>
-      <p className="mt-2 text-2xl font-semibold text-gray-900">{value}</p>
+      <h3 className="mt-4 text-sm font-medium text-gray-500 uppercase tracking-wide">{title}</h3>
+      <p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>
     </div>
   )
 }

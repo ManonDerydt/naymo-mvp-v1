@@ -207,31 +207,49 @@ const Dashboard = () => {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 bg-gray-50 min-h-screen p-6 -m-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tableau de bord</h1>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-500">Dernière mise à jour: aujourd'hui</span>
+          </div>
+        </div>
 
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-500">Dernière mise à jour: aujourd'hui</span>
+        <div className="bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] text-white px-6 py-3 rounded-xl shadow-lg">
+          <div className="flex items-center space-x-2">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <span className="font-medium">En ligne</span>
+          </div>
         </div>
       </div>
 
-      <p className="text-md text-gray-500">
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <p className="text-gray-600 leading-relaxed">
         Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
-      </p>
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <CodeGenerator />
 
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">Comparaison des points attribués</h2>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <div className="w-3 h-3 bg-[#7ebd07] rounded-full"></div>
+                <span>Cette semaine</span>
+                <div className="w-3 h-3 bg-[#ffcd2a] rounded-full ml-4"></div>
+                <span>Semaine précédente</span>
+              </div>
+            </div>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -246,7 +264,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="max-h-[600px] overflow-y-auto rounded-lg shadow bg-white p-4">
+        <div className="max-h-[600px] overflow-y-auto rounded-2xl shadow-sm bg-white border border-gray-100">
           <DailyTip />
         </div>
       </div>

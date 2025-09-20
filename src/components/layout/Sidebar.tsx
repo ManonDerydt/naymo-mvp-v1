@@ -19,7 +19,7 @@ const Sidebar = () => {
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-      <div className="flex flex-col flex-grow border-r border-gray-200 bg-[#032313]">
+      <div className="flex flex-col flex-grow border-r border-gray-200 bg-[#c9eaad]">
         <div className="flex items-center h-16 flex-shrink-0">
          {merchant && merchantData ? 
           <div className="flex justify-center">
@@ -40,7 +40,7 @@ const Sidebar = () => {
           {/* <span className="ml-2 text-xl font-bold text-gray-900">{merchantData && merchantData ? merchantData.company_name : "Naymo"}</span> */}
         </div>
         <div className="flex-grow flex flex-col p-4">
-          <h3 className="text-white mt-10">MENU</h3>
+          <h3 className="text-[#032313] font-semibold mt-10 mb-4">MENU</h3>
           <nav className="flex-1 space-y-8">
             {navigation.map((item) => {
               const Icon = item.icon
@@ -49,17 +49,17 @@ const Sidebar = () => {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    'mt-10 group flex items-center px-3 py-2 text-sm font-medium rounded-lg',
+                    'mt-6 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
-                      ? 'bg-primary-50 text-primary-600'
-                      : 'text-white hover:bg-[white] hover:text-black'
+                      ? 'bg-white text-[#7ebd07] shadow-md'
+                      : 'text-[#032313] hover:bg-white hover:text-[#7ebd07] hover:shadow-sm'
                   )}
                 >
                   <Icon className={cn(
                     'mr-3 h-5 w-5 flex-shrink-0',
                     location.pathname === item.href
                       ? 'text-primary-500'
-                      : 'text-white group-hover:text-gray-500'
+                      : 'text-[#032313] group-hover:text-[#7ebd07]'
                   )} />
                   {item.name}
                 </Link>
@@ -77,7 +77,7 @@ const Sidebar = () => {
                   alt="Logo du marchand"
                   className="w-12 h-12 rounded-full object-cover"
                 />
-                <div className="text-white">
+                <div className="text-[#032313]">
                   <p className="font-semibold">{merchantData.company_name}</p>
                   <p className="text-sm">{merchantData.email}</p>
                 </div>

@@ -250,22 +250,30 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Générer un code client</h1>
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 mb-1">Générer un code client</h2>
+          <p className="text-sm text-gray-500">Recherchez et ajoutez des points à vos clients</p>
+        </div>
+        <div className="p-3 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
+          <svg className="w-6 h-6 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="mt-6">
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="tel"
             placeholder="Numéro de téléphone"
             value={clientCode}
             onChange={e => setClientCode(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent transition-all"
           />
           <button
-            className="md:w-auto w-full py-2 px-4 rounded-md text-white font-medium bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+            className="md:w-auto w-full py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
             onClick={handleOpenModal}
             disabled={loading}
           >
@@ -273,7 +281,7 @@ export default function CodeGenerator() {
           </button>
         </div>
       </div>
-
+    </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="space-y-4">
           {pointsAdded ? (
@@ -293,7 +301,7 @@ export default function CodeGenerator() {
               </p>
               <button
                 onClick={resetForm}
-                className="mt-6 py-2 px-4 rounded-md text-white font-medium bg-blue-600 hover:bg-blue-700"
+                className="mt-6 py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] transition-all duration-200"
               >
                 Ajouter des points à un autre client
               </button>
@@ -302,7 +310,7 @@ export default function CodeGenerator() {
             <>
               <h2 className="text-xl font-bold text-center mb-4">Résultat de la recherche</h2>
               {customer ? (
-                <div className="bg-gray-50 rounded-md p-4 space-y-2">
+                <div className="bg-gradient-to-br from-[#c9eaad]/10 to-[#7ebd07]/10 rounded-xl p-4 space-y-2 border border-[#c9eaad]/20">
                   <p><span className="font-semibold">Nom :</span> {customer.last_name}</p>
                   <p><span className="font-semibold">Prénom :</span> {customer.first_name}</p>
                   <p><span className="font-semibold">Email :</span> {customer.email}</p>
@@ -317,7 +325,7 @@ export default function CodeGenerator() {
                       const hasDiscount = discount > 0;
 
                       return (
-                        <li key={offer.id} className="bg-blue-50 p-3 rounded-md text-sm text-gray-800">
+                        <li key={offer.id} className="bg-white p-3 rounded-xl text-sm text-gray-800 border border-gray-200 shadow-sm">
                           <p className="font-semibold">{offer.title}</p>
                           <p>{offer.name}</p>
 
@@ -328,7 +336,7 @@ export default function CodeGenerator() {
                                 onClick={() =>
                                   setSelectedOfferId(isSelected ? null : offer.id)
                                 }
-                                className="mt-2 text-white bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-xs"
+                                className="mt-2 text-white bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] px-3 py-1 rounded-lg text-xs transition-all"
                               >
                                 {isSelected ? 'Annuler' : 'Appliquer l’offre'}
                               </button>
@@ -351,7 +359,7 @@ export default function CodeGenerator() {
                                     isNaN(value) ? null : (value * (1 - discount / 100)).toFixed(2)
                                   );
                                 }}
-                                className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07]"
                                 placeholder="Ex : 50"
                               />
 
@@ -364,7 +372,7 @@ export default function CodeGenerator() {
                               {/* Bouton pour appliquer l'offre */}
                               <button
                                 onClick={handleApplyOffer}
-                                className="mt-2 w-full text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+                                className="mt-2 w-full text-white bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] px-3 py-2 rounded-lg text-xs transition-all"
                                 disabled={!offerAmount}
                               >
                                 Appliquer la réduction et ajouter les points
@@ -385,7 +393,7 @@ export default function CodeGenerator() {
                       value={amount}
                       onChange={e => setAmount(e.target.value)}
                       placeholder="Ex : 55"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
                     />
                   </div>
                     
@@ -401,7 +409,7 @@ export default function CodeGenerator() {
                         max={maxCoupons}
                         value={couponsToApply}
                         onChange={e => setCouponsToApply(Number(e.target.value))}
-                        className="w-full px-4 py-2 border border-yellow-300 rounded-md"
+                        className="w-full px-4 py-3 border border-[#c9eaad] rounded-xl bg-[#c9eaad]/10 focus:outline-none focus:ring-2 focus:ring-[#7ebd07]"
                       />
                     </div>
                   )}
@@ -415,14 +423,14 @@ export default function CodeGenerator() {
                   {/* Ajouter les points */}
                   <button
                     onClick={handleAddPoints}
-                    className="w-full mt-3 py-2 px-4 rounded-md text-white font-medium bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                    className="w-full mt-4 py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
                     disabled={addingPoints}
                   >
                     {addingPoints ? "Ajout..." : "Ajouter les points"}
                   </button>
                 </div>
               ) : (
-                <div className="bg-red-50 rounded-md p-4 text-center text-red-700 font-semibold">
+                <div className="bg-red-50 rounded-xl p-4 text-center text-red-700 font-semibold border border-red-200">
                   Ce numéro n'est pas dans la liste client.
                 </div>
               )}
@@ -430,6 +438,5 @@ export default function CodeGenerator() {
           )}
         </div>
       </Modal>
-    </div>
   );
 }

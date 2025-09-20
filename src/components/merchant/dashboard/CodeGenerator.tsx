@@ -250,7 +250,8 @@ export default function CodeGenerator() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+    <>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">Générer un code client</h2>
@@ -438,5 +439,6 @@ export default function CodeGenerator() {
           )}
         </div>
       </Modal>
+    </>
   );
 }

@@ -15,11 +15,15 @@ const UserType = () => {
           </p>
         </div>
 
-   <div className="mt-8 space-y-6">
+      <div className="mt-8 space-y-6">
       <Link to="/merchant/login">
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl shadow-sm font-medium
+                     bg-[#7fbd07] text-white
+                     hover:bg-white hover:text-[#7fbd07]
+                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                     transition-colors"
         >
           <Store className="w-5 h-5" />
           <span>Je suis commerçant</span>
@@ -29,7 +33,12 @@ const UserType = () => {
       <Link to="/customer/login">
         <button
           type="button"
-          className="mt-5 w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-[#7fbd07] font-medium bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors transition-shadow shadow-[0_6px_22px_rgba(0,0,0,0.15)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:bg-green-700 hover:text-white"
+          className="mt-5 w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-medium
+                     bg-white text-[#7fbd07]
+                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500
+                     transition-colors transition-shadow
+                     shadow-[0_6px_22px_rgba(0,0,0,0.15)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)]
+                     hover:bg-[#7fbd07] hover:text-white"
         >
           <Users className="w-5 h-5" />
           <span>Je suis client</span>

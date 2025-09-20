@@ -237,10 +237,22 @@ const CustomerRegisterSteps = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#f8fdf4' }}>
       <div className="max-w-2xl w-full space-y-8">
+        {/* Bouton retour */}
+        <div className="absolute top-6 left-6">
+          <button 
+            onClick={() => navigate('/')}
+            className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
         <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-primary-500" />
+          <div className="mx-auto w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mb-8">
+            <Users className="w-10 h-10" color="#7ebd07" />
+          </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Créer votre compte client
           </h2>
@@ -252,7 +264,7 @@ const CustomerRegisterSteps = () => {
           )}
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-8">
+        <div className="bg-white shadow-lg rounded-2xl p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
               <CustomerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
@@ -269,7 +281,7 @@ const CustomerRegisterSteps = () => {
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="space-x-2"
+                className="space-x-2 rounded-2xl py-4 px-6 border-[#7ebd07] text-[#7ebd07] hover:bg-[#7ebd07] hover:text-white"
                 size="lg"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -277,7 +289,7 @@ const CustomerRegisterSteps = () => {
               </Button>
               <Button
                 onClick={nextStep}
-                className="space-x-2"
+                className="space-x-2 rounded-2xl py-4 px-6 bg-[#7ebd07] hover:bg-green-700 text-white"
                 size="lg"
               >
                 <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>
@@ -296,9 +308,11 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
 
   return (
     <div className="space-y-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
+      </div>
       {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
-      <div className="flex gap-4">
+      <div className="flex gap-6">
         <label className="flex items-center space-x-2">
           <input
             type="radio"
@@ -306,6 +320,7 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
             value="Masculin"
             checked={formData.gender === 'Masculin'}
             onChange={onChange}
+            className="text-[#7ebd07] focus:ring-[#7ebd07]"
           />
           <span>Masculin</span>
         </label>
@@ -316,6 +331,7 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
             value="Féminin"
             checked={formData.gender === 'Féminin'}
             onChange={onChange}
+            className="text-[#7ebd07] focus:ring-[#7ebd07]"
           />
           <span>Féminin</span>
         </label>
@@ -412,14 +428,18 @@ const LocationStep = ({ formData, onChange, errors }: StepProps) => (
 // Étape 3
 const PreferencesStep = ({ formData, onChange, errors }: StepProps) => (
   <div className="space-y-6">
-    <div className="flex items-center space-x-2">
-      <Input
-        label="S'inscrire à la newsletter"
-        name="newsletter"
-        type="checkbox"
-        checked={formData.newsletter}
-        onChange={onChange}
-      />
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">Newsletter</label>
+      <div className="flex items-center space-x-3">
+        <input
+          type="checkbox"
+          name="newsletter"
+          checked={formData.newsletter}
+          onChange={onChange}
+          className="w-4 h-4 text-[#7ebd07] focus:ring-[#7ebd07] border-gray-300 rounded"
+        />
+        <span className="text-sm text-gray-700">S'inscrire à la newsletter</span>
+      </div>
     </div>
     <Input
       label="Pourquoi Naymo ?"

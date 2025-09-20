@@ -310,10 +310,22 @@ const RegisterSteps = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#f8fdf4' }}>
       <div className="max-w-2xl w-full space-y-8">
+        {/* Bouton retour */}
+        <div className="absolute top-6 left-6">
+          <button 
+            onClick={() => navigate('/')}
+            className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+        </div>
+
         <div className="text-center">
-          <Store className="mx-auto h-12 w-12 text-primary-500" />
+          <div className="mx-auto w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mb-8">
+            <Store className="w-10 h-10" color="#7ebd07" />
+          </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
             Créer votre compte commerçant
           </h2>
@@ -325,7 +337,7 @@ const RegisterSteps = () => {
           )}
         </div>
 
-        <div className="bg-white shadow-sm rounded-lg p-8">
+        <div className="bg-white shadow-lg rounded-2xl p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
               <BusinessInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
@@ -345,7 +357,7 @@ const RegisterSteps = () => {
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="space-x-2"
+                className="space-x-2 rounded-2xl py-4 px-6 border-[#7ebd07] text-[#7ebd07] hover:bg-[#7ebd07] hover:text-white"
                 size="lg"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -353,7 +365,7 @@ const RegisterSteps = () => {
               </Button>
               <Button
                 onClick={nextStep}
-                className="space-x-2"
+                className="space-x-2 rounded-2xl py-4 px-6 bg-[#7ebd07] hover:bg-green-700 text-white"
                 size="lg"
               >
                 <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>
@@ -433,13 +445,13 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
           value={formData.password}
           onChange={onChange}
           placeholder="Ex: mypassword1234"
-          className="pr-10" // Pour laisser de la place à l'œil
+          className="pr-10 rounded-2xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
           error={errors.password}
         />
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-[40px] text-gray-500"
+          className="absolute right-3 top-[40px] text-gray-400"
         >
           {showPassword ? <EyeOff /> : <Eye />}
         </button>
@@ -466,7 +478,7 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
           name="business_type"
           value={formData.business_type}
           onChange={onChange}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-2xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
         >
           <option value="">Sélectionnez un type d'activité</option>
           <option value="Alimentation">Alimentation</option>
@@ -484,12 +496,17 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
         <div className="flex items-center space-x-2">
           <input
             type="text"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-2xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent"
             placeholder="Ajoutez un mot-clé"
             value={newKeyword}
             onChange={(e) => setNewKeyword(e.target.value)}
           />
-          <Button type="button" onClick={handleAddKeyword} disabled={!newKeyword}>
+          <Button 
+            type="button" 
+            onClick={handleAddKeyword} 
+            disabled={!newKeyword}
+            className="rounded-2xl bg-[#7ebd07] hover:bg-green-700 text-white px-4 py-3"
+          >
             Ajouter
           </Button>
         </div>
@@ -501,7 +518,7 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
               <button
                 type="button"
                 onClick={() => handleRemoveKeyword(keyword)}
-                className="text-red-500"
+                className="text-red-500 hover:text-red-700"
               >
                 Supprimer
               </button>
@@ -512,16 +529,41 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
       {/* Ajout des pictogrammes d'engagements */}
       <div>
         <label className="block text-sm font-medium text-gray-700">Pictogrammes d'engagements</label>
-        <div className="flex flex-wrap gap-4 mt-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {pictograms.map((pictogram, index) => (
             <button
               key={index}
               type="button"
               onClick={() => handleSelectCommitment(pictogram.name)}
-              className={`border p-2 rounded-md ${selectedCommitments.includes(pictogram.name) ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              className={`relative p-6 rounded-2xl border-2 transition-all duration-200 ${
+                selectedCommitments.includes(pictogram.name) 
+                  ? 'border-[#7ebd07] bg-[#ebffbc] shadow-lg transform scale-105' 
+                  : 'border-gray-200 bg-white hover:border-[#7ebd07] hover:shadow-md'
+              }`}
             >
-              <img src={pictogram.imageUrl} alt={pictogram.name} className="w-12 h-12" />
-              <p className="mt-1 text-xs text-center">{pictogram.name}</p>
+              <div className="flex flex-col items-center space-y-3">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  selectedCommitments.includes(pictogram.name) 
+                    ? 'bg-[#7ebd07] text-white' 
+                    : 'bg-gray-100 text-gray-600'
+                }`}>
+                  {getEngagementIcon(pictogram.name)}
+                </div>
+                <p className={`text-sm font-medium text-center ${
+                  selectedCommitments.includes(pictogram.name) 
+                    ? 'text-[#7ebd07]' 
+                    : 'text-gray-700'
+                }`}>
+                  {pictogram.name}
+                </p>
+                {selectedCommitments.includes(pictogram.name) && (
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#7ebd07] rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                )}
+              </div>
             </button>
           ))}
         </div>
@@ -535,7 +577,7 @@ const BusinessInfoStep = ({ formData, onChange, errors, setErrors }: StepProps) 
                 <button
                   type="button"
                   onClick={() => setSelectedCommitments(selectedCommitments.filter(c => c !== commitment))}
-                  className="text-red-500"
+                  className="text-red-500 hover:text-red-700"
                 >
                   Supprimer
                 </button>
@@ -632,5 +674,47 @@ const MediaStep = ({ onFileChange, errors }: { onFileChange: (type: 'logo' | 'co
     />
   </div>
 )
+
+// Fonction pour obtenir les icônes d'engagement
+const getEngagementIcon = (name: string) => {
+  switch (name) {
+    case 'Accueil':
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+        </svg>
+      )
+    case 'Client':
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+        </svg>
+      )
+    case 'Humain':
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+        </svg>
+      )
+    case 'Magasin':
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm3 5a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clipRule="evenodd" />
+        </svg>
+      )
+    case 'Environnement':
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+        </svg>
+      )
+    default:
+      return (
+        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+        </svg>
+      )
+  }
+}
 
 export default RegisterSteps

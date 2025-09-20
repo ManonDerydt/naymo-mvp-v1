@@ -15,7 +15,7 @@ const UserType = () => {
           </p>
         </div>
 
-        <div className="mt-8 space-y-6">
+   <div className="mt-8 space-y-6">
       <Link to="/merchant/login">
         <button
           type="button"
@@ -29,7 +29,7 @@ const UserType = () => {
       <Link to="/customer/login">
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-[#7fbd07] font-medium bg-white border border-[#7fbd07] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 shadow-lg hover:shadow-xl hover:text-white hover:bg-green-700 shadow-[0_6px_24px_rgba(127,189,7,0.25)]"
+          className="mt-5 w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl text-[#7fbd07] font-medium bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors transition-shadow shadow-[0_6px_22px_rgba(0,0,0,0.15)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:bg-green-700 hover:text-white"
         >
           <Users className="w-5 h-5" />
           <span>Je suis client</span>

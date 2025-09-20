@@ -133,7 +133,7 @@ const MerchantLogin = () => {
             <div className="text-right">
               <Link 
                 to="/reset-password?type=merchant" 
-                className="text-green-600 hover:text-green-700 font-medium"
+                className="text-[#7FBD07] hover:text-green-700 font-medium"
               >
                 Mot de passe oublié ?
               </Link>

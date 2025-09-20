@@ -24,7 +24,7 @@ const UserType = () => {
           </Link>
           
           <Link to="/customer/login">
-            <button className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-[#7fbd07] font-medium bg-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors border-black">
+            <button className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-[#7fbd07] font-medium bg-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors border-[#7fbd07]">
               <Users className="w-5 h-5" />
               <span>Je suis client</span>
             </button>

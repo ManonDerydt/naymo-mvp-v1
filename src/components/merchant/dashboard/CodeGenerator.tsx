@@ -274,7 +274,7 @@ export default function CodeGenerator() {
             className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent transition-all"
           />
           <button
-            className="md:w-auto w-full py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="md:w-auto w-full py-3 px-6 rounded-xl text-white font-medium bg-[#7fbd07] hover:bg-[#6ba006] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
             onClick={handleOpenModal}
             disabled={loading}
           >
@@ -302,7 +302,7 @@ export default function CodeGenerator() {
               </p>
               <button
                 onClick={resetForm}
-                className="mt-6 py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] transition-all duration-200"
+                className="mt-6 py-3 px-6 rounded-xl text-white font-medium bg-[#7fbd07] hover:bg-[#6ba006] transition-all duration-200"
               >
                 Ajouter des points à un autre client
               </button>
@@ -373,7 +373,7 @@ export default function CodeGenerator() {
                               {/* Bouton pour appliquer l'offre */}
                               <button
                                 onClick={handleApplyOffer}
-                                className="mt-2 w-full text-white bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] px-3 py-2 rounded-lg text-xs transition-all"
+                                className="mt-2 w-full text-white bg-[#7fbd07] hover:bg-[#6ba006] px-3 py-2 rounded-lg text-xs transition-all"
                                 disabled={!offerAmount}
                               >
                                 Appliquer la réduction et ajouter les points
@@ -424,7 +424,7 @@ export default function CodeGenerator() {
                   {/* Ajouter les points */}
                   <button
                     onClick={handleAddPoints}
-                    className="w-full mt-4 py-3 px-6 rounded-xl text-white font-medium bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] hover:from-[#6ba006] hover:to-[#b8d99c] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full mt-4 py-3 px-6 rounded-xl text-white font-medium bg-[#7fbd07] hover:bg-[#6ba006] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
                     disabled={addingPoints}
                   >
                     {addingPoints ? "Ajout..." : "Ajouter les points"}

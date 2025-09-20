@@ -208,25 +208,10 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 bg-gray-50 min-h-screen p-6 -m-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Tableau de bord</h1>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">Dernière mise à jour: aujourd'hui</span>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-[#7ebd07] to-[#c9eaad] text-white px-6 py-3 rounded-xl shadow-lg">
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            <span className="font-medium">En ligne</span>
-          </div>
-        </div>
-      </div>
-
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Tableau de bord</h1>
         <p className="text-gray-600 leading-relaxed">
-        Sur votre tableau de bord Naymo, vous visualisez en un clin d’œil vos chiffres clés et gérez facilement votre activité au quotidien.
+          Sur votre tableau de bord Naymo, vous visualisez en un clin d'œil vos chiffres clés et gérez facilement votre activité au quotidien.
         </p>
       </div>
 
@@ -237,10 +222,12 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
           <CodeGenerator />
+        </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -250,7 +237,7 @@ const Dashboard = () => {
                 <span>Semaine précédente</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={280}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -264,8 +251,35 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="max-h-[600px] overflow-y-auto rounded-2xl shadow-sm bg-white border border-gray-100">
-          <DailyTip />
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">Répartition des clients par âge</h2>
+              <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
+                <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={[
+                { name: '18-25', clients: 15 },
+                { name: '26-35', clients: 45 },
+                { name: '36-50', clients: 25 },
+                { name: '50+', clients: 15 }
+              ]}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="clients" fill="#7fbd07" name="Nombre de clients" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-80 overflow-y-auto">
+            <DailyTip />
+          </div>
         </div>
       </div>
     </div>

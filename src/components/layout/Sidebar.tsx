@@ -40,7 +40,7 @@ const Sidebar = () => {
           {/* <span className="ml-2 text-xl font-bold text-gray-900">{merchantData && merchantData ? merchantData.company_name : "Naymo"}</span> */}
         </div>
         <div className="flex-grow flex flex-col p-4">
-          <h3 className="text-[#032313] font-semibold mt-10 mb-4">MENU</h3>
+          <h3 className="text-white font-semibold mt-10 mb-4">MENU</h3>
           <nav className="flex-1 space-y-8">
             {navigation.map((item) => {
               const Icon = item.icon
@@ -51,15 +51,15 @@ const Sidebar = () => {
                   className={cn(
                     'mt-6 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
-                      ? 'bg-white text-[#7ebd07] shadow-md'
-                      : 'text-[#032313] hover:bg-white hover:text-[#7ebd07] hover:shadow-sm'
+                      ? 'bg-[#7fbd07] text-white shadow-md'
+                      : 'text-white hover:bg-white hover:text-[#7ebd07] hover:shadow-sm'
                   )}
                 >
                   <Icon className={cn(
                     'mr-3 h-5 w-5 flex-shrink-0',
                     location.pathname === item.href
-                      ? 'text-primary-500'
-                      : 'text-[#032313] group-hover:text-[#7ebd07]'
+                      ? 'text-white'
+                      : 'text-white group-hover:text-[#7ebd07]'
                   )} />
                   {item.name}
                 </Link>

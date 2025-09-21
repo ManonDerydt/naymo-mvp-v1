@@ -271,9 +271,6 @@ const CustomerSearch = () => {
                     </div>
                 )}
             </div>
-        </div>
-    )
-}
 
             {/* Modale du commerçant */}
             {isModalOpen && selectedMerchant && (
@@ -451,4 +448,7 @@ const CustomerSearch = () => {
                     </div>
                 </div>
             )}
+        </div>
+    )
+}
 export default CustomerSearch;

@@ -190,7 +190,7 @@ const CustomerRegisterSteps = () => {
             Créer votre compte client
           </h2>
           <p className="mt-2 text-sm text-[#589507] font-medium">
-            Créez votre compte en quelques secondes
+            Étape {currentStep + 1} sur {steps.length}
           </p>
           {errors.general && (
             <p className="mt-2 text-sm text-red-600 font-medium">{errors.general}</p>
@@ -278,6 +278,8 @@ const RegistrationStep = ({ formData, onChange, errors }: StepProps) => {
         placeholder="Retapez votre mot de passe"
         error={errors.confirmPassword} 
       />
-  </div>
+    </div>
+  )
+}
 
 export default CustomerRegisterSteps

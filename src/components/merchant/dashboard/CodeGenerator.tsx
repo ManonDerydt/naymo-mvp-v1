@@ -252,7 +252,7 @@ export default function CodeGenerator() {
   return (
     <>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-1">Générer un code client</h2>
           <p className="text-sm text-gray-500">Recherchez et ajoutez des points à vos clients</p>
@@ -264,7 +264,7 @@ export default function CodeGenerator() {
         </div>
       </div>
 
-      <div className="mt-6">
+      <div>
         <div className="flex flex-col md:flex-row gap-4">
           <input
             type="tel"

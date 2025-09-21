@@ -198,20 +198,8 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28 pt-10 px-4">
-      {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#c9eaad] shadow-lg z-50 flex items-center px-6 py-4">
-        <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-12 mx-auto" />
-        <div className="flex-1 flex justify-end">
-          <div className="relative">
-            <Bell size={24} className="text-[#396F04] hover:text-[#589507] transition-colors cursor-pointer" />
-            <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-2xl mx-auto mt-20 space-y-8">
+    <div className="min-h-screen bg-white pb-28 pt-10 px-4">
+      <div className="max-w-2xl mx-auto space-y-8">
         {/* En-tête */}
         <div className="text-center mb-8">
           <div className="w-20 h-20 bg-gradient-to-br from-[#7DBD07] to-[#589507] rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">

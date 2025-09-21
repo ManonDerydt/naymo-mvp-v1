@@ -1,5 +1,6 @@
 import { Bell, History, Home, Search, Settings, User } from "lucide-react"
 import { Link, Outlet, useLocation } from "react-router-dom"
+import logo from "../../assets/Logo.png"
 
 const CustomerLayout = () => {
     const location = useLocation()
@@ -13,17 +14,23 @@ const CustomerLayout = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc]">
+        <div className="min-h-screen bg-white">
+            {/* Header uniforme */}
             <div className="fixed top-0 left-0 right-0 bg-[#c9eaad] shadow-lg z-50 flex items-center px-6 py-4">
-            </div>
-            {/* Contenu principal */}
-            <div className="lg:pl-64 flex flex-col min-h-screen">
-                <main className="flex-1 pb-24">
-                    <Outlet />
+                <div className="flex-1" />
+                <img src={logo} alt="Naymo" className="h-12 mx-auto" />
+                <div className="flex-1 flex justify-end">
                     <div className="relative">
                         <Bell size={24} className="text-[#396F04] hover:text-[#589507] transition-colors cursor-pointer" />
-                        <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+                        <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">3</span>
                     </div>
+                </div>
+            </div>
+            
+            {/* Contenu principal */}
+            <div className="lg:pl-64 flex flex-col min-h-screen">
+                <main className="flex-1 pb-24 pt-20">
+                    <Outlet />
                 </main>
             </div>
 
@@ -45,14 +52,14 @@ const CustomerLayout = () => {
                                 >
                                     <div className={`p-3 rounded-2xl transition-all duration-200 ${
                                         isActive 
-                                            ? 'bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] text-white shadow-lg transform -translate-y-1' 
+                                            ? 'bg-[#7fbd07] text-white shadow-lg transform -translate-y-1' 
                                             : 'hover:bg-[#ebffbc] hover:shadow-md'
                                     }`}>
                                         {item.icon}
                                     </div>
                                     <span className="mt-1 font-medium">{item.label}</span>
                                     {isActive && (
-                                        <div className="w-1 h-1 bg-[#396F04] rounded-full mt-1"></div>
+                                        <div className="w-1 h-1 bg-[#7fbd07] rounded-full mt-1"></div>
                                     )}
                                 </Link>
                             </li>

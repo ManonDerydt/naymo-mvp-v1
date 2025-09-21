@@ -109,21 +109,9 @@ const CustomerMyNaymo = () => {
   }, [customer])
   
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
-      {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#c9eaad] border-b shadow-sm z-50 flex items-center px-4 py-3">
-        <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
-        <div className="flex-1 flex justify-end">
-          <div className="relative">
-            <Bell size={24} className="text-[#396F04] hover:text-[#589507] transition-colors cursor-pointer" />
-            <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">2</span>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-white pb-28">
       {/* Contenu principal */}
-      <div className="pt-24 px-6 space-y-10 max-w-5xl mx-auto">
+      <div className="px-6 space-y-10 max-w-5xl mx-auto">
         
         {/* Section Points - Nouveau style */}
         <section className="bg-white rounded-2xl shadow-lg p-6 space-y-6">

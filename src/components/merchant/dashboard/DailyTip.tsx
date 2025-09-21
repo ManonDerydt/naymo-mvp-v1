@@ -20,12 +20,7 @@ const DailyTip = () => {
         </div>
      
         
-        <button
-          onClick={() => setShowTutorials(!showTutorials)}
-          className="px-6 py-2 bg-[#7fbd07] text-white rounded-xl font-medium hover:bg-[#6ba006] transition-colors text-sm"
-        >
-          {showTutorials ? 'Masquer les tutoriels' : 'Voir les tutoriels'}
-        </button>
+        
       </div>
 
       {showTutorials && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, Edit, HelpCircle, Lock, LogOut, Search, Trash2, User } from "lucide-react";
+import { Bell, Edit, HelpCircle, Lock, LogOut, Search, Trash2, User, Shield, FileText } from "lucide-react";
 import logo from "../../assets/Logo.png";
 import { useAuth } from "@/components/firebase/useAuth";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
@@ -38,7 +38,6 @@ const CustomerSettings = () => {
   const { customer, customerData } = useAuth();
   const navigate = useNavigate();
 
-  // Initialiser les données éditées avec les valeurs actuelles
   useEffect(() => {
     if (customerData) {
       setEditedData({
@@ -199,131 +198,157 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   ];
 
   return (
-    <div className="min-h-screen from-green-50 via-white to-green-100 pb-28 pt-10 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28 pt-10 px-4">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-lg z-50 flex items-center px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-[#396F04] to-[#589507] shadow-lg z-50 flex items-center px-6 py-4">
         <div className="flex-1" />
-        <img src={logo} alt="Naymo" className="h-10 mx-auto" />
+        <img src={logo} alt="Naymo" className="h-12 mx-auto" />
         <div className="flex-1 flex justify-end">
-          {/* <div className="relative">
-            <Bell size={24} className="text-green-500 fill-current" />
-            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">0</span>
-          </div> */}
+          <div className="relative">
+            <Bell size={24} className="text-[#B7DB25] hover:text-[#FFCD29] transition-colors cursor-pointer" />
+            <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto mt-16 space-y-8">
+      <div className="max-w-2xl mx-auto mt-20 space-y-8">
+        {/* En-tête */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-gradient-to-br from-[#7DBD07] to-[#589507] rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+            <User className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-[#0A2004] mb-2">Paramètres</h1>
+          <p className="text-[#589507] font-medium">Gérez votre compte et vos préférences</p>
+        </div>
+
         {/* Profil */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Profil</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+          <div className="bg-white rounded-3xl shadow-xl border border-[#c9eaad]/30 p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-[#0A2004]">Mon Profil</h2>
+            </div>
+
             {customer && customerData ? (
               <>
                 {!isEditingProfile ? (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                        <User className="text-green-600" size={20} />
+                    <div className="bg-[#f8fdf4] rounded-2xl p-4 space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-[#7DBD07]/20 rounded-full flex items-center justify-center">
+                          <User className="w-5 h-5 text-[#396F04]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-[#589507] font-medium">Prénom</p>
+                          <p className="font-bold text-[#0A2004]">{customerData.first_name}</p>
+                        </div>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Prénom : <strong>{customerData.first_name}</strong>
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                        <Search className="text-green-600" size={20} />
+                      
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-[#7DBD07]/20 rounded-full flex items-center justify-center">
+                          <Search className="w-5 h-5 text-[#396F04]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-[#589507] font-medium">Email</p>
+                          <p className="font-bold text-[#0A2004]">{customerData.email}</p>
+                        </div>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Email : <strong>{customerData.email}</strong>
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                        <HelpCircle className="text-green-600" size={20} />
+
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-[#7DBD07]/20 rounded-full flex items-center justify-center">
+                          <HelpCircle className="w-5 h-5 text-[#396F04]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-[#589507] font-medium">Date de naissance</p>
+                          <p className="font-bold text-[#0A2004]">
+                            {customerData.birth_date
+                              ? new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
+                                })
+                              : "Non spécifié"}
+                          </p>
+                        </div>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Date de naissance :{" "}
-                        <strong>
-                          {customerData.birth_date
-                            ? new Date(customerData.birth_date).toLocaleDateString("fr-FR", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric",
-                              })
-                            : "Non spécifié"}
-                        </strong>
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                        <Lock className="text-green-600" size={20} />
+
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-[#7DBD07]/20 rounded-full flex items-center justify-center">
+                          <Lock className="w-5 h-5 text-[#396F04]" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-[#589507] font-medium">Téléphone</p>
+                          <p className="font-bold text-[#0A2004]">{customerData.phone_number || "Non spécifié"}</p>
+                        </div>
                       </div>
-                      <span className="text-gray-900 font-medium">
-                        Téléphone : <strong>{customerData.phone_number || "Non spécifié"}</strong>
-                      </span>
                     </div>
-                    <div
-                      className="flex items-center gap-3 p-3 bg-[#7ebd07] rounded-2xl shadow cursor-pointer hover:bg-green-100 w-fit mt-10"
+
+                    <button
                       onClick={() => setIsEditingProfile(true)}
+                      className="w-full bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] hover:from-[#589507] hover:to-[#7DBD07] text-white py-4 px-6 rounded-2xl font-bold flex items-center justify-center space-x-2 shadow-lg transform hover:scale-105 transition-all duration-200"
                     >
-                      <Edit className="text-white" size={20} />
-                      <span className="font-semibold text-white">Modifier</span>
-                    </div>
+                      <Edit className="w-5 h-5" />
+                      <span>Modifier mon profil</span>
+                    </button>
                   </div>
                 ) : (
                   <form onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
                     <div className="space-y-4">
-                      <label className="block">
-                        <span className="text-gray-700 font-medium">Prénom</span>
-                        <input
-                          type="text"
-                          value={editedData.first_name}
-                          onChange={(e) => setEditedData({ ...editedData, first_name: e.target.value })}
-                          placeholder="Prénom"
-                          className="block w-full border p-3 rounded-2xl mt-1"
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700 font-medium">Email</span>
-                        <input
-                          type="email"
-                          value={editedData.email}
-                          onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
-                          placeholder="Email"
-                          className="block w-full border p-3 rounded-2xl mt-1"
-                          disabled
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700 font-medium">Date de naissance</span>
-                        <input
-                          type="date"
-                          value={editedData.birth_date}
-                          onChange={(e) => setEditedData({ ...editedData, birth_date: e.target.value })}
-                          className="block w-full border p-3 rounded-2xl mt-1"
-                        />
-                      </label>
-                      <label className="block">
-                        <span className="text-gray-700 font-medium">Numéro de téléphone</span>
-                        <input
-                          type="tel"
-                          value={editedData.phone_number}
-                          onChange={(e) => setEditedData({ ...editedData, phone_number: e.target.value.replace(/\D/g, "").slice(0, 10) })}
-                          placeholder="Numéro de téléphone"
-                          className="block w-full border p-3 rounded-2xl mt-1"
-                        />
-                      </label>
-                      <div className="flex justify-end space-x-4 pt-2">
+                      <div className="bg-[#f8fdf4] rounded-2xl p-4 space-y-4">
+                        <label className="block">
+                          <span className="text-[#396F04] font-bold text-sm mb-2 block">Prénom</span>
+                          <input
+                            type="text"
+                            value={editedData.first_name}
+                            onChange={(e) => setEditedData({ ...editedData, first_name: e.target.value })}
+                            placeholder="Prénom"
+                            className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-white focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                          />
+                        </label>
+                        <label className="block">
+                          <span className="text-[#396F04] font-bold text-sm mb-2 block">Email</span>
+                          <input
+                            type="email"
+                            value={editedData.email}
+                            onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
+                            placeholder="Email"
+                            className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-gray-100 text-[#589507] cursor-not-allowed"
+                            disabled
+                          />
+                        </label>
+                        <label className="block">
+                          <span className="text-[#396F04] font-bold text-sm mb-2 block">Date de naissance</span>
+                          <input
+                            type="date"
+                            value={editedData.birth_date}
+                            onChange={(e) => setEditedData({ ...editedData, birth_date: e.target.value })}
+                            className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-white focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                          />
+                        </label>
+                        <label className="block">
+                          <span className="text-[#396F04] font-bold text-sm mb-2 block">Numéro de téléphone</span>
+                          <input
+                            type="tel"
+                            value={editedData.phone_number}
+                            onChange={(e) => setEditedData({ ...editedData, phone_number: e.target.value.replace(/\D/g, "").slice(0, 10) })}
+                            placeholder="Numéro de téléphone"
+                            className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-white focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                          />
+                        </label>
+                      </div>
+                      <div className="flex space-x-4">
                         <button
                           type="button"
                           onClick={() => setIsEditingProfile(false)}
-                          className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl"
+                          className="flex-1 bg-white border-2 border-[#c9eaad] text-[#589507] px-6 py-3 rounded-2xl font-bold hover:bg-[#f8fdf4] transition-colors"
                         >
                           Annuler
                         </button>
                         <button
                           type="submit"
-                          className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
+                          className="flex-1 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                           disabled={loading}
                         >
                           {loading ? "Sauvegarde..." : "Sauvegarder"}
@@ -339,155 +364,183 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
 
         {/* Mon compte */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Mon compte</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setShowPasswordForm(true)}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <Lock className="text-green-600" size={20} />
+          <div className="bg-white rounded-3xl shadow-xl border border-[#c9eaad]/30 p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#589507] to-[#396F04] rounded-full flex items-center justify-center">
+                <Shield className="w-6 h-6 text-white" />
               </div>
-              <span className="font-semibold text-green-800">Changer mon mot de passe</span>
+              <h2 className="text-2xl font-bold text-[#0A2004]">Sécurité</h2>
             </div>
-            {showPasswordForm && (
-              <div className="ml-12 space-y-4">
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mot de passe actuel"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
-                />
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Nouveau mot de passe"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
-                />
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirmer le nouveau mot de passe"
-                  className="block border px-4 py-3 w-full rounded-2xl shadow-sm"
-                />
-                <div className="flex justify-end space-x-4">
-                  <button
-                    type="button"
-                    onClick={() => { setShowPasswordForm(false); setPassword(""); setNewPassword(""); setConfirmPassword(""); setError(null); }}
-                    className="bg-gray-200 text-gray-800 px-6 py-3 rounded-2xl"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={handleChangePassword}
-                    className="bg-green-500 text-white px-6 py-3 rounded-2xl font-semibold"
-                    disabled={loading || !newPassword || newPassword !== confirmPassword}
-                  >
-                    {loading ? "Mise à jour..." : "Sauvegarder"}
-                  </button>
+
+            <div className="space-y-4">
+              <div 
+                className="flex items-center space-x-4 p-4 bg-[#f8fdf4] hover:bg-[#ebffbc] rounded-2xl cursor-pointer transition-all duration-200 transform hover:scale-105" 
+                onClick={() => setShowPasswordForm(true)}
+              >
+                <div className="w-12 h-12 bg-[#7DBD07]/20 rounded-full flex items-center justify-center">
+                  <Lock className="text-[#396F04] w-6 h-6" />
                 </div>
+                <span className="font-bold text-[#0A2004] text-lg">Changer mon mot de passe</span>
               </div>
-            )}
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={() => setDeleteStep("reason")}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <Trash2 className="text-green-600" size={20} />
+
+              {showPasswordForm && (
+                <div className="bg-white border-2 border-[#c9eaad] rounded-2xl p-6 space-y-4">
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Mot de passe actuel"
+                    className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                  />
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Nouveau mot de passe"
+                    className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirmer le nouveau mot de passe"
+                    className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                  />
+                  <div className="flex space-x-4">
+                    <button
+                      type="button"
+                      onClick={() => { setShowPasswordForm(false); setPassword(""); setNewPassword(""); setConfirmPassword(""); setError(null); }}
+                      className="flex-1 bg-white border-2 border-[#c9eaad] text-[#589507] px-6 py-3 rounded-2xl font-bold hover:bg-[#f8fdf4] transition-colors"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={handleChangePassword}
+                      className="flex-1 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white px-6 py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                      disabled={loading || !newPassword || newPassword !== confirmPassword}
+                    >
+                      {loading ? "Mise à jour..." : "Sauvegarder"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div 
+                className="flex items-center space-x-4 p-4 bg-[#f8fdf4] hover:bg-[#ebffbc] rounded-2xl cursor-pointer transition-all duration-200 transform hover:scale-105" 
+                onClick={() => setDeleteStep("reason")}
+              >
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <Trash2 className="text-red-600 w-6 h-6" />
+                </div>
+                <span className="font-bold text-red-600 text-lg">Supprimer mon compte</span>
               </div>
-              <span className="font-semibold text-green-800">Supprimer mon compte</span>
-            </div>
-            <div className="flex items-center gap-4 p-3 hover:bg-green-50 rounded-2xl cursor-pointer transition-all" onClick={handleLogout}>
-              <div className="bg-[#7ebd07]/10 shadow-sm rounded-full p-3">
-                <LogOut className="text-green-600" size={20} />
+
+              <div 
+                className="flex items-center space-x-4 p-4 bg-[#f8fdf4] hover:bg-[#ebffbc] rounded-2xl cursor-pointer transition-all duration-200 transform hover:scale-105" 
+                onClick={handleLogout}
+              >
+                <div className="w-12 h-12 bg-[#589507]/20 rounded-full flex items-center justify-center">
+                  <LogOut className="text-[#396F04] w-6 h-6" />
+                </div>
+                <span className="font-bold text-[#0A2004] text-lg">Me déconnecter</span>
               </div>
-              <span className="font-semibold text-green-800">Me déconnecter</span>
             </div>
           </div>
         </section>
 
         {/* Confidentialité */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-gray-800">Confidentialité</h2>
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <div className="max-w-3xl space-y-8">
-              <section className="space-y-4">
-                <h2 className="text-lg font-bold text-gray-900">Documents légaux</h2>
-                <div className="grid gap-6 md:grid-cols-2">
-                  {legalDocuments.map((doc) => (
-                    <div key={doc.title} className="p-6 bg-[#f2f8ea] rounded-2xl shadow">
-                      <h3 className="font-bold text-gray-900 mb-3">{doc.title}</h3>
-                      <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedDocument(doc)}
-                        className="border-[#7fbd07] text-green-700"
-                      >
-                        Consulter
-                      </Button>
-                    </div>
-                  ))}
+          <div className="bg-white rounded-3xl shadow-xl border border-[#c9eaad]/30 p-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#396F04] to-[#0A2004] rounded-full flex items-center justify-center">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-[#0A2004]">Documents Légaux</h2>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {legalDocuments.map((doc) => (
+                <div key={doc.title} className="bg-[#f8fdf4] rounded-2xl p-6 border border-[#c9eaad]/30 hover:bg-[#ebffbc] transition-all duration-200 transform hover:scale-105">
+                  <h3 className="font-bold text-[#0A2004] mb-3 text-lg">{doc.title}</h3>
+                  <p className="text-sm text-[#589507] mb-4 leading-relaxed">{doc.description}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSelectedDocument(doc)}
+                    className="border-2 border-[#7DBD07] text-[#396F04] hover:bg-[#7DBD07] hover:text-white font-bold transition-all duration-200"
+                  >
+                    Consulter
+                  </Button>
                 </div>
-              </section>
-              {selectedDocument && (
-                <LegalDocumentModal
-                  title={selectedDocument.title}
-                  content={selectedDocument.content}
-                  onClose={() => setSelectedDocument(null)}
-                />
-              )}
+              ))}
             </div>
           </div>
         </section>
 
         {/* Modals de suppression */}
         {deleteStep !== "idle" && deleteStep !== "success" && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 border border-[#c9eaad]/30 shadow-2xl">
               {deleteStep === "confirm" && (
-                <div className="space-y-4">
-                  <h3 className="font-medium text-red-900">Confirmation de suppression</h3>
-                  <p className="text-sm text-red-600">
+                <div className="space-y-6 text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                    <Trash2 className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="font-bold text-red-900 text-xl">Confirmation de suppression</h3>
+                  <p className="text-sm text-red-600 leading-relaxed">
                     Pour des raisons de sécurité, veuillez entrer vos identifiants pour confirmer la suppression.
                   </p>
-                  <Button
-                    size="sm"
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    onClick={() => setDeleteStep("reauthenticate")}
-                  >
-                    Vérifier mon identité
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")}>
-                    Annuler
-                  </Button>
+                  <div className="flex space-x-4">
+                    <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")} className="flex-1">
+                      Annuler
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                      onClick={() => setDeleteStep("reauthenticate")}
+                    >
+                      Continuer
+                    </Button>
+                  </div>
                 </div>
               )}
               {deleteStep === "reauthenticate" && (
-                <div className="space-y-4">
-                  <h3 className="font-medium text-red-900">Vérification d'identité</h3>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 border rounded-2xl"
-                    placeholder="Votre email"
-                  />
-                  <input
-                    type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    className="w-full p-3 border rounded-2xl"
-                    placeholder="Votre mot de passe"
-                  />
-                  {error && <p className="text-red-600">{error}</p>}
-                  <Button
-                    size="sm"
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                    onClick={handleDeleteAccount}
-                  >
-                    Supprimer mon compte
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")}>
-                    Annuler
-                  </Button>
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Shield className="w-8 h-8 text-red-600" />
+                    </div>
+                    <h3 className="font-bold text-red-900 text-xl mb-2">Vérification d'identité</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-red-300 rounded-2xl bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-200 focus:border-red-500"
+                      placeholder="Votre email"
+                    />
+                    <input
+                      type="password"
+                      value={deletePassword}
+                      onChange={(e) => setDeletePassword(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-red-300 rounded-2xl bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-200 focus:border-red-500"
+                      placeholder="Votre mot de passe"
+                    />
+                    {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
+                  </div>
+                  <div className="flex space-x-4">
+                    <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")} className="flex-1">
+                      Annuler
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                      onClick={handleDeleteAccount}
+                    >
+                      Supprimer définitivement
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -495,24 +548,29 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
         )}
 
         {deleteStep === "reason" && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6">
-              <div className="space-y-4">
-                <h3 className="font-medium text-red-900">Raison de la suppression</h3>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 border border-[#c9eaad]/30 shadow-2xl">
+              <div className="space-y-6">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <HelpCircle className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="font-bold text-red-900 text-xl">Raison de la suppression</h3>
+                </div>
                 <textarea
                   value={deletionReason}
                   onChange={(e) => setDeletionReason(e.target.value)}
-                  className="w-full p-3 border rounded-2xl"
-                  rows={3}
+                  className="w-full px-4 py-3 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004]"
+                  rows={4}
                   placeholder="Dites-nous pourquoi vous souhaitez supprimer votre compte..."
                 />
-                <div className="flex justify-end space-x-3">
-                  <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")}>
+                <div className="flex space-x-4">
+                  <Button variant="outline" size="sm" onClick={() => setDeleteStep("idle")} className="flex-1">
                     Annuler
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-red-600 hover:bg-red-700 text-white"
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                     onClick={() => setDeleteStep("confirm")}
                   >
                     Continuer
@@ -524,10 +582,15 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
         )}
 
         {deleteStep === "success" && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-6">
-              <div className="space-y-4">
-                <h3 className="font-medium text-green-900">Compte supprimé avec succès</h3>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-3xl max-w-md w-full p-6 border border-[#c9eaad]/30 shadow-2xl">
+              <div className="space-y-6 text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                  <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h3 className="font-bold text-green-900 text-xl">Compte supprimé avec succès</h3>
                 <p className="text-sm text-green-600">Votre compte a été supprimé. Merci de nous avoir utilisé.</p>
                 <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => navigate("/")}>
                   Fermer
@@ -536,8 +599,16 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
             </div>
           </div>
         )}
+
+        {selectedDocument && (
+          <LegalDocumentModal
+            title={selectedDocument.title}
+            content={selectedDocument.content}
+            onClose={() => setSelectedDocument(null)}
+          />
+        )}
       </div>
-      {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+      {error && <p className="text-red-600 text-sm mt-2 text-center font-medium">{error}</p>}
     </div>
   );
 };

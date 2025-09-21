@@ -11,84 +11,80 @@ const CustomerLogin = () => {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Implement login logic
 
     setError('')
+    setLoading(true)
 
     try {
-      // Authentification avec Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       const user = userCredential.user
 
-      // Vérification dans la collection "customer"
       const customerQuery = query(collection(db, "customer"), where("email", "==", email))
       const customerSnapshot = await getDocs(customerQuery)
       
       if (customerSnapshot.empty) {
-        // Si aucun document n'est trouvé dans "customer", déconnecter l'utilisateur
         await signOut(auth)
         setError('Cet email n\'est pas associé à un compte client. Veuillez utiliser un compte client ou vous inscrire.')
         return
       }
 
-      // Si l'utilisateur est trouvé dans "customer", rediriger vers le dashboard client
       navigate('/customer/dashboard')
     } catch (err: any) {
-      // Gestion des erreurs d'authentification (email/mot de passe incorrect)
       setError('Email ou mot de passe incorrect.')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8fdf4' }}>
-      {/* Bouton retour */}
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc]">
       <div className="absolute top-6 left-6">
-        <Link to="/" className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+        <Link to="/" className="w-14 h-14 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-xl border border-[#c9eaad]/30 hover:bg-white transition-all duration-200 transform hover:scale-110">
+          <ArrowLeft className="w-6 h-6 text-[#396F04]" />
         </Link>
       </div>
 
       <div className="flex items-center justify-center min-h-screen py-12 px-4">
         <div className="max-w-md w-full space-y-8">
-          {/* Icône avec cercle vert */}
           <div className="text-center">
-            <div className="mx-auto w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mb-8">
-              <Users className="w-10 h-10" color="#7ebd07" />
+            <div className="mx-auto w-28 h-28 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center mb-8 shadow-2xl">
+              <Users className="w-14 h-14 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            <h2 className="text-3xl font-bold text-[#0A2004] mb-2">
               Connexion Client
             </h2>
-            <p className="text-gray-600">
+            <p className="text-[#589507] font-medium">
               Connectez-vous à votre espace client
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="bg-white/90 backdrop-blur rounded-3xl shadow-2xl border border-[#c9eaad]/30 p-8">
+            <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-600 text-sm">{error}</p>
+              <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-4">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
               </div>
             )}
 
-            {/* Email */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-bold text-[#396F04]">
                 Email professionnel
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-6 w-6 text-[#589507]" />
                 </div>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl bg-gray-50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="block w-full pl-14 pr-4 py-4 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] placeholder-[#589507]/60 text-[#0A2004] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] font-medium"
                   placeholder="commerce@exemple.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -96,21 +92,20 @@ const CustomerLogin = () => {
               </div>
             </div>
 
-            {/* Mot de passe */}
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-bold text-[#396F04]">
                 Mot de passe
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-6 w-6 text-[#589507]" />
                 </div>
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  className="block w-full pl-12 pr-12 py-4 border border-gray-200 rounded-2xl bg-gray-50 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="block w-full pl-14 pr-14 py-4 border-2 border-[#c9eaad] rounded-2xl bg-[#f8fdf4] placeholder-[#589507]/60 text-[#0A2004] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] font-medium"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -121,40 +116,39 @@ const CustomerLogin = () => {
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
+                    <EyeOff className="h-6 w-6 text-[#589507]" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
+                    <Eye className="h-6 w-6 text-[#589507]" />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Mot de passe oublié */}
             <div className="text-right">
               <Link 
                 to="/reset-password?type=customer" 
-                className="text-[#7FBD07] hover:text-green-700 font-medium"
+                className="text-[#7DBD07] hover:text-[#396F04] font-bold transition-colors"
               >
                 Mot de passe oublié ?
               </Link>
             </div>
 
-            {/* Bouton de connexion */}
             <button
               type="submit"
-              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-sm text-white font-medium bg-[#7fbd07] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+              disabled={loading}
+              className="w-full flex items-center justify-center py-4 px-6 border border-transparent rounded-2xl shadow-lg text-white font-bold bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] hover:from-[#589507] hover:to-[#7DBD07] focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Users className="w-5 h-5 mr-2" />
-              Se connecter
+              <Users className="w-6 h-6 mr-3" />
+              {loading ? "Connexion..." : "Se connecter"}
             </button>
-          </form>
+            </form>
+          </div>
 
-          {/* Lien d'inscription */}
           <div className="text-center">
-            <span className="text-gray-600">Nouveau client ? </span>
+            <span className="text-[#589507] font-medium">Nouveau client ? </span>
             <Link 
               to="/customer/register" 
-              className="font-medium text-[#7FBD07] hover:text-green-700"
+              className="font-bold text-[#7DBD07] hover:text-[#396F04] transition-colors"
             >
               Créer un compte
             </Link>

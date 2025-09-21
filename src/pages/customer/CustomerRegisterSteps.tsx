@@ -237,34 +237,33 @@ const CustomerRegisterSteps = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#f8fdf4' }}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc]">
       <div className="max-w-2xl w-full space-y-8">
-        {/* Bouton retour */}
         <div className="absolute top-6 left-6">
           <button 
             onClick={() => navigate('/')}
-            className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm"
+            className="w-14 h-14 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-xl border border-[#c9eaad]/30 hover:bg-white transition-all duration-200 transform hover:scale-110"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-6 h-6 text-[#396F04]" />
           </button>
         </div>
 
         <div className="text-center">
-          <div className="mx-auto w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mb-8">
-            <Users className="w-10 h-10" color="#7ebd07" />
+          <div className="mx-auto w-28 h-28 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center mb-8 shadow-2xl">
+            <Users className="w-14 h-14 text-white" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
+          <h2 className="mt-6 text-3xl font-bold text-[#0A2004]">
             Créer votre compte client
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-[#589507] font-medium">
             Étape {currentStep + 1} sur {steps.length}
           </p>
           {errors.general && (
-            <p className="mt-2 text-sm text-red-600">{errors.general}</p>
+            <p className="mt-2 text-sm text-red-600 font-medium">{errors.general}</p>
           )}
         </div>
 
-        <div className="bg-white shadow-lg rounded-2xl p-8">
+        <div className="bg-white/90 backdrop-blur shadow-2xl rounded-3xl border border-[#c9eaad]/30 p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
               <CustomerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
@@ -281,7 +280,7 @@ const CustomerRegisterSteps = () => {
                 variant="outline"
                 onClick={prevStep}
                 disabled={currentStep === 0}
-                className="space-x-2 rounded-2xl py-4 px-6 border-[#7ebd07] text-[#7ebd07] hover:bg-[#7ebd07] hover:text-white"
+                className="space-x-2 rounded-2xl py-4 px-6 border-2 border-[#7DBD07] text-[#396F04] hover:bg-[#7DBD07] hover:text-white font-bold transition-all duration-200"
                 size="lg"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -289,7 +288,7 @@ const CustomerRegisterSteps = () => {
               </Button>
               <Button
                 onClick={nextStep}
-                className="space-x-2 rounded-2xl py-4 px-6 bg-[#7ebd07] hover:bg-green-700 text-white"
+                className="space-x-2 rounded-2xl py-4 px-6 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] hover:from-[#589507] hover:to-[#7DBD07] text-white font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
                 size="lg"
               >
                 <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>

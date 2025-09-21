@@ -211,15 +211,15 @@ const Dashboard = () => {
       </div>
 
       {/* Layout principal optimisé */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Générateur de code - plus large */}
-        <div className="lg:col-span-3 h-fit">
+        <div className="lg:col-span-4 h-fit">
           <CodeGenerator />
         </div>
 
         {/* Tutoriels - hauteur adaptée */}
         <div className="lg:col-span-1 h-fit">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[400px]">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[320px]">
             <DailyTip />
           </div>
         </div>
@@ -228,7 +228,7 @@ const Dashboard = () => {
       {/* Graphiques en dessous */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
         <div className="space-y-3">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-80">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -238,7 +238,7 @@ const Dashboard = () => {
                 <span>Semaine précédente</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -253,7 +253,7 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-3">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-80">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
               <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
@@ -262,7 +262,7 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />

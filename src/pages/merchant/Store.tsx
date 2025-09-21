@@ -322,7 +322,7 @@ const Store = () => {
   return (
     <div className="space-y-6">
       {/* En-tête avec titre et boutons de vue */}
-      <div className="mb-8">
+      <div className="mb-8 px-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Aperçu de votre magasin</h1>
         <p className="text-gray-600 mb-6">Voici comment vos clients verront votre magasin sur différents appareils</p>
         

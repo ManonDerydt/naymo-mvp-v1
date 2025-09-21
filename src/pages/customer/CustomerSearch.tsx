@@ -9,6 +9,8 @@ import Map from "@/components/map/Map"
 const CustomerSearch = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedType, setSelectedType] = useState<string | null>(null);
+    const [selectedMerchant, setSelectedMerchant] = useState<any | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [stores, setStores] = useState<{ 
         name: string; 
         type: string; 
@@ -16,7 +18,14 @@ const CustomerSearch = () => {
         shortDescription: string; 
         logo: string, 
         hasOffers: boolean;
-        address: string
+        address: string;
+        longDescription?: string;
+        keywords?: string[];
+        commitments?: string[];
+        cover_photo?: string;
+        store_photos?: string[];
+        city?: string;
+        postal_code?: string;
     }[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,15 +38,24 @@ const CustomerSearch = () => {
                 const merchantData = await Promise.all(
                     merchantSnapshot.docs.map(async (doc) => {
                         const merchantId = doc.id;
+                        const data = doc.data();
 
                         const merchant = {
-                            name: doc.data().company_name || "Nom inconnu",
-                            type: doc.data().business_type || "Type inconnu",
-                            owner_name: doc.data().owner_name || "Propriétaire inconnu",
-                            shortDescription: doc.data().shortDescription || "Aucune description",
-                            logo: doc.data().logo || "/default-logo.png",
+                            id: merchantId,
+                            name: data.company_name || "Nom inconnu",
+                            type: data.business_type || "Type inconnu",
+                            owner_name: data.owner_name || "Propriétaire inconnu",
+                            shortDescription: data.shortDescription || "Aucune description",
+                            longDescription: data.longDescription || data.shortDescription || "Aucune description",
+                            logo: data.logo || "/default-logo.png",
+                            cover_photo: data.cover_photo || "",
+                            store_photos: data.store_photos || [],
+                            keywords: data.keywords || [],
+                            commitments: data.commitments || [],
+                            city: data.city || "",
+                            postal_code: data.postal_code || "",
                             hasOffers: false,
-                            address: doc.data().address && doc.data().address !== "Adresse inconnue" ? doc.data().address : "",
+                            address: data.address && data.address !== "Adresse inconnue" ? data.address : "",
                         };
 
                         const offerQuery = query(
@@ -88,6 +106,15 @@ const CustomerSearch = () => {
         return emojiMap[type] || '🏪';
     };
 
+    const openMerchantModal = (merchant: any) => {
+        setSelectedMerchant(merchant);
+        setIsModalOpen(true);
+    };
+
+    const closeMerchantModal = () => {
+        setSelectedMerchant(null);
+        setIsModalOpen(false);
+    };
     return (
         <div className="min-h-screen bg-white pb-10">
             {/* Titre principal */}
@@ -178,7 +205,11 @@ const CustomerSearch = () => {
                         {filteredResults.length > 0 ? (
                             <div className="space-y-4">
                                 {filteredResults.map((result, index) => (
-                                    <div key={index} className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-102">
+                                    <div 
+                                        key={index} 
+                                        className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-102 cursor-pointer"
+                                        onClick={() => openMerchantModal(result)}
+                                    >
                                         <div className="flex items-start space-x-4">
                                             <div className="relative">
                                                 <img
@@ -244,4 +275,180 @@ const CustomerSearch = () => {
     )
 }
 
+            {/* Modale du commerçant */}
+            {isModalOpen && selectedMerchant && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+                        <button
+                            onClick={closeMerchantModal}
+                            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-800 transition-all shadow-lg"
+                        >
+                            ✕
+                        </button>
+                        
+                        {/* Header avec photo de couverture */}
+                        <div className="relative h-48 md:h-64 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden rounded-t-3xl">
+                            <img
+                                src={selectedMerchant.cover_photo || "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
+                                alt="Cover"
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-30" />
+                        </div>
+
+                        {/* Profil principal */}
+                        <div className="px-6 relative -mt-16">
+                            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+                                <div className="flex flex-col md:flex-row items-start gap-6">
+                                    {/* Logo de l'entreprise */}
+                                    <div className="flex-shrink-0 mx-auto md:mx-0">
+                                        <img
+                                            src={selectedMerchant.logo}
+                                            alt="Logo"
+                                            className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                                        />
+                                    </div>
+
+                                    {/* Informations principales */}
+                                    <div className="flex-1 text-center md:text-left">
+                                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                                            {selectedMerchant.name}
+                                        </h1>
+                                        <p className="text-lg text-[#7fbd07] font-semibold mb-3">
+                                            {selectedMerchant.type}
+                                        </p>
+                                        <div className="flex flex-col md:flex-row items-center text-gray-600 mb-4">
+                                            <div className="flex items-center">
+                                                <MapPin className="w-5 h-5 mr-2" />
+                                                <span>{selectedMerchant.address}</span>
+                                                {selectedMerchant.postal_code && (
+                                                    <span>, {selectedMerchant.postal_code}</span>
+                                                )}
+                                                {selectedMerchant.city && (
+                                                    <span> {selectedMerchant.city}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Contenu principal */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6">
+                                {/* Colonne principale */}
+                                <div className="lg:col-span-2 space-y-6">
+                                    {/* Description */}
+                                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                                        <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
+                                        <p className="text-gray-700 leading-relaxed">
+                                            {selectedMerchant.longDescription}
+                                        </p>
+                                    </div>
+
+                                    {/* Mots-clés */}
+                                    {selectedMerchant.keywords && selectedMerchant.keywords.length > 0 && (
+                                        <div className="bg-white rounded-2xl shadow-sm p-6">
+                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Mots-clés</h2>
+                                            <div className="flex flex-wrap gap-3">
+                                                {selectedMerchant.keywords.map((keyword: string, index: number) => (
+                                                    <span 
+                                                        key={index} 
+                                                        className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-medium text-sm"
+                                                    >
+                                                        {keyword}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Engagements */}
+                                    {selectedMerchant.commitments && selectedMerchant.commitments.length > 0 && (
+                                        <div className="bg-white rounded-2xl shadow-sm p-6">
+                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Engagements</h2>
+                                            <div className="flex flex-wrap gap-3">
+                                                {selectedMerchant.commitments.map((commitment: string, index: number) => (
+                                                    <span 
+                                                        key={index} 
+                                                        className="px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium text-sm"
+                                                    >
+                                                        {commitment}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Galerie photos */}
+                                    {selectedMerchant.store_photos && selectedMerchant.store_photos.length > 0 && (
+                                        <div className="bg-white rounded-2xl shadow-sm p-6">
+                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Galerie photos</h2>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                {selectedMerchant.store_photos.map((photo: string, index: number) => (
+                                                    <img
+                                                        key={index}
+                                                        src={photo}
+                                                        alt={`Store image ${index + 1}`}
+                                                        className="rounded-lg aspect-square object-cover"
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Sidebar */}
+                                <div className="space-y-6">
+                                    {/* Informations rapides */}
+                                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Informations</h3>
+                                        <div className="space-y-4">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-5 h-5 text-gray-400 mt-1">🏪</div>
+                                                <div>
+                                                    <p className="font-medium text-gray-900">Type d'activité</p>
+                                                    <p className="text-gray-600 text-sm">{selectedMerchant.type}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <MapPin className="w-5 h-5 text-gray-400 mt-1" />
+                                                <div>
+                                                    <p className="font-medium text-gray-900">Adresse</p>
+                                                    <p className="text-gray-600 text-sm">{selectedMerchant.address}</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-5 h-5 text-gray-400 mt-1">👤</div>
+                                                <div>
+                                                    <p className="font-medium text-gray-900">Propriétaire</p>
+                                                    <p className="text-gray-600 text-sm">{selectedMerchant.owner_name}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Statistiques */}
+                                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Statistiques</h3>
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-gray-600 text-sm">Vues du profil</span>
+                                                <span className="font-bold text-gray-900">1,234</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-gray-600 text-sm">Clients fidèles</span>
+                                                <span className="font-bold text-gray-900">89</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-gray-600 text-sm">Note moyenne</span>
+                                                <span className="font-bold text-yellow-600">4.8/5</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 export default CustomerSearch;

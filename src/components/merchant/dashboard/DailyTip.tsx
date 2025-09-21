@@ -20,13 +20,7 @@ const DailyTip = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a1.5 1.5 0 011.5 1.5V12a1.5 1.5 0 01-1.5 1.5H9m0-4.5V9a1.5 1.5 0 011.5-1.5H12a1.5 1.5 0 011.5 1.5v1.5m-6 0h6m-6 0v1.5a1.5 1.5 0 001.5 1.5H12a1.5 1.5 0 001.5-1.5V12m-6 0V9a1.5 1.5 0 011.5-1.5H12a1.5 1.5 0 011.5 1.5v3" />
           </svg>
         </div>
-        
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Guides et tutoriels</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Découvrez comment optimiser votre utilisation de Naymo
-          </p>
-        </div>
+     
         
         <button
           onClick={() => setShowTutorials(!showTutorials)}

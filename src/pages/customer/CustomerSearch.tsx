@@ -11,6 +11,8 @@ const CustomerSearch = () => {
     const [selectedType, setSelectedType] = useState<string | null>(null);
     const [selectedMerchant, setSelectedMerchant] = useState<any | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [stores, setStores] = useState<{ 
         name: string; 
         type: string; 
@@ -115,8 +117,29 @@ const CustomerSearch = () => {
         setSelectedMerchant(null);
         setIsModalOpen(false);
     };
+
+    const openImageModal = (imageSrc: string) => {
+        setSelectedImage(imageSrc);
+        setIsImageModalOpen(true);
+    };
+
+    const closeImageModal = () => {
+        setSelectedImage(null);
+        setIsImageModalOpen(false);
+    };
+
     return (
         <div className="min-h-screen bg-white pb-10">
+            {/* ID Client en haut */}
+            {customerData?.code && (
+                <div className="text-center pt-6 pb-4">
+                    <div className="inline-block bg-white px-8 py-4 rounded-3xl shadow-xl border-2 border-[#c9eaad]">
+                        <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
+                        <p className="text-3xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
+                    </div>
+                </div>
+            )}
+
             {/* Titre principal */}
             <div className="px-6 pt-8 pb-6">
                 <h1 className="text-2xl font-bold text-[#0A2004] text-center">Découvrir</h1>
@@ -386,7 +409,8 @@ const CustomerSearch = () => {
                                                         key={index}
                                                         src={photo}
                                                         alt={`Store image ${index + 1}`}
-                                                        className="rounded-lg aspect-square object-cover"
+                                                        className="rounded-lg aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                                        onClick={() => openImageModal(photo)}
                                                     />
                                                 ))}
                                             </div>
@@ -446,6 +470,24 @@ const CustomerSearch = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Modale d'image en plein écran */}
+            {isImageModalOpen && selectedImage && (
+                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-4">
+                    <button
+                        onClick={closeImageModal}
+                        className="absolute top-4 right-4 z-10 w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all text-xl font-bold"
+                    >
+                        ✕
+                    </button>
+                    <img
+                        src={selectedImage}
+                        alt="Image en plein écran"
+                        className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+                        onClick={closeImageModal}
+                    />
                 </div>
             )}
         </div>

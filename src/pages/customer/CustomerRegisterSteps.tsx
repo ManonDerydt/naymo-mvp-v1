@@ -26,18 +26,11 @@ interface FormErrors {
 
 // Définition d'une interface pour le formulaire
 interface FormData {
-  gender: string
   last_name: string
   first_name: string
-  birth_date: string
-  phone_number: string
-  zip_code: string
-  city: string
   email: string
-  occupation: string
   password: string
-  newsletter: boolean
-  why_naymo: string[]
+  confirmPassword: string
 }
 
 interface StepProps {
@@ -49,19 +42,9 @@ interface StepProps {
 
 const steps = [
   {
-    id: 'customer',
-    title: 'Information client',
-    fields: ['gender', 'last_name', 'first_name', 'birth_date', 'phone_number', 'occupation', 'email', 'password',],
-  },
-  {
-    id: 'location',
-    title: 'Localisation',
-    fields: ['city', 'zip_code'],
-  },
-  {
-    id: 'preferences',
-    title: 'Préférences',
-    fields: ['newsletter', 'why_naymo']
+    id: 'registration',
+    title: 'Inscription',
+    fields: ['first_name', 'last_name', 'email', 'password', 'confirmPassword'],
   }
 ]
 
@@ -70,18 +53,11 @@ const CustomerRegisterSteps = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
-    gender: '',
     last_name: '',
     first_name: '',
-    birth_date: '',
-    phone_number: '',
-    zip_code: '',
-    city: '',
     email: '',
-    occupation: '',
     password: '',
-    newsletter: false,
-    why_naymo: []
+    confirmPassword: ''
   })
   const [errors, setErrors] = useState<FormErrors>({})
 
@@ -89,34 +65,11 @@ const CustomerRegisterSteps = () => {
     const newErrors: FormErrors = {}
     const stepFields = steps[stepIndex].fields
 
-    if (stepFields.includes('gender')) {
-      if (!formData.gender) newErrors.gender = 'Le genre est requis'
-    }
     if (stepFields.includes('first_name')) {
       if (!formData.first_name) newErrors.first_name = 'Le prénom est requis'
     }
     if (stepFields.includes('last_name')) {
       if (!formData.last_name) newErrors.last_name = 'Le nom est requis'
-    }
-    if (stepFields.includes('birth_date')) {
-      if (!formData.birth_date) newErrors.birth_date = 'La date de naissance est requise'
-      else {
-        const birthDate = new Date(formData.birth_date)
-        const today = new Date()
-        let age = today.getFullYear() - birthDate.getFullYear()
-        const monthDiff = today.getMonth() - birthDate.getMonth()
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-          age--
-        }
-        if (age < 18) newErrors.birth_date = 'Vous devez avoir au moins 18 ans'
-      }
-    }
-    if (stepFields.includes('phone_number')) {
-      if (!formData.phone_number) newErrors.phone_number = 'Le numéro de téléphone est requis'
-      else if (!/^\d{10}$/.test(formData.phone_number)) newErrors.phone_number = 'Numéro de téléphone invalide (10 chiffres requis)'
-    }
-    if (stepFields.includes('occupation')) {
-      if (!formData.occupation) newErrors.occupation = 'La profession est requise'
     }
     if (stepFields.includes('email')) {
       if (!formData.email) newErrors.email = 'L\'email est requis'
@@ -126,15 +79,9 @@ const CustomerRegisterSteps = () => {
       if (!formData.password) newErrors.password = 'Le mot de passe est requis'
       else if (formData.password.length < 6) newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères'
     }
-    if (stepFields.includes('city')) {
-      if (!formData.city) newErrors.city = 'La ville est requise'
-    }
-    if (stepFields.includes('zip_code')) {
-      if (!formData.zip_code) newErrors.zip_code = 'Le code postal est requis'
-      else if (!/^\d{5}$/.test(formData.zip_code)) newErrors.zip_code = 'Code postal invalide (5 chiffres requis)'
-    }
-    if (stepFields.includes('why_naymo')) {
-      if (formData.why_naymo.length === 0) newErrors.why_naymo = 'Au moins une raison est requise'
+    if (stepFields.includes('confirmPassword')) {
+      if (!formData.confirmPassword) newErrors.confirmPassword = 'La confirmation du mot de passe est requise'
+      else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
     }
 
     setErrors(newErrors)
@@ -148,18 +95,6 @@ const CustomerRegisterSteps = () => {
 
     if (type === 'checkbox') {
       setFormData({ ...formData, [name]: checked })
-    } else if (name === 'why_naymo') {
-      setFormData({ ...formData, [name]: value.split(',').map((item) => item.trim()) })
-    } else if (name === 'phone_number') {
-      const onlyDigits = value.replace(/\D/g, '') // Supprime tout sauf chiffres
-      if (onlyDigits.length <= 10) {
-        setFormData({ ...formData, [name]: onlyDigits })
-      }
-    } else if (name === 'zip_code') {
-      const onlyDigits = value.replace(/\D/g, '') // Supprime tout sauf chiffres
-      if (onlyDigits.length <= 5) {
-        setFormData({ ...formData, [name]: onlyDigits })
-      }
     } else {
       setFormData({ ...formData, [name]: value })
     }
@@ -188,18 +123,11 @@ const CustomerRegisterSteps = () => {
 
       // Enregistrer les données du commerçant dans Firestore sous le document correspondant à son UID
       await setDoc(doc(db, "customer", user.uid), {
-        gender: formData.gender,
         code: customerCode,
         last_name: formData.last_name,
         first_name: formData.first_name,
-        birth_date: formData.birth_date,
-        phone_number: formData.phone_number,
-        zip_code: formData.zip_code,
-        city: formData.city,
         email: formData.email,
-        occupation: formData.occupation,
-        newsletter: formData.newsletter,
-        why_naymo: formData.why_naymo
+        points: 0
       })
 
       console.log("Données du client enregistrées sous l'UID : ", user.uid)
@@ -262,7 +190,7 @@ const CustomerRegisterSteps = () => {
             Créer votre compte client
           </h2>
           <p className="mt-2 text-sm text-[#589507] font-medium">
-            Étape {currentStep + 1} sur {steps.length}
+            Créez votre compte en quelques secondes
           </p>
           {errors.general && (
             <p className="mt-2 text-sm text-red-600 font-medium">{errors.general}</p>
@@ -272,13 +200,7 @@ const CustomerRegisterSteps = () => {
         <div className="bg-white/90 backdrop-blur shadow-2xl rounded-3xl border border-[#c9eaad]/30 p-8">
           <div className="space-y-6">
             {currentStep === 0 && (
-              <CustomerInfoStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
-            )}
-            {currentStep === 1 && (
-              <LocationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
-            )}
-            {currentStep === 2 && (
-              <PreferencesStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
+              <RegistrationStep formData={formData} onChange={handleInputChange} errors={errors} setErrors={setErrors} />
             )}
 
             <div className="flex justify-between pt-6">
@@ -309,39 +231,10 @@ const CustomerRegisterSteps = () => {
   )
 }
 
-// Étape 1
-const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
-
+// Étape unique d'inscription
+const RegistrationStep = ({ formData, onChange, errors }: StepProps) => {
   return (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Genre</label>
-      </div>
-      {errors.gender && <p className="mt-1 text-sm text-red-600">{errors.gender}</p>}
-      <div className="flex gap-6">
-        <label className="flex items-center space-x-2">
-          <input
-            type="radio"
-            name="gender"
-            value="Masculin"
-            checked={formData.gender === 'Masculin'}
-            onChange={onChange}
-            className="text-[#7ebd07] focus:ring-[#7ebd07]"
-          />
-          <span>Masculin</span>
-        </label>
-        <label className="flex items-center space-x-2">
-          <input
-            type="radio"
-            name="gender"
-            value="Féminin"
-            checked={formData.gender === 'Féminin'}
-            onChange={onChange}
-            className="text-[#7ebd07] focus:ring-[#7ebd07]"
-          />
-          <span>Féminin</span>
-        </label>
-      </div>
       <Input
         label="Prénom"
         name="first_name"
@@ -358,40 +251,13 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
         placeholder="Ex: Dupont"
         error={errors.last_name}
       />
-      <Input
-        label="Date de naissance"
-        name="birth_date"
-        type="date"
-        value={formData.birth_date}
-        onChange={onChange}
-        error={errors.birth_date}
-      />
-      <Input
-        label="Numéro de téléphone"
-        name="phone_number"
-        value={formData.phone_number}
-        onChange={onChange}
-        placeholder="Ex: 0601020304"
-        maxLength={10}
-        pattern="\d{10}"
-        type="tel"
-        error={errors.phone_number}
-      />
-      <Input 
-        label="Profession" 
-        name="occupation" 
-        value={formData.occupation} 
-        onChange={onChange} 
-        placeholder="Ex: Fleuriste" 
-        error={errors.occupation}
-      />
       <Input 
         label="Adresse e-mail" 
         name="email" 
         type="email" 
         value={formData.email} 
         onChange={onChange} 
-        placeholder="Ex: exemple@mail.com"
+        placeholder="Ex: client@exemple.com"
         error={errors.email}
       />
       <Input 
@@ -400,62 +266,18 @@ const CustomerInfoStep = ({ formData, onChange, errors }: StepProps) => {
         type="password" 
         value={formData.password} 
         onChange={onChange} 
-        placeholder="********"
+        placeholder="Minimum 6 caractères"
         error={errors.password} 
       />
-    </div>
-  )
-}
-
-// Étape 2
-const LocationStep = ({ formData, onChange, errors }: StepProps) => (
-  <div className="space-y-6">
-    <Input
-      label="Ville"
-      name="city"
-      value={formData.city}
-      onChange={onChange}
-      placeholder="Ex: Grenoble"
-      error={errors.city}
-    />
-    <Input
-      label="Code postal"
-      name="zip_code"
-      value={formData.zip_code}
-      onChange={onChange}
-      placeholder="Ex: 38000"
-      maxLength={5}
-      type="text"
-      error={errors.zip_code}
-    />
+      <Input 
+        label="Confirmer le mot de passe" 
+        name="confirmPassword" 
+        type="password" 
+        value={formData.confirmPassword} 
+        onChange={onChange} 
+        placeholder="Retapez votre mot de passe"
+        error={errors.confirmPassword} 
+      />
   </div>
-)
-
-// Étape 3
-const PreferencesStep = ({ formData, onChange, errors }: StepProps) => (
-  <div className="space-y-6">
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">Newsletter</label>
-      <div className="flex items-center space-x-3">
-        <input
-          type="checkbox"
-          name="newsletter"
-          checked={formData.newsletter}
-          onChange={onChange}
-          className="w-4 h-4 text-[#7ebd07] focus:ring-[#7ebd07] border-gray-300 rounded"
-        />
-        <span className="text-sm text-gray-700">S'inscrire à la newsletter</span>
-      </div>
-    </div>
-    <Input
-      label="Pourquoi Naymo ?"
-      name="why_naymo"
-      value={formData.why_naymo.join(', ')}
-      onChange={onChange}
-      placeholder="Ex: Visibilité, communauté..."
-      error={errors.why_naymo}
-    />
-  </div>
-)
 
 export default CustomerRegisterSteps

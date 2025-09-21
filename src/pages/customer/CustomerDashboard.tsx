@@ -123,8 +123,13 @@ const CustomerDashboard = () => {
               <span className="text-3xl">👤</span>
             </div>
             <h2 className="text-xl font-bold">
-              Bonjour {customerData?.first_name || "Invité"} !
+              Bonjour {customerData?.first_name} {customerData?.last_name || "Invité"} !
             </h2>
+            {customerData?.code && (
+              <p className="text-sm opacity-90 mt-2">
+                ID Client : {customerData.code}
+              </p>
+            )}
           </div>
 
           {/* Statistiques */}

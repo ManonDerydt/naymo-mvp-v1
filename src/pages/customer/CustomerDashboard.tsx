@@ -124,14 +124,14 @@ const CustomerDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 overflow-x-hidden">
       {/* HEADER */}
-      <div className="fixed top-0 left-0 right-0 bg-[#032313] border-b shadow-sm z-50 flex items-center px-4 py-3">
+      <div className="fixed top-0 left-0 right-0 bg-[#c9eaad] border-b shadow-sm z-50 flex items-center px-4 py-3">
         <div className="flex-1" />
         <img src={logo} alt="Naymo" className="h-10 mx-auto" />
         <div className="flex-1 flex justify-end">
-          {/* <div className="relative">
-            <Bell size={24} className="text-green-500 fill-current" />
-            <span className="absolute -top-1 -right-1 bg-yellow-400 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
-          </div> */}
+          <div className="relative">
+            <Bell size={24} className="text-[#396F04] hover:text-[#589507] transition-colors cursor-pointer" />
+            <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">3</span>
+          </div>
         </div>
       </div>
       

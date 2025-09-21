@@ -12,13 +12,13 @@ const CustomerLayout = () => {
         { path: '/customer/settings', icon: <Settings size={24} />, label: "Paramètres" }
     ]
 
-    return (
+            <div className="fixed top-0 left-0 right-0 bg-[#c9eaad] shadow-lg z-50 flex items-center px-6 py-4">
         <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc]">
             {/* Contenu principal */}
             <div className="lg:pl-64 flex flex-col min-h-screen">
                 <main className="flex-1 pb-24">
-                    <div className="max-w-7xl mx-auto">
-                        <Outlet />
+                        <Bell size={24} className="text-[#396F04] hover:text-[#589507] transition-colors cursor-pointer" />
+                        <span className="absolute -top-1 -right-1 bg-[#FFCD29] text-[#0A2004] text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
                     </div>
                 </main>
             </div>

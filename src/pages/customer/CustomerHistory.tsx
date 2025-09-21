@@ -176,13 +176,13 @@ const CustomerHistory = () => {
 
     return (
         <div className="min-h-screen bg-white pb-28">
+            {/* Titre principal */}
+            <div className="px-6 pt-8 pb-6">
+                <h1 className="text-2xl font-bold text-[#0A2004] text-center">Mon Historique</h1>
+            </div>
+
             {/* CONTENU */}
             <div className="px-4 space-y-8">
-                {/* En-tête */}
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-[#0A2004] mb-2">Mon Historique</h1>
-                    <p className="text-[#589507] font-medium">Vos achats et évaluations</p>
-                </div>
 
                 {/* SECTION : Historique de vos commerçants */}
                 <section className="space-y-6">

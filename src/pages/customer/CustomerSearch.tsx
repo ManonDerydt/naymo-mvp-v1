@@ -90,13 +90,13 @@ const CustomerSearch = () => {
 
     return (
         <div className="min-h-screen bg-white pb-10">
+            {/* Titre principal */}
+            <div className="px-6 pt-8 pb-6">
+                <h1 className="text-2xl font-bold text-[#0A2004] text-center">Découvrir</h1>
+            </div>
+
             {/* Contenu principal */}
             <div className="px-4 space-y-8">
-                {/* En-tête de recherche */}
-                <div className="text-center mb-6">
-                    <h1 className="text-3xl font-bold text-[#0A2004] mb-2">Découvrir</h1>
-                    <p className="text-[#589507] font-medium">Trouvez les meilleurs commerçants près de chez vous</p>
-                </div>
 
                 {/* Barre de recherche */}
                 <div className="relative max-w-md mx-auto">

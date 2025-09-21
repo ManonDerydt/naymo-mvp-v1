@@ -110,6 +110,11 @@ const CustomerMyNaymo = () => {
   
   return (
     <div className="min-h-screen bg-white pb-28">
+      {/* Titre principal */}
+      <div className="px-6 pt-8 pb-6">
+        <h1 className="text-2xl font-bold text-[#0A2004] text-center">Mon Profil</h1>
+      </div>
+
       {/* Contenu principal */}
       <div className="px-6 space-y-10 max-w-5xl mx-auto">
         

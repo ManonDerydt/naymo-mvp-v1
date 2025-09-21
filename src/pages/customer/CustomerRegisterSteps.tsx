@@ -190,7 +190,7 @@ const CustomerRegisterSteps = () => {
             Créer votre compte client
           </h2>
           <p className="mt-2 text-sm text-[#589507] font-medium">
-            Étape {currentStep + 1} sur {steps.length}
+            Créez votre compte en quelques secondes
           </p>
           {errors.general && (
             <p className="mt-2 text-sm text-red-600 font-medium">{errors.general}</p>

@@ -175,9 +175,9 @@ const CustomerHistory = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white pb-28">
+        <div className="min-h-screen bg-white pb-28 px-2 sm:px-0">
             {/* Titre principal */}
-            <div className="px-6 pt-8 pb-6">
+            <div className="px-4 sm:px-6 pt-8 pb-6">
                 <h1 className="text-2xl font-bold text-[#0A2004] text-center">Mon Historique</h1>
             </div>
 
@@ -186,7 +186,7 @@ const CustomerHistory = () => {
 
                 {/* SECTION : Historique de vos commerçants */}
                 <section className="space-y-6">
-                    <div className="flex items-center justify-center space-x-2 mb-6">
+                    <div className="flex items-center justify-center space-x-2 mb-6 px-2">
                         <Award className="w-6 h-6 text-[#7DBD07]" />
                         <h2 className="text-2xl font-bold text-[#0A2004]">Vos Commerçants</h2>
                     </div>
@@ -196,35 +196,35 @@ const CustomerHistory = () => {
                             <div className="w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mx-auto mb-6">
                                 <Award className="w-12 h-12 text-[#589507]" />
                             </div>
-                            <h3 className="text-xl font-bold text-[#396F04] mb-2">Aucun commerçant visité</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-[#396F04] mb-2">Aucun commerçant visité</h3>
                             <p className="text-[#589507]">Commencez à explorer pour voir votre historique ici !</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {history.map((merchant) => (
-                                <div key={merchant.id} className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300">
-                                    <div className="flex items-center mb-4">
+                                <div key={merchant.id} className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300">
+                                    <div className="flex items-center mb-4 space-x-3">
                                         <div className="relative">
                                             <img
                                                 src={merchant.logo}
                                                 alt={merchant.company_name}
-                                                className="w-16 h-16 rounded-2xl mr-4 object-cover shadow-lg border-2 border-[#c9eaad]/30"
+                                                className="w-12 sm:w-16 h-12 sm:h-16 rounded-2xl object-cover shadow-lg border-2 border-[#c9eaad]/30"
                                             />
-                                            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full px-2 py-1">
+                                            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full px-1.5 sm:px-2 py-0.5 sm:py-1">
                                                 <span className="text-xs font-bold text-white">{merchant.points}</span>
                                             </div>
                                         </div>
                                         <div className="flex-1">
-                                            <h3 className="text-lg font-bold text-[#0A2004]">{merchant.company_name}</h3>
-                                            <p className="text-sm font-medium text-[#7DBD07] bg-[#ebffbc] px-3 py-1 rounded-full inline-block">{merchant.business_type}</p>
+                                            <h3 className="text-base sm:text-lg font-bold text-[#0A2004]">{merchant.company_name}</h3>
+                                            <p className="text-xs sm:text-sm font-medium text-[#7DBD07] bg-[#ebffbc] px-2 sm:px-3 py-1 rounded-full inline-block mt-1">{merchant.business_type}</p>
                                         </div>
                                     </div>
 
-                                    <div className="bg-[#f8fdf4] rounded-2xl p-4 mb-4 space-y-2">
+                                    <div className="bg-[#f8fdf4] rounded-2xl p-3 sm:p-4 mb-4 space-y-2">
                                         {merchant.address && (
                                             <div className="flex items-center space-x-2">
                                                 <MapPin className="w-4 h-4 text-[#7DBD07]" />
-                                                <p className="text-sm text-[#396F04] font-medium">
+                                                <p className="text-xs sm:text-sm text-[#396F04] font-medium">
                                                     {merchant.address}{merchant.postal_code && `, ${merchant.postal_code}`} {merchant.city && `- ${merchant.city}`}
                                                 </p>
                                             </div>
@@ -235,13 +235,13 @@ const CustomerHistory = () => {
                                                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                                                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                                                 </svg>
-                                                <p className="text-sm text-[#396F04] font-medium">{merchant.email}</p>
+                                                <p className="text-xs sm:text-sm text-[#396F04] font-medium">{merchant.email}</p>
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className="bg-white border border-[#c9eaad]/30 rounded-2xl p-4">
-                                        <p className="text-sm font-bold text-[#396F04] mb-3 text-center">Évaluez ce commerçant</p>
+                                    <div className="bg-white border border-[#c9eaad]/30 rounded-2xl p-3 sm:p-4">
+                                        <p className="text-xs sm:text-sm font-bold text-[#396F04] mb-3 text-center">Évaluez ce commerçant</p>
                                         <StarRating
                                             rating={merchant.rating}
                                             onRate={(rate) => handleRating(merchant.id, rate)}
@@ -255,7 +255,7 @@ const CustomerHistory = () => {
 
                 {/* SECTION : Offres en cours */}
                 <section className="space-y-6">
-                    <div className="flex items-center justify-center space-x-2 mb-6">
+                    <div className="flex items-center justify-center space-x-2 mb-6 px-2">
                         <Star className="w-6 h-6 text-[#FFCD29] fill-current" />
                         <h2 className="text-2xl font-bold text-[#0A2004]">Mes Offres Actives</h2>
                     </div>
@@ -265,33 +265,33 @@ const CustomerHistory = () => {
                             <div className="w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mx-auto mb-6">
                                 <Star className="w-12 h-12 text-[#589507]" />
                             </div>
-                            <h3 className="text-xl font-bold text-[#396F04] mb-2">Aucune offre active</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-[#396F04] mb-2">Aucune offre active</h3>
                             <p className="text-[#589507]">Explorez les magasins pour découvrir des offres !</p>
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {activeOffers.map((offer) => (
-                                <div key={offer.id} className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30">
+                                <div key={offer.id} className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30">
                                     <div className="flex items-start justify-between">
                                         <div className="flex-1">
                                             <div className="flex items-center mb-3">
-                                                <h3 className="text-lg font-bold text-[#0A2004]">{offer.name}</h3>
+                                                <h3 className="text-base sm:text-lg font-bold text-[#0A2004] mr-2">{offer.name}</h3>
                                                 {offer.discount && (
-                                                    <span className="ml-3 bg-gradient-to-r from-[#FFCD29] to-[#B7DB25] text-[#0A2004] px-3 py-1 rounded-full text-xs font-bold">
+                                                    <span className="bg-gradient-to-r from-[#FFCD29] to-[#B7DB25] text-[#0A2004] px-2 sm:px-3 py-1 rounded-full text-xs font-bold">
                                                         -{offer.discount}%
                                                     </span>
                                                 )}
                                             </div>
                                             <p className="text-sm text-[#589507] mb-3 leading-relaxed">{offer.description}</p>
-                                            <div className="flex items-center space-x-4 text-xs">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-xs">
                                                 <div className="flex items-center space-x-1">
                                                     <Calendar className="w-4 h-4 text-[#7DBD07]" />
                                                     <span className="text-[#396F04] font-medium">Durée : {offer.duration} mois</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="w-16 h-16 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-2xl flex items-center justify-center shadow-lg">
-                                            <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <div className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            <svg className="w-6 sm:w-8 h-6 sm:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clipRule="evenodd" />
                                             </svg>
                                         </div>

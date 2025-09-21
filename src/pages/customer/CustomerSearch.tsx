@@ -133,25 +133,15 @@ const CustomerSearch = () => {
             {/* ID Client en haut */}
             {customerData?.code && (
                 <div className="text-center pt-6 pb-4">
-                    <div className="inline-block bg-white px-8 py-4 rounded-3xl shadow-xl border-2 border-[#c9eaad]">
+                    <div className="inline-block bg-white px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-xl border-2 border-[#c9eaad]">
                         <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
-                        <p className="text-3xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
-                    </div>
-                </div>
-            )}
-
-            {/* ID Client en haut */}
-            {customerData?.code && (
-                <div className="text-center pt-6 pb-4">
-                    <div className="inline-block bg-white px-8 py-4 rounded-3xl shadow-xl border-2 border-[#c9eaad]">
-                        <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
-                        <p className="text-3xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
                     </div>
                 </div>
             )}
 
             {/* Titre principal */}
-            <div className="px-6 pt-8 pb-6">
+            <div className="px-4 sm:px-6 pt-8 pb-6">
                 <h1 className="text-2xl font-bold text-[#0A2004] text-center">Découvrir</h1>
             </div>
 
@@ -159,7 +149,7 @@ const CustomerSearch = () => {
             <div className="px-4 space-y-8">
 
                 {/* Barre de recherche */}
-                <div className="relative max-w-md mx-auto">
+                <div className="relative max-w-md mx-auto px-2">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <Search className="h-6 w-6 text-[#589507]" />
                     </div>
@@ -168,7 +158,7 @@ const CustomerSearch = () => {
                         placeholder="Rechercher un magasin..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-14 pr-14 py-4 bg-white border-2 border-[#c9eaad] rounded-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004] placeholder-[#589507]/60 font-medium text-lg"
+                        className="w-full pl-14 pr-14 py-3 sm:py-4 bg-white border-2 border-[#c9eaad] rounded-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-[#7DBD07]/20 focus:border-[#7DBD07] text-[#0A2004] placeholder-[#589507]/60 font-medium text-base sm:text-lg"
                     />
                     <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
                         <MapPin className="h-6 w-6 text-[#7DBD07]" />
@@ -177,33 +167,33 @@ const CustomerSearch = () => {
 
                 {/* Filtres par type */}
                 <div className="space-y-4">
-                    <div className="flex items-center justify-center space-x-2 mb-4">
+                    <div className="flex items-center justify-center space-x-2 mb-4 px-2">
                         <Filter className="w-5 h-5 text-[#396F04]" />
-                        <h3 className="text-lg font-bold text-[#0A2004]">Catégories</h3>
+                        <h3 className="text-base sm:text-lg font-bold text-[#0A2004]">Catégories</h3>
                     </div>
-                    <div className="flex overflow-x-auto space-x-3 pb-2 px-4">
+                    <div className="flex overflow-x-auto space-x-2 sm:space-x-3 pb-2 px-2 sm:px-4">
                         <button
-                            className={`flex-shrink-0 flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105 shadow-lg ${
+                            className={`flex-shrink-0 flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm sm:text-base ${
                                 selectedType === null
                                     ? "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white shadow-xl" 
                                     : "bg-white text-[#589507] border-2 border-[#c9eaad] hover:border-[#7DBD07]"
                             }`}
                             onClick={() => setSelectedType(null)}
                         >
-                            <span className="text-lg">🏪</span>
+                            <span className="text-base sm:text-lg">🏪</span>
                             <span className="whitespace-nowrap">Tous</span>
                         </button>
                         {uniqueTypes.map((type) => (
                             <button
                                 key={type}
-                                className={`flex-shrink-0 flex items-center space-x-2 px-6 py-3 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105 shadow-lg ${
+                                className={`flex-shrink-0 flex items-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 rounded-2xl font-bold transition-all duration-200 transform hover:scale-105 shadow-lg text-sm sm:text-base ${
                                     selectedType === type 
                                         ? "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white shadow-xl" 
                                         : "bg-white text-[#589507] border-2 border-[#c9eaad] hover:border-[#7DBD07]"
                                 }`}
                                 onClick={() => setSelectedType(selectedType === type ? null : type)}
                             >
-                                <span className="text-lg">{getTypeEmoji(type)}</span>
+                                <span className="text-base sm:text-lg">{getTypeEmoji(type)}</span>
                                 <span className="whitespace-nowrap">{type}</span>
                             </button>
                         ))}
@@ -212,7 +202,7 @@ const CustomerSearch = () => {
 
                 {/* Carte interactive */}
                 <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-[#0A2004] text-center">Carte interactive</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0A2004] text-center px-2">Carte interactive</h3>
                     <div className="w-full h-96 bg-white rounded-3xl overflow-hidden shadow-xl border-2 border-[#c9eaad]/30">
                         <Map stores={filteredResults} />
                     </div>
@@ -221,14 +211,14 @@ const CustomerSearch = () => {
                 {/* Résultats de la recherche */}
                 {(searchTerm.length > 0 || selectedType) && !loading && (
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between px-2">
-                            <h3 className="text-xl font-bold text-[#0A2004]">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 gap-2">
+                            <h3 className="text-lg sm:text-xl font-bold text-[#0A2004]">
                                 Résultats ({filteredResults.length})
                             </h3>
                             {selectedType && (
                                 <button
                                     onClick={() => setSelectedType(null)}
-                                    className="text-sm text-[#7DBD07] font-bold bg-white px-4 py-2 rounded-full border border-[#c9eaad] hover:bg-[#f8fdf4] transition-colors"
+                                    className="text-xs sm:text-sm text-[#7DBD07] font-bold bg-white px-3 sm:px-4 py-1 sm:py-2 rounded-full border border-[#c9eaad] hover:bg-[#f8fdf4] transition-colors"
                                 >
                                     Effacer les filtres
                                 </button>
@@ -240,41 +230,41 @@ const CustomerSearch = () => {
                                 {filteredResults.map((result, index) => (
                                     <div 
                                         key={index} 
-                                        className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-102 cursor-pointer"
+                                        className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30 hover:shadow-2xl transition-all duration-300 transform hover:scale-102 cursor-pointer"
                                         onClick={() => openMerchantModal(result)}
                                     >
-                                        <div className="flex items-start space-x-4">
+                                        <div className="flex items-start space-x-3 sm:space-x-4">
                                             <div className="relative">
                                                 <img
                                                     src={result.logo}
                                                     alt={`${result.name} logo`}
-                                                    className="w-16 h-16 object-cover rounded-2xl shadow-lg border-2 border-[#c9eaad]/30"
+                                                    className="w-12 sm:w-16 h-12 sm:h-16 object-cover rounded-2xl shadow-lg border-2 border-[#c9eaad]/30"
                                                     onError={(e) => { e.currentTarget.src = "/default-logo.png"; }}
                                                 />
                                                 {result.hasOffers && (
-                                                    <div className="absolute -top-2 -right-2 bg-gradient-to-br from-[#FFCD29] to-[#B7DB25] rounded-full p-2 shadow-lg">
-                                                        <Star className="w-4 h-4 text-[#0A2004] fill-current" />
+                                                    <div className="absolute -top-1 sm:-top-2 -right-1 sm:-right-2 bg-gradient-to-br from-[#FFCD29] to-[#B7DB25] rounded-full p-1 sm:p-2 shadow-lg">
+                                                        <Star className="w-3 sm:w-4 h-3 sm:h-4 text-[#0A2004] fill-current" />
                                                     </div>
                                                 )}
                                             </div>
                                             <div className="flex-1">
-                                                <div className="flex items-start justify-between mb-2">
+                                                <div className="flex flex-col sm:flex-row items-start justify-between mb-2 gap-2">
                                                     <div>
-                                                        <h4 className="text-lg font-bold text-[#0A2004]">{result.name}</h4>
-                                                        <div className="flex items-center space-x-2 mt-1">
-                                                            <span className="text-lg">{getTypeEmoji(result.type)}</span>
-                                                            <span className="text-sm font-bold text-[#7DBD07] bg-[#ebffbc] px-3 py-1 rounded-full">{result.type}</span>
+                                                        <h4 className="text-base sm:text-lg font-bold text-[#0A2004]">{result.name}</h4>
+                                                        <div className="flex items-center space-x-2 mt-1 flex-wrap">
+                                                            <span className="text-base sm:text-lg">{getTypeEmoji(result.type)}</span>
+                                                            <span className="text-xs sm:text-sm font-bold text-[#7DBD07] bg-[#ebffbc] px-2 sm:px-3 py-1 rounded-full">{result.type}</span>
                                                         </div>
                                                     </div>
                                                     {result.hasOffers && (
-                                                        <span className="bg-gradient-to-r from-[#FFCD29] to-[#B7DB25] text-[#0A2004] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                        <span className="bg-gradient-to-r from-[#FFCD29] to-[#B7DB25] text-[#0A2004] px-2 sm:px-3 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
                                                             🎁 Offres dispo
                                                         </span>
                                                     )}
                                                 </div>
                                                 <p className="text-sm text-[#589507] mb-3 leading-relaxed">{result.shortDescription}</p>
-                                                <div className="flex items-center space-x-2 mb-2">
-                                                    <MapPin className="w-4 h-4 text-[#7DBD07]" />
+                                                <div className="flex items-start space-x-2 mb-2">
+                                                    <MapPin className="w-4 h-4 text-[#7DBD07] flex-shrink-0 mt-0.5" />
                                                     <p className="text-xs text-[#396F04] font-medium">{result.address}</p>
                                                 </div>
                                                 <p className="text-xs text-[#589507]">Propriétaire : {result.owner_name}</p>
@@ -288,7 +278,7 @@ const CustomerSearch = () => {
                                 <div className="w-24 h-24 bg-[#ebffbc] rounded-full flex items-center justify-center mx-auto mb-6">
                                     <Search className="w-12 h-12 text-[#589507]" />
                                 </div>
-                                <h3 className="text-xl font-bold text-[#396F04] mb-2">Aucun magasin trouvé</h3>
+                                <h3 className="text-lg sm:text-xl font-bold text-[#396F04] mb-2">Aucun magasin trouvé</h3>
                                 <p className="text-sm text-[#589507]">Essayez de modifier vos critères de recherche</p>
                             </div>
                         )}
@@ -307,17 +297,17 @@ const CustomerSearch = () => {
 
             {/* Modale du commerçant */}
             {isModalOpen && selectedMerchant && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative">
                         <button
                             onClick={closeMerchantModal}
-                            className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-800 transition-all shadow-lg"
+                            className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 w-8 sm:w-10 h-8 sm:h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-800 transition-all shadow-lg"
                         >
                             ✕
                         </button>
                         
                         {/* Header avec photo de couverture */}
-                        <div className="relative h-48 md:h-64 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden rounded-t-3xl">
+                        <div className="relative h-32 sm:h-48 md:h-64 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden rounded-t-3xl">
                             <img
                                 src={selectedMerchant.cover_photo || "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
                                 alt="Cover"
@@ -327,30 +317,30 @@ const CustomerSearch = () => {
                         </div>
 
                         {/* Profil principal */}
-                        <div className="px-6 relative -mt-16">
-                            <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-                                <div className="flex flex-col md:flex-row items-start gap-6">
+                        <div className="px-3 sm:px-6 relative -mt-12 sm:-mt-16">
+                            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+                                <div className="flex flex-col md:flex-row items-start gap-4 sm:gap-6">
                                     {/* Logo de l'entreprise */}
                                     <div className="flex-shrink-0 mx-auto md:mx-0">
                                         <img
                                             src={selectedMerchant.logo}
                                             alt="Logo"
-                                            className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                                            className="w-16 sm:w-24 h-16 sm:h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
                                         />
                                     </div>
 
                                     {/* Informations principales */}
                                     <div className="flex-1 text-center md:text-left">
-                                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                                        <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                                             {selectedMerchant.name}
                                         </h1>
-                                        <p className="text-lg text-[#7fbd07] font-semibold mb-3">
+                                        <p className="text-base sm:text-lg text-[#7fbd07] font-semibold mb-3">
                                             {selectedMerchant.type}
                                         </p>
                                         <div className="flex flex-col md:flex-row items-center text-gray-600 mb-4">
-                                            <div className="flex items-center">
-                                                <MapPin className="w-5 h-5 mr-2" />
-                                                <span>{selectedMerchant.address}</span>
+                                            <div className="flex items-start">
+                                                <MapPin className="w-4 sm:w-5 h-4 sm:h-5 mr-2 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm sm:text-base">{selectedMerchant.address}</span>
                                                 {selectedMerchant.postal_code && (
                                                     <span>, {selectedMerchant.postal_code}</span>
                                                 )}
@@ -364,26 +354,26 @@ const CustomerSearch = () => {
                             </div>
 
                             {/* Contenu principal */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 pb-4 sm:pb-6">
                                 {/* Colonne principale */}
-                                <div className="lg:col-span-2 space-y-6">
+                                <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                                     {/* Description */}
-                                    <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <h2 className="text-xl font-bold text-gray-900 mb-4">Description</h2>
-                                        <p className="text-gray-700 leading-relaxed">
+                                    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Description</h2>
+                                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                                             {selectedMerchant.longDescription}
                                         </p>
                                     </div>
 
                                     {/* Mots-clés */}
                                     {selectedMerchant.keywords && selectedMerchant.keywords.length > 0 && (
-                                        <div className="bg-white rounded-2xl shadow-sm p-6">
-                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Mots-clés</h2>
-                                            <div className="flex flex-wrap gap-3">
+                                        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Mots-clés</h2>
+                                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                                 {selectedMerchant.keywords.map((keyword: string, index: number) => (
                                                     <span 
                                                         key={index} 
-                                                        className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-medium text-sm"
+                                                        className="px-3 sm:px-4 py-1 sm:py-2 bg-blue-100 text-blue-800 rounded-full font-medium text-xs sm:text-sm"
                                                     >
                                                         {keyword}
                                                     </span>
@@ -394,13 +384,13 @@ const CustomerSearch = () => {
 
                                     {/* Engagements */}
                                     {selectedMerchant.commitments && selectedMerchant.commitments.length > 0 && (
-                                        <div className="bg-white rounded-2xl shadow-sm p-6">
-                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Engagements</h2>
-                                            <div className="flex flex-wrap gap-3">
+                                        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Engagements</h2>
+                                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                                 {selectedMerchant.commitments.map((commitment: string, index: number) => (
                                                     <span 
                                                         key={index} 
-                                                        className="px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium text-sm"
+                                                        className="px-3 sm:px-4 py-1 sm:py-2 bg-green-100 text-green-800 rounded-full font-medium text-xs sm:text-sm"
                                                     >
                                                         {commitment}
                                                     </span>
@@ -411,9 +401,9 @@ const CustomerSearch = () => {
 
                                     {/* Galerie photos */}
                                     {selectedMerchant.store_photos && selectedMerchant.store_photos.length > 0 && (
-                                        <div className="bg-white rounded-2xl shadow-sm p-6">
-                                            <h2 className="text-xl font-bold text-gray-900 mb-4">Galerie photos</h2>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Galerie photos</h2>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                                                 {selectedMerchant.store_photos.map((photo: string, index: number) => (
                                                     <img
                                                         key={index}
@@ -429,10 +419,10 @@ const CustomerSearch = () => {
                                 </div>
 
                                 {/* Sidebar */}
-                                <div className="space-y-6">
+                                <div className="hidden lg:block space-y-4 sm:space-y-6">
                                     {/* Informations rapides */}
-                                    <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Informations</h3>
+                                    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Informations</h3>
                                         <div className="space-y-4">
                                             <div className="flex items-start gap-3">
                                                 <div className="w-5 h-5 text-gray-400 mt-1">🏪</div>
@@ -459,8 +449,8 @@ const CustomerSearch = () => {
                                     </div>
 
                                     {/* Statistiques */}
-                                    <div className="bg-white rounded-2xl shadow-sm p-6">
-                                        <h3 className="text-xl font-bold text-gray-900 mb-4">Statistiques</h3>
+                                    <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+                                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">Statistiques</h3>
                                         <div className="space-y-4">
                                             <div className="flex justify-between items-center">
                                                 <span className="text-gray-600 text-sm">Vues du profil</span>
@@ -485,17 +475,17 @@ const CustomerSearch = () => {
 
             {/* Modale d'image en plein écran */}
             {isImageModalOpen && selectedImage && (
-                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-4">
+                <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-2 sm:p-4">
                     <button
                         onClick={closeImageModal}
-                        className="absolute top-4 right-4 z-10 w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all text-xl font-bold"
+                        className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 w-10 sm:w-12 h-10 sm:h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all text-lg sm:text-xl font-bold"
                     >
                         ✕
                     </button>
                     <img
                         src={selectedImage}
                         alt="Image en plein écran"
-                        className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+                        className="max-h-[85vh] sm:max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
                         onClick={closeImageModal}
                     />
                 </div>

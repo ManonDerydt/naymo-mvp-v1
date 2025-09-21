@@ -185,16 +185,16 @@ const CustomerDashboard = () => {
             placeholder="Rechercher une offre..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#7DBD07] focus:border-transparent text-[#0A2004] placeholder-gray-500"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#7DBD07] focus:border-transparent text-[#0A2004] placeholder-gray-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Offre du moment */}
         {topMomentOffer.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-[#0A2004] mb-3 text-center">⭐ Offre du moment</h2>
+            <h2 className="text-base sm:text-lg font-bold text-[#0A2004] mb-3 text-center">⭐ Offre du moment</h2>
             <div
-              className="bg-gradient-to-br from-[#FFCD29]/20 to-[#B7DB25]/20 rounded-3xl p-6 border-2 border-[#FFCD29]/30 cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-br from-[#FFCD29]/20 to-[#B7DB25]/20 rounded-3xl p-4 sm:p-6 border-2 border-[#FFCD29]/30 cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               onClick={() => openOfferModal(topMomentOffer[0])}
             >
               <div className="flex items-center justify-between mb-4">
@@ -202,7 +202,7 @@ const CustomerDashboard = () => {
                   PREMIUM
                 </span>
               </div>
-              <h3 className="font-bold text-[#0A2004] mb-3 text-lg">{topMomentOffer[0].name}</h3>
+              <h3 className="font-bold text-[#0A2004] mb-3 text-base sm:text-lg">{topMomentOffer[0].name}</h3>
               <p className="text-sm text-gray-600 leading-relaxed">{topMomentOffer[0].description}</p>
               {topMomentOffer[0].discount && (
                 <div className="mt-4 text-center">
@@ -217,16 +217,16 @@ const CustomerDashboard = () => {
 
         {/* Offres en cours */}
         <div>
-          <h2 className="text-lg font-bold text-[#0A2004] mb-4 text-center">Offres disponibles</h2>
+          <h2 className="text-base sm:text-lg font-bold text-[#0A2004] mb-4 text-center">Offres disponibles</h2>
           <div className="space-y-3">
             {(showAllOffers ? otherOffers : otherOffers.slice(0, 3)).map((offer) => (
               <div
                 key={offer.id}
-                className="bg-white rounded-2xl p-5 border border-gray-200 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-102"
+                className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-102"
                 onClick={() => openOfferModal(offer)}
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-bold text-[#0A2004] text-lg">{offer.name}</h3>
+                  <h3 className="font-bold text-[#0A2004] text-base sm:text-lg flex-1 mr-2">{offer.name}</h3>
                   {offer.discount && (
                     <span className="bg-[#7DBD07] text-white text-xs px-3 py-1 rounded-full font-bold">
                       -{offer.discount}%
@@ -235,15 +235,15 @@ const CustomerDashboard = () => {
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed">{offer.description}</p>
               </div>
-            ))}
+        <section className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30">
           </div>
           
           {otherOffers.length > 3 && (
-            <div className="text-center mt-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <button
-                onClick={toggleOffers}
-                className="px-6 py-2 bg-[#7DBD07] text-white rounded-full font-bold hover:bg-[#6ba006] transition-colors"
-              >
+            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#7DBD07]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Points</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
                 {showAllOffers ? "Voir moins" : `Voir ${otherOffers.length - 3} offres de plus`}
               </button>
             </div>
@@ -254,27 +254,27 @@ const CustomerDashboard = () => {
       {/* Modal détail offre */}
       {isModalOpen && selectedOffer && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 relative">
-            <button
-              onClick={closeOfferModal}
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-4 sm:p-6 relative mx-4">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
               className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
             >
               ✕
             </button>
             
-            <div className="text-center pt-4">
-              <h3 className="text-xl font-bold text-[#0A2004] mb-2">{selectedOffer.name}</h3>
-              <p className="text-gray-600 mb-4">{selectedOffer.description}</p>
+            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#589507]/20">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0A2004] mb-2">{selectedOffer.name}</h3>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
               
               {selectedOffer.discount && (
-                <div className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white rounded-2xl p-4 mb-4">
-                  <div className="text-2xl font-bold">-{selectedOffer.discount}%</div>
+                <div className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white rounded-2xl p-3 sm:p-4 mb-4">
+                  <div className="text-xl sm:text-2xl font-bold">-{selectedOffer.discount}%</div>
                   <div className="text-sm">de réduction</div>
-                </div>
-              )}
+            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#396F04]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Commerçant préféré</p>
               
               {selectedOffer.duration && (
-                <div className="bg-gray-100 rounded-xl p-3 mb-4">
+                  <p className="text-base sm:text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
                   <p className="text-sm text-gray-600">
                     <span className="font-medium">Durée :</span> {selectedOffer.duration} mois
                   </p>
@@ -284,15 +284,15 @@ const CustomerDashboard = () => {
               <button
                 onClick={() => addOfferToCustomer(selectedOffer.id)}
                 disabled={hasAddedOffer(selectedOffer.id)}
-                className={`w-full py-4 rounded-2xl font-bold transition-all ${
+                className={`w-full py-3 sm:py-4 rounded-2xl font-bold transition-all text-sm sm:text-base ${
                   hasAddedOffer(selectedOffer.id)
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                     : "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white hover:from-[#6ba006] hover:to-[#7DBD07] active:scale-95 shadow-lg"
                 }`}
               >
-                {hasAddedOffer(selectedOffer.id) ? "Déjà dans mes offres" : "Ajouter à mes offres"}
+          <div className="inline-block bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-xl">
               </button>
-            </div>
+            <p className="text-2xl sm:text-3xl font-bold text-white tracking-wider">{customerData.code}</p>
           </div>
         </div>
       )}

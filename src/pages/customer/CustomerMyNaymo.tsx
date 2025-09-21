@@ -109,51 +109,51 @@ const CustomerMyNaymo = () => {
   }, [customer])
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28 px-2 sm:px-0">
       {/* Titre principal */}
-      <div className="px-6 pt-8 pb-6">
+      <div className="px-4 sm:px-6 pt-8 pb-6">
         <h1 className="text-3xl font-bold text-[#0A2004] text-center mb-2">Mon Profil</h1>
         <p className="text-[#589507] text-center">Gérez vos informations et vos offres</p>
       </div>
 
       {/* Contenu principal */}
-      <div className="px-4 space-y-6 max-w-md mx-auto">
+      <div className="px-2 sm:px-4 space-y-6 max-w-md mx-auto">
         
         {/* Section Points */}
-        <section className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30">
+        <section className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30">
           <h2 className="text-2xl font-bold text-[#0A2004] text-center mb-6">Mes Points</h2>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {/* Carte Points */}
-            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-4 text-center border border-[#7DBD07]/20">
-              <p className="text-[#589507] font-semibold text-sm mb-2">Points</p>
-              <p className="text-3xl font-bold text-[#0A2004]">
+            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#7DBD07]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Points</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
                 {points !== null ? points : "Chargement..."}
               </p>
             </div>
 
             {/* Carte Bons Restants */}
-            <div className="bg-gradient-to-br from-[#FFCD29]/10 to-[#B7DB25]/10 rounded-2xl p-4 text-center border border-[#FFCD29]/20">
-              <p className="text-[#589507] font-semibold text-sm mb-2">Bons</p>
-              <p className="text-3xl font-bold text-[#0A2004]">
+            <div className="bg-gradient-to-br from-[#FFCD29]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#FFCD29]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
                 {bonsRestants}
               </p>
             </div>
 
             {/* Carte Bons utilisés */}
-            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-4 text-center border border-[#589507]/20">
-              <p className="text-[#589507] font-semibold text-sm mb-2">Bons utilisés</p>
-              <p className="text-3xl font-bold text-[#0A2004]">
+            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#589507]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons utilisés</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
                 {usedBons}
               </p>
             </div>
 
             {/* Carte Commerçant préféré */}
-            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-4 text-center border border-[#396F04]/20">
-              <p className="text-[#589507] font-semibold text-sm mb-2">Commerçant préféré</p>
+            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#396F04]/20">
+              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Commerçant préféré</p>
               {favMerchant ? (
                 <>
-                  <p className="text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
+                  <p className="text-base sm:text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
                   <p className="text-sm text-[#589507] mt-1">
                     {favMerchant.points} points cumulés
                   </p>

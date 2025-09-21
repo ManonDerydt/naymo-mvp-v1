@@ -220,15 +220,28 @@ const Dashboard = () => {
           
           {/* Bouton Tutoriel */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-center">
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20 mr-3">
+                  <svg className="w-6 h-6 text-[#7ebd07]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h2 className="text-xl font-bold text-gray-900">Tutoriel Vidéo</h2>
+                  <p className="text-sm text-gray-500">Apprenez à utiliser Naymo efficacement</p>
+                </div>
+              </div>
             <button
               onClick={() => setShowTutorialModal(true)}
-              className="bg-gradient-to-r from-[#7fbd07] to-[#6ba006] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-3"
+              className="bg-gradient-to-r from-[#7fbd07] to-[#6ba006] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-3 w-full justify-center"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
               </svg>
-              <span>Voir le Tutoriel</span>
+              <span>Regarder la vidéo</span>
             </button>
+            </div>
           </div>
         </div>
 

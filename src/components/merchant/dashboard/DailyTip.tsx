@@ -16,9 +16,7 @@ const DailyTip = () => {
 
       <div className="flex-1 flex flex-col justify-center items-center text-center space-y-4">
         <div className="w-20 h-20 bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20 rounded-full flex items-center justify-center">
-          <svg className="w-10 h-10 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.5a1.5 1.5 0 011.5 1.5V12a1.5 1.5 0 01-1.5 1.5H9m0-4.5V9a1.5 1.5 0 011.5-1.5H12a1.5 1.5 0 011.5 1.5v1.5m-6 0h6m-6 0v1.5a1.5 1.5 0 001.5 1.5H12a1.5 1.5 0 001.5-1.5V12m-6 0V9a1.5 1.5 0 011.5-1.5H12a1.5 1.5 0 011.5 1.5v3" />
-          </svg>
+         
         </div>
      
         

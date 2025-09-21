@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Building2, MapPin, Tags, Pencil, Edit, X } from 'lucide-react'
 import { Button } from '@/components/ui'
 import ImageGallery from '@/components/merchant/store/ImageGallery'
@@ -9,8 +9,24 @@ const Store = () => {
   const [showEditModal, setShowEditModal] = useState(false)
   const [viewMode, setViewMode] = useState('desktop')
   const [editingField, setEditingField] = useState<string | null>(null)
+  const [isMobileDevice, setIsMobileDevice] = useState(false)
   
   const { merchant, merchantData } = useAuth()
+
+  // Détecter si l'utilisateur est sur mobile/tablette
+  useEffect(() => {
+    const checkMobileDevice = () => {
+      const isMobile = window.innerWidth < 1024 // lg breakpoint
+      setIsMobileDevice(isMobile)
+      if (isMobile) {
+        setViewMode('mobile')
+      }
+    }
+
+    checkMobileDevice()
+    window.addEventListener('resize', checkMobileDevice)
+    return () => window.removeEventListener('resize', checkMobileDevice)
+  }, [])
   
   const storeImages = merchant && merchantData && merchantData.store_photos 
     ? merchantData.store_photos.map((photo: string | undefined, index: number) => ({
@@ -311,49 +327,60 @@ const Store = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Aperçu de votre magasin</h1>
           <p className="text-gray-600 mb-6">Voici comment vos clients verront votre magasin sur différents appareils</p>
           
-          {/* Sélecteur de vue responsive */}
-          <div className="flex justify-center space-x-4 mb-6">
-            <button
-              onClick={() => setViewMode('desktop')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                viewMode === 'desktop'
-                  ? 'bg-[#7fbd07] text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              🖥️ Desktop
-            </button>
-            <button
-              onClick={() => setViewMode('tablet')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                viewMode === 'tablet'
-                  ? 'bg-[#7fbd07] text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              📱 Tablette
-            </button>
-            <button
-              onClick={() => setViewMode('mobile')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                viewMode === 'mobile'
-                  ? 'bg-[#7fbd07] text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              📱 Mobile
-            </button>
-          </div>
+          {/* Sélecteur de vue responsive - seulement sur desktop */}
+          {!isMobileDevice && (
+            <div className="flex justify-center space-x-4 mb-6">
+              <button
+                onClick={() => setViewMode('desktop')}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  viewMode === 'desktop'
+                    ? 'bg-[#7fbd07] text-white shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                🖥️ Desktop
+              </button>
+              <button
+                onClick={() => setViewMode('tablet')}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  viewMode === 'tablet'
+                    ? 'bg-[#7fbd07] text-white shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                📱 Tablette
+              </button>
+              <button
+                onClick={() => setViewMode('mobile')}
+                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                  viewMode === 'mobile'
+                    ? 'bg-[#7fbd07] text-white shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                📱 Mobile
+              </button>
+            </div>
+          )}
+
+          {/* Message pour les utilisateurs mobiles */}
+          {isMobileDevice && (
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
+                <span className="text-sm font-medium">📱 Vue mobile automatique</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Aperçu responsive */}
         <div className="flex justify-center">
-          {viewMode === 'desktop' ? (
+          {viewMode === 'desktop' && !isMobileDevice ? (
             // Vue desktop - pleine largeur
             <div className="w-full">
               <StoreContent />
             </div>
-          ) : viewMode === 'tablet' ? (
+          ) : viewMode === 'tablet' && !isMobileDevice ? (
             // Vue tablette - conteneur simulé
             <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl">
               <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '768px', height: '1024px' }}>
@@ -366,22 +393,30 @@ const Store = () => {
               </div>
             </div>
           ) : (
-            // Vue mobile - conteneur simulé
-            <div className="bg-gray-800 rounded-3xl p-4 shadow-2xl">
-              <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '375px', height: '667px' }}>
-                <div className="h-full overflow-y-auto">
-                  <StoreContent isPreview={true} />
+            // Vue mobile - conteneur simulé ou vue native
+            isMobileDevice ? (
+              // Vue mobile native pour les vrais appareils mobiles
+              <div className="w-full">
+                <StoreContent />
+              </div>
+            ) : (
+              // Vue mobile simulée pour desktop
+              <div className="bg-gray-800 rounded-3xl p-4 shadow-2xl">
+                <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '375px', height: '667px' }}>
+                  <div className="h-full overflow-y-auto">
+                    <StoreContent isPreview={true} />
+                  </div>
+                </div>
+                <div className="text-center mt-4">
+                  <span className="text-white text-sm font-medium">iPhone - 375 × 667</span>
                 </div>
               </div>
-              <div className="text-center mt-4">
-                <span className="text-white text-sm font-medium">iPhone - 375 × 667</span>
-              </div>
-            </div>
+            )
           )}
         </div>
 
-        {/* Bouton d'édition globale pour desktop */}
-        {viewMode === 'desktop' && (
+        {/* Bouton d'édition globale pour desktop seulement */}
+        {(viewMode === 'desktop' || isMobileDevice) && (
           <div className="fixed bottom-8 right-8">
             <Button 
               onClick={() => setShowEditModal(true)}

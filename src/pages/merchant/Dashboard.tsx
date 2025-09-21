@@ -29,6 +29,7 @@ const formatCurrency = (amount: number) =>
 
 const Dashboard = () => {
   const { merchant } = useAuth()
+  const [showTutorialModal, setShowTutorialModal] = useState(false)
 
   const [clientsFideles, setClientsFideles] = useState(0)
   const [totalPoints, setTotalPoints] = useState(0)
@@ -211,10 +212,23 @@ const Dashboard = () => {
         </div>
 
         {/* Layout principal optimisé */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Générateur de code - plus large */}
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Générateur de code - réduit de moitié */}
+          <div>
             <CodeGenerator />
+          </div>
+          
+          {/* Bouton Tutoriel */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-center">
+            <button
+              onClick={() => setShowTutorialModal(true)}
+              className="bg-gradient-to-r from-[#7fbd07] to-[#6ba006] text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-3"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
+              <span>Voir le Tutoriel</span>
+            </button>
           </div>
         </div>
 
@@ -268,6 +282,43 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modale Tutoriel */}
+      {showTutorialModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden relative">
+            <button
+              onClick={() => setShowTutorialModal(false)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-600 hover:bg-white hover:text-gray-800 transition-all shadow-lg"
+            >
+              ✕
+            </button>
+            
+            <div className="p-6">
+              <h2 className="text-2xl font-bold text-[#0A2004] mb-6 text-center">Tutoriel Naymo</h2>
+              
+              <div className="aspect-video bg-gray-100 rounded-2xl overflow-hidden">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/zoFnEF-A7kQ"
+                  title="Tutoriel Naymo"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                ></iframe>
+              </div>
+              
+              <div className="mt-6 text-center">
+                <h3 className="text-lg font-bold text-[#0A2004] mb-2">
+                  Comment utiliser Naymo efficacement
+                </h3>
+                <p className="text-[#589507] leading-relaxed">
+                  Découvrez toutes les fonctionnalités de votre tableau de bord et optimisez votre relation client avec Naymo.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

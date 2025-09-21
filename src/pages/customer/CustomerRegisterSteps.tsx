@@ -68,6 +68,7 @@ const steps = [
 const CustomerRegisterSteps = () => {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(0)
+  const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     gender: '',
     last_name: '',
@@ -172,6 +173,9 @@ const CustomerRegisterSteps = () => {
   const handleSubmitRegister = async () => {
     if (!validateStep(currentStep)) return
 
+    setLoading(true)
+    setError('')
+
     try {
       // Créer l'utilisateur dans Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password)
@@ -217,6 +221,8 @@ const CustomerRegisterSteps = () => {
       } else {
         setErrors({ ...errors, general: errorMessage })
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -288,10 +294,11 @@ const CustomerRegisterSteps = () => {
               </Button>
               <Button
                 onClick={nextStep}
+                disabled={loading}
                 className="space-x-2 rounded-2xl py-4 px-6 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] hover:from-[#589507] hover:to-[#7DBD07] text-white font-bold shadow-lg transform hover:scale-105 transition-all duration-200"
                 size="lg"
               >
-                <span>{currentStep === steps.length - 1 ? 'Terminer' : 'Suivant'}</span>
+                <span>{loading ? 'Inscription...' : (currentStep === steps.length - 1 ? 'Terminer' : 'Suivant')}</span>
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </div>

@@ -1,17 +1,19 @@
 import { useState } from 'react'
-import { Users, Award, Crown } from 'lucide-react'
+import { Users, Award, Crown, UserCheck } from 'lucide-react'
 import { Button } from '@/components/ui'
 import CustomerAnalytics from '@/components/merchant/customers/analytics/CustomerAnalytics'
 import LoyaltyProgram from '@/components/merchant/customers/loyalty/LoyaltyProgram'
 import VipProgram from '@/components/merchant/customers/VipProgram'
+import CustomersList from '@/components/merchant/customers/CustomersList'
 
-type TabType = 'analytics' | 'loyalty' | 'vip'
+type TabType = 'analytics' | 'loyalty' | 'vip' | 'list'
 
 const Customers = () => {
   const [activeTab, setActiveTab] = useState<TabType>('analytics')
 
   const tabs = [
     { id: 'analytics', label: 'Typologie client', icon: Users },
+    { id: 'list', label: 'Liste des clients', icon: UserCheck },
     { id: 'loyalty', label: 'Programme fidélité', icon: Award },
     { id: 'vip', label: 'Promo VIP', icon: Crown },
   ]
@@ -50,6 +52,7 @@ const Customers = () => {
 
         <div className="p-8">
           {activeTab === 'analytics' && <CustomerAnalytics />}
+          {activeTab === 'list' && <CustomersList />}
           {activeTab === 'loyalty' && <LoyaltyProgram />}
           {activeTab === 'vip' && <VipProgram />}
         </div>

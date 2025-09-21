@@ -5,13 +5,28 @@ import { AnalyticsItem } from './analyticsData'
 const getIcon = (iconType: AnalyticsItem['iconType']): ReactNode => {
   switch (iconType) {
     case 'users':
-      return <Users className="w-5 h-5 text-blue-500" />
+      return <Users className="w-5 h-5 text-[#6366f1]" />
     case 'map':
-      return <MapPin className="w-5 h-5 text-red-500" />
+      return <MapPin className="w-5 h-5 text-[#f59e0c]" />
     case 'chart':
-      return <BarChart3 className="w-5 h-5 text-green-500" />
+      return <BarChart3 className="w-5 h-5 text-[#13b981]" />
     case 'heart':
       return <Heart className="w-5 h-5 text-purple-500" />
+  }
+}
+
+const getBarColor = (iconType: AnalyticsItem['iconType']): string => {
+  switch (iconType) {
+    case 'users':
+      return 'bg-[#6366f1]'
+    case 'map':
+      return 'bg-[#f59e0c]'
+    case 'chart':
+      return 'bg-[#13b981]'
+    case 'heart':
+      return 'bg-purple-500'
+    default:
+      return 'bg-primary-500'
   }
 }
 
@@ -56,7 +71,7 @@ const DistributionBar = ({ label, value }: Distribution) => (
     </div>
     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
       <div
-        className="h-full bg-primary-500 rounded-full"
+        className={`h-full ${getBarColor(iconType)} rounded-full`}
         style={{ width: `${value}%` }}
       />
     </div>

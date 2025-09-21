@@ -5,21 +5,11 @@ import { useEffect, useState } from "react"
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
 
-interface Offer {
-  id: string
-  name: string
-  description: string
-  discount?: number
-  duration?: number
-  type?: string
-}
-
 const CustomerMyNaymo = () => {
   const { customer, customerData } = useAuth()
   const [points, setPoints] = useState<number | null>(null)
   const [favMerchant, setFavMerchant] = useState<{id: string; name: string; points: number} | null>(null)
   const [usedBons, setUsedBons] = useState<number>(0)
-  const [myOffers, setMyOffers] = useState<Offer[]>([])
 
   const bonsRestants = points !== null ? Math.floor(points / 100) : 0
 
@@ -118,31 +108,6 @@ const CustomerMyNaymo = () => {
     fetchUsedBons()
   }, [customer])
   
-  // Récupérer les offres du client
-  useEffect(() => {
-    const fetchMyOffers = async () => {
-      if (!customer?.uid || !customerData?.offers) return
-
-      try {
-        const offerPromises = customerData.offers.map(async (offerId: string) => {
-          const offerDoc = await getDoc(doc(db, "offer", offerId))
-          if (offerDoc.exists()) {
-            return { id: offerDoc.id, ...offerDoc.data() } as Offer
-          }
-          return null
-        })
-
-        const offers = await Promise.all(offerPromises)
-        const validOffers = offers.filter(offer => offer !== null) as Offer[]
-        setMyOffers(validOffers)
-      } catch (error) {
-        console.error("Erreur lors de la récupération des offres :", error)
-      }
-    }
-
-    fetchMyOffers()
-  }, [customer, customerData])
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28">
       {/* Titre principal */}
@@ -198,48 +163,6 @@ const CustomerMyNaymo = () => {
               )}
             </div>
           </div>
-        </section>
-
-        {/* Section Mes Offres */}
-        <section className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30">
-          <h2 className="text-2xl font-bold text-[#0A2004] text-center mb-6">Mes Offres</h2>
-          
-          {myOffers.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-[#ebffbc] rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-[#589507]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-[#396F04] mb-2">Aucune offre</h3>
-              <p className="text-[#589507]">Explorez les offres disponibles sur l'accueil !</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {myOffers.map((offer) => (
-                <div key={offer.id} className="bg-gradient-to-r from-[#f8fdf4] to-[#ebffbc] rounded-2xl p-4 border border-[#c9eaad]/30">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-[#0A2004] mb-2">{offer.name}</h3>
-                      <p className="text-sm text-[#589507] mb-3 leading-relaxed">{offer.description}</p>
-                      {offer.duration && (
-                        <p className="text-xs text-[#396F04] font-medium">
-                          Durée : {offer.duration} mois
-                        </p>
-                      )}
-                    </div>
-                    {offer.discount && (
-                      <div className="ml-4">
-                        <span className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white px-3 py-1 rounded-full text-sm font-bold">
-                          -{offer.discount}%
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </section>
       </div>
     </div>

@@ -174,7 +174,7 @@ const CustomerRegisterSteps = () => {
     if (!validateStep(currentStep)) return
 
     setLoading(true)
-    setError('')
+    setErrors({})
 
     try {
       // Créer l'utilisateur dans Firebase Authentication

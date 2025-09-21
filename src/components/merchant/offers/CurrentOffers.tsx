@@ -131,9 +131,9 @@ const CurrentOffers = () => {
           <div className="flex justify-between items-center">
             <div>
               {offer.isBoosted && (
-                <h6 className="inline-flex items-center justify-center bg-yellow-500 text-white text-2xl w-10 h-10 rounded-full mb-2">
+                <div className="inline-flex items-center justify-center bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-lg w-8 h-8 rounded-full mb-2 shadow-md">
                   ⭐
-                </h6>
+                </div>
               )}
             </div>
             <div className="flex items-center space-x-2">
@@ -142,14 +142,14 @@ const CurrentOffers = () => {
                   setSelectedOffer(offer)  // Définir l'offre sélectionnée
                   setShowEditModal(true)
                 }}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 bg-[#7fbd07] hover:bg-[#6ba006] text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 <Pencil className="w-4 h-4" />
                 <span>Modifier</span>
               </Button>
               <Button 
                 onClick={() => handleDeleteConfirm(offer.id)}  // Suppression de l'offre
-                className="flex items-center space-x-2 text-red-600 hover:text-red-800"
+                className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-xl font-medium transition-all duration-200 border border-red-200 hover:border-red-300"
               >
                 <Trash className="w-4 h-4" />  {/* Icône de suppression */}
                 <span>Supprimer</span>

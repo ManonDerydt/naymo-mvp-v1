@@ -74,20 +74,25 @@ const LoyaltyOverview = ({ onEdit, onDelete, onAdd }: LoyaltyOverviewProps) => {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
+    <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
       <div className="flex justify-between items-start mb-6">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Programme de fidélité</h3>
           <p className="text-sm text-gray-500">Configurez votre programme actuel</p>
         </div>
-        <Button onClick={onAdd}>Ajouter</Button>
+        <Button 
+          onClick={onAdd}
+          className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-6 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        >
+          Ajouter
+        </Button>
       </div>
 
       {programs.length === 0 ? (
         <p className="text-center text-gray-500">Aucun programme pour le moment.</p>
       ) : (
         programs.map(program => (
-          <div key={program.id} className="space-y-4 border-b pb-4 mb-4">
+          <div key={program.id} className="space-y-4 border-b border-gray-100 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
             <div>
               <p className="text-sm font-medium text-gray-500">Fréquence</p>
               <p className="mt-1">{program.frequency}</p>
@@ -101,10 +106,18 @@ const LoyaltyOverview = ({ onEdit, onDelete, onAdd }: LoyaltyOverviewProps) => {
               <p className="mt-1">{program.value}</p>
             </div>
             <div className="text-right space-x-4">
-              <Button size="sm" onClick={() => onEdit(program.id)}>
+              <Button 
+                size="sm" 
+                onClick={() => onEdit(program.id)}
+                className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+              >
                 Modifier
               </Button>
-              <Button size="sm" onClick={() => onDelete(program.id)}>
+              <Button 
+                size="sm" 
+                onClick={() => onDelete(program.id)}
+                className="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-red-200 hover:border-red-300"
+              >
                 Supprimer
               </Button>
             </div>

@@ -327,7 +327,7 @@ const VipProgram = () => {
   }
   
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
+    <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
       <div className="flex justify-between items-start mb-6">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Programme VIP actuel</h3>
@@ -336,16 +336,16 @@ const VipProgram = () => {
           </p>
         </div>
         <div className="flex space-x-4">
-          <Button onClick={() => {
+          <Button 
+            onClick={() => {
             setFormData({ frequency: '', reward: '', value: '' })
             setMode('create')
             setStep('form')
-          }}>
+            }}
+            className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-6 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+          >
             Ajouter
           </Button>
-          {/* <Button onClick={handleEdit}>
-            Modifier
-          </Button> */}
         </div>
       </div>
 
@@ -353,7 +353,7 @@ const VipProgram = () => {
         <p className="text-center text-gray-500">Aucune promo VIP disponible.</p>
       ) : (
         promosVip.map((promoVip) => (
-          <div key={promoVip.id} className="space-y-4">
+          <div key={promoVip.id} className="space-y-4 border-b border-gray-100 pb-6 mb-6 last:border-b-0 last:pb-0 last:mb-0">
             <div>
               <p className="text-sm font-medium text-gray-500">Fréquence</p>
               <p className="mt-1">{promoVip.frequency}</p>
@@ -367,14 +367,21 @@ const VipProgram = () => {
               <p className="mt-1">{promoVip.value}</p>
             </div>
             <div className="text-right space-x-4">
-              <Button size="sm" onClick={() => handleEdit(promoVip.id)}>
+              <Button 
+                size="sm" 
+                onClick={() => handleEdit(promoVip.id)}
+                className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+              >
                 Modifier
               </Button>
-              <Button size="sm" onClick={() => handleDelete(promoVip.id)}>
+              <Button 
+                size="sm" 
+                onClick={() => handleDelete(promoVip.id)}
+                className="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-red-200 hover:border-red-300"
+              >
                 Supprimer
               </Button>
             </div>
-            <hr></hr>
           </div>
         ))
       )}

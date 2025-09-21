@@ -56,14 +56,14 @@ const AnalyticsCard = ({ title, value, iconType, distribution }: AnalyticsCardPr
       
       <div className="space-y-3">
         {distribution.map((dist, i) => (
-          <DistributionBar key={i} {...dist} />
+          <DistributionBar key={i} {...dist} iconType={iconType} />
         ))}
       </div>
     </div>
   )
 }
 
-const DistributionBar = ({ label, value }: Distribution) => (
+const DistributionBar = ({ label, value, iconType }: Distribution & { iconType: AnalyticsItem['iconType'] }) => (
   <div>
     <div className="flex justify-between text-sm text-gray-600 mb-1">
       <span>{label}</span>

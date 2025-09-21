@@ -2,14 +2,24 @@ import { Bell } from "lucide-react"
 import logo from "../../assets/Logo.png"
 import { useAuth } from "@/components/firebase/useAuth"
 import { useEffect, useState } from "react"
-import { collection, doc, getDoc, getDocs, limit, orderBy, query, where } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
+
+interface Offer {
+  id: string
+  name: string
+  description: string
+  discount?: number
+  duration?: number
+  type?: string
+}
 
 const CustomerMyNaymo = () => {
   const { customer, customerData } = useAuth()
   const [points, setPoints] = useState<number | null>(null)
   const [favMerchant, setFavMerchant] = useState<{id: string; name: string; points: number} | null>(null)
   const [usedBons, setUsedBons] = useState<number>(0)
+  const [myOffers, setMyOffers] = useState<Offer[]>([])
 
   const bonsRestants = points !== null ? Math.floor(points / 100) : 0
 
@@ -108,123 +118,129 @@ const CustomerMyNaymo = () => {
     fetchUsedBons()
   }, [customer])
   
+  // Récupérer les offres du client
+  useEffect(() => {
+    const fetchMyOffers = async () => {
+      if (!customer?.uid || !customerData?.offers) return
+
+      try {
+        const offerPromises = customerData.offers.map(async (offerId: string) => {
+          const offerDoc = await getDoc(doc(db, "offer", offerId))
+          if (offerDoc.exists()) {
+            return { id: offerDoc.id, ...offerDoc.data() } as Offer
+          }
+          return null
+        })
+
+        const offers = await Promise.all(offerPromises)
+        const validOffers = offers.filter(offer => offer !== null) as Offer[]
+        setMyOffers(validOffers)
+      } catch (error) {
+        console.error("Erreur lors de la récupération des offres :", error)
+      }
+    }
+
+    fetchMyOffers()
+  }, [customer, customerData])
+
   return (
-    <div className="min-h-screen bg-white pb-28">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28">
       {/* Titre principal */}
       <div className="px-6 pt-8 pb-6">
-        <h1 className="text-2xl font-bold text-[#0A2004] text-center">Mon Profil</h1>
+        <h1 className="text-3xl font-bold text-[#0A2004] text-center mb-2">Mon Profil</h1>
+        <p className="text-[#589507] text-center">Gérez vos informations et vos offres</p>
       </div>
 
       {/* Contenu principal */}
-      <div className="px-6 space-y-10 max-w-5xl mx-auto">
+      <div className="px-4 space-y-6 max-w-md mx-auto">
         
-        {/* Section Points - Nouveau style */}
-        <section className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">Vos points</h2>
+        {/* Section Points */}
+        <section className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30">
+          <h2 className="text-2xl font-bold text-[#0A2004] text-center mb-6">Mes Points</h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {/* Carte Points */}
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-purple-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-purple-500 w-3 h-3 rounded-full"></div>
-                <p className="text-purple-700 font-semibold text-lg">Nombre de points</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
+            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-4 text-center border border-[#7DBD07]/20">
+              <p className="text-[#589507] font-semibold text-sm mb-2">Points</p>
+              <p className="text-3xl font-bold text-[#0A2004]">
                 {points !== null ? points : "Chargement..."}
               </p>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
-                <div 
-                  className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full" 
-                  style={{ width: '75%' }}>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">Prochain niveau: 200 points</p>
             </div>
 
             {/* Carte Bons Restants */}
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-blue-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-blue-500 w-3 h-3 rounded-full"></div>
-                <p className="text-blue-700 font-semibold text-lg">Bons restants</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
+            <div className="bg-gradient-to-br from-[#FFCD29]/10 to-[#B7DB25]/10 rounded-2xl p-4 text-center border border-[#FFCD29]/20">
+              <p className="text-[#589507] font-semibold text-sm mb-2">Bons</p>
+              <p className="text-3xl font-bold text-[#0A2004]">
                 {bonsRestants}
               </p>
-              <p className="text-xs text-gray-500 mt-2">1 bon = 100 points</p>
             </div>
 
             {/* Carte Bons utilisés */}
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-blue-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-blue-500 w-3 h-3 rounded-full"></div>
-                <p className="text-blue-700 font-semibold text-lg">Bons utilisés</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">
-                {usedBons > 0 ? usedBons : "Aucun bon utilisé"}
+            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-4 text-center border border-[#589507]/20">
+              <p className="text-[#589507] font-semibold text-sm mb-2">Bons utilisés</p>
+              <p className="text-3xl font-bold text-[#0A2004]">
+                {usedBons}
               </p>
             </div>
 
             {/* Carte Commerçant préféré */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-green-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-green-600 w-3 h-3 rounded-full" />
-                <p className="text-green-700 font-semibold text-lg">Votre commerçant préféré</p>
-              </div>
-
+            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-4 text-center border border-[#396F04]/20">
+              <p className="text-[#589507] font-semibold text-sm mb-2">Commerçant préféré</p>
               {favMerchant ? (
                 <>
-                  <p className="text-2xl font-bold text-gray-900">{favMerchant.name}</p>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
+                  <p className="text-sm text-[#589507] mt-1">
                     {favMerchant.points} points cumulés
                   </p>
                 </>
               ) : (
-                <p className="text-gray-500 italic">Aucun point attribué pour l’instant</p>
+                <p className="text-[#589507] italic">Aucun favori</p>
               )}
-            </div>
-
-            {/* Carte Vues */}
-            <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-green-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-green-500 w-3 h-3 rounded-full"></div>
-                <p className="text-green-700 font-semibold text-lg">Nombre de vues</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">567</p>
-              <div className="mt-4 flex items-center">
-                <span className="text-green-600 font-semibold">+12%</span>
-                <span className="text-gray-500 text-sm ml-2">vs mois dernier</span>
-              </div>
-            </div>
-
-            {/* Historique */}
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-yellow-100 cursor-pointer hover:bg-yellow-100 transition">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-yellow-500 w-3 h-3 rounded-full"></div>
-                <p className="text-yellow-700 font-semibold text-lg">Historique de points</p>
-              </div>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-500 mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <p className="text-sm text-yellow-600 font-medium mt-2 underline">Voir détails</p>
-            </div>
-
-            {/* Achats */}
-            <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl shadow p-6 flex flex-col items-center justify-center border border-pink-100">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="bg-pink-500 w-3 h-3 rounded-full"></div>
-                <p className="text-pink-700 font-semibold text-lg">Nombre d'achats</p>
-              </div>
-              <p className="text-4xl font-extrabold text-gray-900 mt-1">12</p>
-              <div className="mt-4">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-pink-100 text-pink-800">
-                  Top 20%
-                </span>
-              </div>
             </div>
           </div>
         </section>
 
-        {/* ... le reste de votre code ... */}
+        {/* Section Mes Offres */}
+        <section className="bg-white rounded-3xl shadow-xl p-6 border border-[#c9eaad]/30">
+          <h2 className="text-2xl font-bold text-[#0A2004] text-center mb-6">Mes Offres</h2>
+          
+          {myOffers.length === 0 ? (
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-[#ebffbc] rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[#589507]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-[#396F04] mb-2">Aucune offre</h3>
+              <p className="text-[#589507]">Explorez les offres disponibles sur l'accueil !</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {myOffers.map((offer) => (
+                <div key={offer.id} className="bg-gradient-to-r from-[#f8fdf4] to-[#ebffbc] rounded-2xl p-4 border border-[#c9eaad]/30">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-[#0A2004] mb-2">{offer.name}</h3>
+                      <p className="text-sm text-[#589507] mb-3 leading-relaxed">{offer.description}</p>
+                      {offer.duration && (
+                        <p className="text-xs text-[#396F04] font-medium">
+                          Durée : {offer.duration} mois
+                        </p>
+                      )}
+                    </div>
+                    {offer.discount && (
+                      <div className="ml-4">
+                        <span className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white px-3 py-1 rounded-full text-sm font-bold">
+                          -{offer.discount}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   )

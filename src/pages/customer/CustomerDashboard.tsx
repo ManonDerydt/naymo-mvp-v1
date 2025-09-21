@@ -109,20 +109,22 @@ const CustomerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header avec ID client */}
-      <div className="px-6 pt-8 pb-6 bg-gradient-to-r from-[#f8fdf4] to-[#ebffbc]">
-        <div className="text-center mb-4">
-          {customerData?.code && (
-            <div className="inline-block bg-white px-6 py-3 rounded-2xl shadow-lg border-2 border-[#7DBD07]/30">
-              <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
-              <p className="text-2xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
-            </div>
-          )}
-        </div>
+      {/* Header avec titre */}
+      <div className="px-6 pt-8 pb-6">
         <h1 className="text-2xl font-bold text-[#0A2004] text-center">Accueil</h1>
       </div>
 
       <div className="px-4 space-y-6 max-w-md mx-auto">
+        
+        {/* ID Client en haut */}
+        {customerData?.code && (
+          <div className="text-center">
+            <div className="inline-block bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] px-8 py-4 rounded-3xl shadow-xl">
+              <p className="text-sm font-medium text-white/90 mb-1">Votre ID Client</p>
+              <p className="text-3xl font-bold text-white tracking-wider">{customerData.code}</p>
+            </div>
+          </div>
+        )}
         
         {/* Section Profil avec jauge */}
         <div className="bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-3xl p-6 text-white shadow-xl">

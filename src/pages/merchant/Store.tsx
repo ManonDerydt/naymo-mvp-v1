@@ -43,94 +43,6 @@ const Store = () => {
     commitments: ["Produits 100% locaux", "Emballages recyclables", "Circuit court"]
   }
 
-  // Fonctions pour les classes responsives
-  const getContainerClass = () => {
-    switch (viewMode) {
-      case 'mobile': return 'max-w-sm'
-      case 'tablet': return 'max-w-2xl'
-      default: return 'max-w-4xl'
-    }
-  }
-
-  const getLayoutClass = () => {
-    switch (viewMode) {
-      case 'mobile': return 'flex-col'
-      case 'tablet': return 'flex-col md:flex-row'
-      default: return 'flex-col md:flex-row'
-    }
-  }
-
-  const getLogoSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'w-20 h-20'
-      case 'tablet': return 'w-24 h-24'
-      default: return 'w-32 h-32'
-    }
-  }
-
-  const getTitleSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'text-xl'
-      case 'tablet': return 'text-2xl'
-      default: return 'text-3xl'
-    }
-  }
-
-  const getSubtitleSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'text-base'
-      case 'tablet': return 'text-lg'
-      default: return 'text-lg'
-    }
-  }
-
-  const getSectionTitleSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'text-lg'
-      case 'tablet': return 'text-xl'
-      default: return 'text-xl'
-    }
-  }
-
-  const getTextSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'text-sm'
-      case 'tablet': return 'text-base'
-      default: return 'text-base'
-    }
-  }
-
-  const getTagSize = () => {
-    switch (viewMode) {
-      case 'mobile': return 'text-xs'
-      case 'tablet': return 'text-sm'
-      default: return 'text-sm'
-    }
-  }
-
-  const getGridClass = () => {
-    switch (viewMode) {
-      case 'mobile': return 'grid grid-cols-1'
-      case 'tablet': return 'grid grid-cols-1 lg:grid-cols-2'
-      default: return 'grid grid-cols-1 lg:grid-cols-3'
-    }
-  }
-
-  const getMainColumnClass = () => {
-    switch (viewMode) {
-      case 'mobile': return ''
-      case 'tablet': return 'lg:col-span-1'
-      default: return 'lg:col-span-2'
-    }
-  }
-
-  const getSidebarClass = () => {
-    switch (viewMode) {
-      case 'tablet': return 'lg:col-span-1'
-      default: return ''
-    }
-  }
-
   const getCurrentFieldValue = (field: string) => {
     const data = merchant && merchantData ? merchantData : initialStoreData
     switch (field) {
@@ -145,14 +57,14 @@ const Store = () => {
   }
 
   const handleSaveField = (field: string, value: any) => {
-    // Ici vous pouvez implémenter la logique de sauvegarde
     console.log(`Saving ${field}:`, value)
   }
 
-  return (
+  // Contenu de la page magasin
+  const StoreContent = ({ isPreview = false }: { isPreview?: boolean }) => (
     <div className="min-h-screen bg-gray-50">
       {/* Header avec photo de couverture */}
-      <div className="relative h-80 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden">
+      <div className="relative h-48 md:h-64 lg:h-80 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden">
         <img
           src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
           alt="Cover"
@@ -161,99 +73,71 @@ const Store = () => {
         <div className="absolute inset-0 bg-black bg-opacity-30" />
       </div>
 
-      {/* Sélecteur de vue responsive */}
-      <div className="max-w-7xl mx-auto px-6 -mt-16 relative z-10 mb-6">
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={() => setViewMode('desktop')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              viewMode === 'desktop'
-                ? 'bg-[#7fbd07] text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            🖥️ Desktop
-          </button>
-          <button
-            onClick={() => setViewMode('tablet')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              viewMode === 'tablet'
-                ? 'bg-[#7fbd07] text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            📱 Tablette
-          </button>
-          <button
-            onClick={() => setViewMode('mobile')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              viewMode === 'mobile'
-                ? 'bg-[#7fbd07] text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-100'
-            }`}
-          >
-            📱 Mobile
-          </button>
-        </div>
-      </div>
-
       {/* Profil principal */}
-      <div className={`mx-auto px-6 relative z-10 ${getContainerClass()}`}>
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-          <div className={`flex items-start gap-6 ${getLayoutClass()}`}>
+      <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 -mt-16">
+        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-8 mb-6">
+          <div className="flex flex-col md:flex-row items-start gap-4 md:gap-6">
             {/* Logo de l'entreprise */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mx-auto md:mx-0">
               <img
                 src={merchant && merchantData ? merchantData.logo : "https://images.unsplash.com/photo-1560472354-b33ff0c44a43"}
                 alt="Logo"
-                className={`rounded-full object-cover border-4 border-white shadow-lg ${getLogoSize()}`}
+                className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full object-cover border-4 border-white shadow-lg"
               />
             </div>
 
             {/* Informations principales */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className={`font-bold text-gray-900 ${getTitleSize()}`}>
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 mb-2">
+                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
                   {merchant && merchantData ? merchantData.company_name : initialStoreData.company_name}
                 </h1>
-                <button
-                  onClick={() => setEditingField('company_name')}
-                  className="p-1 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('company_name')}
+                    className="p-1 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <div className="flex items-center gap-3 mb-3">
-                <p className={`text-[#7fbd07] font-semibold ${getSubtitleSize()}`}>
+              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 mb-3">
+                <p className="text-base md:text-lg lg:text-lg text-[#7fbd07] font-semibold">
                   {merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}
                 </p>
-                <button
-                  onClick={() => setEditingField('business_type')}
-                  className="p-1 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('business_type')}
+                    className="p-1 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <div className="flex items-center text-gray-600 mb-4">
-                <MapPin className="w-5 h-5 mr-2" />
-                <span>{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
-                <button
-                  onClick={() => setEditingField('address')}
-                  className="p-1 ml-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+              <div className="flex flex-col md:flex-row items-center text-gray-600 mb-4">
+                <div className="flex items-center">
+                  <MapPin className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+                  <span className="text-sm md:text-base">{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
+                </div>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('address')}
+                    className="p-1 ml-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Bouton modifier global - seulement en desktop */}
-            {viewMode === 'desktop' && (
+            {/* Bouton modifier global - seulement en desktop et pas en preview */}
+            {!isPreview && viewMode === 'desktop' && (
               <div className="flex-shrink-0">
                 <Button 
                   onClick={() => setShowEditModal(true)}
-                  className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-8 py-3 rounded-xl flex items-center gap-2 shadow-lg"
+                  className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-6 md:px-8 py-2 md:py-3 rounded-xl flex items-center gap-2 shadow-lg text-sm md:text-base"
                 >
-                  <Edit className="w-5 h-5" />
+                  <Edit className="w-4 h-4 md:w-5 md:h-5" />
                   Modifier tout
                 </Button>
               </div>
@@ -262,21 +146,23 @@ const Store = () => {
         </div>
 
         {/* Contenu principal */}
-        <div className={`gap-6 ${getGridClass()}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Colonne principale */}
-          <div className={`space-y-6 ${getMainColumnClass()}`}>
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Description */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`font-bold text-gray-900 ${getSectionTitleSize()}`}>Description</h2>
-                <button
-                  onClick={() => setEditingField('description')}
-                  className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Description</h2>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('description')}
+                    className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <p className={`text-gray-700 leading-relaxed ${getTextSize()}`}>
+              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
                 {merchant && merchantData ? 
                   (merchantData.longDescription || merchantData.shortDescription) : 
                   initialStoreData.longDescription
@@ -285,21 +171,23 @@ const Store = () => {
             </div>
 
             {/* Mots-clés */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`font-bold text-gray-900 ${getSectionTitleSize()}`}>Mots-clés</h2>
-                <button
-                  onClick={() => setEditingField('keywords')}
-                  className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Mots-clés</h2>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('keywords')}
+                    className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {(merchant && merchantData && merchantData.keywords ? merchantData.keywords : initialStoreData.keywords).map((keyword: string, index: number) => (
                   <span 
                     key={index} 
-                    className={`px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-medium ${getTagSize()}`}
+                    className="px-3 md:px-4 py-1 md:py-2 bg-blue-100 text-blue-800 rounded-full font-medium text-xs md:text-sm"
                   >
                     {keyword}
                   </span>
@@ -308,21 +196,23 @@ const Store = () => {
             </div>
 
             {/* Engagements */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`font-bold text-gray-900 ${getSectionTitleSize()}`}>Engagements</h2>
-                <button
-                  onClick={() => setEditingField('commitments')}
-                  className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Engagements</h2>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('commitments')}
+                    className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {(merchant && merchantData && merchantData.commitments ? merchantData.commitments : initialStoreData.commitments).map((commitment: string, index: number) => (
                   <span 
                     key={index} 
-                    className={`px-4 py-2 bg-green-100 text-green-800 rounded-full font-medium ${getTagSize()}`}
+                    className="px-3 md:px-4 py-1 md:py-2 bg-green-100 text-green-800 rounded-full font-medium text-xs md:text-sm"
                   >
                     {commitment}
                   </span>
@@ -331,84 +221,177 @@ const Store = () => {
             </div>
 
             {/* Galerie photos */}
-            <div className="bg-white rounded-2xl shadow-sm p-6">
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className={`font-bold text-gray-900 ${getSectionTitleSize()}`}>Galerie photos</h2>
-                <button
-                  onClick={() => setEditingField('gallery')}
-                  className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
-                >
-                  <Edit className="w-4 h-4" />
-                </button>
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">Galerie photos</h2>
+                {!isPreview && (
+                  <button
+                    onClick={() => setEditingField('gallery')}
+                    className="p-2 text-gray-400 hover:text-[#7fbd07] transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               <ImageGallery images={storeImages} />
             </div>
           </div>
 
           {/* Sidebar - masquée en mobile */}
-          {viewMode !== 'mobile' && (
-            <div className={`space-y-6 ${getSidebarClass()}`}>
-              {/* Informations rapides */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className={`font-bold text-gray-900 mb-4 ${getSectionTitleSize()}`}>Informations</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Building2 className="w-5 h-5 text-gray-400 mt-1" />
-                    <div>
-                      <p className="font-medium text-gray-900">Type d'activité</p>
-                      <p className="text-gray-600">{merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}</p>
-                    </div>
+          <div className="hidden lg:block space-y-4 md:space-y-6">
+            {/* Informations rapides */}
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Informations</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-900">Type d'activité</p>
+                    <p className="text-gray-600 text-sm">{merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}</p>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-gray-400 mt-1" />
-                    <div>
-                      <p className="font-medium text-gray-900">Adresse</p>
-                      <p className="text-gray-600">{merchant && merchantData ? merchantData.address : initialStoreData.address}</p>
-                    </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-gray-400 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-900">Adresse</p>
+                    <p className="text-gray-600 text-sm">{merchant && merchantData ? merchantData.address : initialStoreData.address}</p>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Statistiques */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className={`font-bold text-gray-900 mb-4 ${getSectionTitleSize()}`}>Statistiques</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Vues du profil</span>
-                    <span className="font-bold text-gray-900">1,234</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Clients fidèles</span>
-                    <span className="font-bold text-gray-900">89</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Note moyenne</span>
-                    <span className="font-bold text-yellow-600">4.8/5</span>
-                  </div>
+            {/* Statistiques */}
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Statistiques</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 text-sm">Vues du profil</span>
+                  <span className="font-bold text-gray-900">1,234</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 text-sm">Clients fidèles</span>
+                  <span className="font-bold text-gray-900">89</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 text-sm">Note moyenne</span>
+                  <span className="font-bold text-yellow-600">4.8/5</span>
                 </div>
               </div>
+            </div>
 
-              {/* Actions rapides */}
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <h3 className={`font-bold text-gray-900 mb-4 ${getSectionTitleSize()}`}>Actions rapides</h3>
-                <div className="space-y-3">
-                  <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
-                    <p className="font-medium text-gray-900">Créer une offre</p>
-                    <p className="text-sm text-gray-600">Proposer une promotion</p>
-                  </button>
-                  <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
-                    <p className="font-medium text-gray-900">Voir mes clients</p>
-                    <p className="text-sm text-gray-600">Gérer la fidélité</p>
-                  </button>
-                  <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
-                    <p className="font-medium text-gray-900">Statistiques</p>
-                    <p className="text-sm text-gray-600">Analyser les performances</p>
-                  </button>
+            {/* Actions rapides */}
+            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
+              <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Actions rapides</h3>
+              <div className="space-y-3">
+                <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
+                  <p className="font-medium text-gray-900 text-sm">Créer une offre</p>
+                  <p className="text-xs text-gray-600">Proposer une promotion</p>
+                </button>
+                <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
+                  <p className="font-medium text-gray-900 text-sm">Voir mes clients</p>
+                  <p className="text-xs text-gray-600">Gérer la fidélité</p>
+                </button>
+                <button className="w-full text-left p-3 rounded-xl hover:bg-green-50 transition-colors">
+                  <p className="font-medium text-gray-900 text-sm">Statistiques</p>
+                  <p className="text-xs text-gray-600">Analyser les performances</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* En-tête avec titre et boutons de vue */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Aperçu de votre magasin</h1>
+          <p className="text-gray-600 mb-6">Voici comment vos clients verront votre magasin sur différents appareils</p>
+          
+          {/* Sélecteur de vue responsive */}
+          <div className="flex justify-center space-x-4 mb-6">
+            <button
+              onClick={() => setViewMode('desktop')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                viewMode === 'desktop'
+                  ? 'bg-[#7fbd07] text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              🖥️ Desktop
+            </button>
+            <button
+              onClick={() => setViewMode('tablet')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                viewMode === 'tablet'
+                  ? 'bg-[#7fbd07] text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              📱 Tablette
+            </button>
+            <button
+              onClick={() => setViewMode('mobile')}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                viewMode === 'mobile'
+                  ? 'bg-[#7fbd07] text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              📱 Mobile
+            </button>
+          </div>
+        </div>
+
+        {/* Aperçu responsive */}
+        <div className="flex justify-center">
+          {viewMode === 'desktop' ? (
+            // Vue desktop - pleine largeur
+            <div className="w-full">
+              <StoreContent />
+            </div>
+          ) : viewMode === 'tablet' ? (
+            // Vue tablette - conteneur simulé
+            <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl">
+              <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '768px', height: '1024px' }}>
+                <div className="h-full overflow-y-auto">
+                  <StoreContent isPreview={true} />
                 </div>
+              </div>
+              <div className="text-center mt-4">
+                <span className="text-white text-sm font-medium">iPad - 768 × 1024</span>
+              </div>
+            </div>
+          ) : (
+            // Vue mobile - conteneur simulé
+            <div className="bg-gray-800 rounded-3xl p-4 shadow-2xl">
+              <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '375px', height: '667px' }}>
+                <div className="h-full overflow-y-auto">
+                  <StoreContent isPreview={true} />
+                </div>
+              </div>
+              <div className="text-center mt-4">
+                <span className="text-white text-sm font-medium">iPhone - 375 × 667</span>
               </div>
             </div>
           )}
         </div>
+
+        {/* Bouton d'édition globale pour desktop */}
+        {viewMode === 'desktop' && (
+          <div className="fixed bottom-8 right-8">
+            <Button 
+              onClick={() => setShowEditModal(true)}
+              className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2"
+            >
+              <Edit className="w-5 h-5" />
+              Modifier tout
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Modals d'édition individuelle */}

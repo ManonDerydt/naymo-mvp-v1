@@ -202,20 +202,24 @@ const Dashboard = () => {
           Sur votre tableau de bord Naymo, vous visualisez en un clin d'œil vos chiffres clés et gérez facilement votre activité au quotidien.
         </p>
       </div>
-    <div className="space-y-6 bg-gray-50 min-h-screen p-4 -m-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="bg-gray-50 min-h-screen p-4 -m-6">
+      {/* Stats compactes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-1">
+      {/* Layout principal optimisé */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Générateur de code - plus compact */}
+        <div className="lg:col-span-1 h-fit">
           <CodeGenerator />
         </div>
 
-        <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-72">
+        {/* Graphiques - hauteur réduite */}
+        <div className="lg:col-span-2 space-y-3">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-64">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -225,7 +229,7 @@ const Dashboard = () => {
                 <span>Semaine précédente</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={180}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -238,7 +242,7 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-72">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-64">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
               <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
@@ -247,7 +251,7 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={180}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -259,8 +263,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[600px]">
+        {/* Tutoriels - hauteur adaptée */}
+        <div className="lg:col-span-1 h-fit">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[532px]">
             <DailyTip />
           </div>
         </div>

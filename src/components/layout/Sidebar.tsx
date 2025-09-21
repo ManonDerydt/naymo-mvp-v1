@@ -51,14 +51,14 @@ const Sidebar = () => {
                   className={cn(
                     'mt-6 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
-                      ? 'bg-[#7fbd07] text-white shadow-md'
+                      ? 'bg-white text-[#7fbd07] shadow-md'
                       : 'text-[#032313] hover:bg-[#7fbd07] hover:text-white hover:shadow-sm'
                   )}
                 >
                   <Icon className={cn(
                     'mr-3 h-5 w-5 flex-shrink-0',
                     location.pathname === item.href
-                      ? 'text-white'
+                      ? 'text-[#7fbd07]'
                       : 'text-[#032313] group-hover:text-white'
                   )} />
                   {item.name}

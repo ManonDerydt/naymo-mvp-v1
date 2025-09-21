@@ -211,14 +211,23 @@ const Dashboard = () => {
       </div>
 
       {/* Layout principal optimisé */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Générateur de code - plus compact */}
-        <div className="lg:col-span-1 h-fit">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Générateur de code - plus large */}
+        <div className="lg:col-span-2 h-fit">
           <CodeGenerator />
         </div>
 
-        {/* Graphiques - hauteur réduite */}
-        <div className="lg:col-span-2 space-y-3">
+        {/* Tutoriels - hauteur adaptée */}
+        <div className="lg:col-span-1 h-fit">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[300px]">
+            <DailyTip />
+          </div>
+        </div>
+      </div>
+
+      {/* Graphiques en dessous */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <div className="space-y-3">
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-64">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
@@ -241,7 +250,9 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
 
+        <div className="space-y-3">
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-64">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
@@ -260,13 +271,6 @@ const Dashboard = () => {
                 <Bar dataKey="semaineActuelle" fill="#7fbd07" name="Points distribués" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Tutoriels - hauteur adaptée */}
-        <div className="lg:col-span-1 h-fit">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[532px]">
-            <DailyTip />
           </div>
         </div>
       </div>

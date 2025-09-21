@@ -202,79 +202,79 @@ const Dashboard = () => {
           Sur votre tableau de bord Naymo, vous visualisez en un clin d'œil vos chiffres clés et gérez facilement votre activité au quotidien.
         </p>
       </div>
-    <div className="bg-gray-50 min-h-screen p-4 -m-6">
-      {/* Stats compactes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        {stats.map((stat, index) => (
-          <StatCard key={index} {...stat} />
-        ))}
-      </div>
-
-      {/* Layout principal optimisé */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* Générateur de code - plus large */}
-        <div className="lg:col-span-4 h-fit">
-          <CodeGenerator />
+      <div className="bg-gray-50 min-h-screen p-4 -m-6">
+        {/* Stats compactes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {stats.map((stat, index) => (
+            <StatCard key={index} {...stat} />
+          ))}
         </div>
 
-        {/* Tutoriels - hauteur adaptée */}
-        <div className="lg:col-span-1 h-fit">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[320px]">
-            <DailyTip />
+        {/* Layout principal optimisé */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Générateur de code - plus large */}
+          <div className="lg:col-span-4 h-fit">
+            <CodeGenerator />
           </div>
-        </div>
-      </div>
 
-      {/* Graphiques en dessous */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-        <div className="space-y-3">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
-              <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <div className="w-3 h-3 bg-[#7ebd07] rounded-full"></div>
-                <span>Cette semaine</span>
-                <div className="w-3 h-3 bg-[#ffcd2a] rounded-full ml-4"></div>
-                <span>Semaine précédente</span>
-              </div>
+          {/* Tutoriels - hauteur adaptée */}
+          <div className="lg:col-span-1 h-fit">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[320px]">
+              <DailyTip />
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="semaineActuelle" fill="#7ebd07" name="Semaine actuelle" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="semainePrecedente" fill="#ffcd2a" name="Semaine précédente" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
-              <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
-                <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                </svg>
+        {/* Graphiques en dessous */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="space-y-3">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
+                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                  <div className="w-3 h-3 bg-[#7ebd07] rounded-full"></div>
+                  <span>Cette semaine</span>
+                  <div className="w-3 h-3 bg-[#ffcd2a] rounded-full ml-4"></div>
+                  <span>Semaine précédente</span>
+                </div>
               </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="semaineActuelle" fill="#7ebd07" name="Semaine actuelle" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="semainePrecedente" fill="#ffcd2a" name="Semaine précédente" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="semaineActuelle" fill="#7fbd07" name="Points distribués" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          </div>
+
+          <div className="space-y-3">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-96">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
+                <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
+                  <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={barChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="semaineActuelle" fill="#7fbd07" name="Points distribués" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   )
 }

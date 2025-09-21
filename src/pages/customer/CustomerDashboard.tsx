@@ -109,8 +109,16 @@ const CustomerDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Titre principal */}
-      <div className="px-6 pt-8 pb-6">
+      {/* Header avec ID client */}
+      <div className="px-6 pt-8 pb-6 bg-gradient-to-r from-[#f8fdf4] to-[#ebffbc]">
+        <div className="text-center mb-4">
+          {customerData?.code && (
+            <div className="inline-block bg-white px-6 py-3 rounded-2xl shadow-lg border-2 border-[#7DBD07]/30">
+              <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
+              <p className="text-2xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
+            </div>
+          )}
+        </div>
         <h1 className="text-2xl font-bold text-[#0A2004] text-center">Accueil</h1>
       </div>
 
@@ -125,11 +133,6 @@ const CustomerDashboard = () => {
             <h2 className="text-xl font-bold">
               Bonjour {customerData?.first_name} {customerData?.last_name || "Invité"} !
             </h2>
-            {customerData?.code && (
-              <p className="text-sm opacity-90 mt-2">
-                ID Client : {customerData.code}
-              </p>
-            )}
           </div>
 
           {/* Statistiques */}
@@ -187,45 +190,48 @@ const CustomerDashboard = () => {
         {/* Offre du moment */}
         {topMomentOffer.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold text-[#0A2004] mb-3">Offre du moment</h2>
+            <h2 className="text-lg font-bold text-[#0A2004] mb-3 text-center">⭐ Offre du moment</h2>
             <div
-              className="bg-gradient-to-br from-[#FFCD29]/20 to-[#B7DB25]/20 rounded-2xl p-4 border-2 border-[#FFCD29]/30 cursor-pointer hover:shadow-lg transition-all duration-300"
+              className="bg-gradient-to-br from-[#FFCD29]/20 to-[#B7DB25]/20 rounded-3xl p-6 border-2 border-[#FFCD29]/30 cursor-pointer hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               onClick={() => openOfferModal(topMomentOffer[0])}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{getEmojiForCategory(topMomentOffer[0].type)}</span>
+              <div className="flex items-center justify-between mb-4">
                 <span className="bg-[#FFCD29] text-[#0A2004] text-xs px-2 py-1 rounded-full font-bold">
                   PREMIUM
                 </span>
               </div>
-              <h3 className="font-bold text-[#0A2004] mb-1">{topMomentOffer[0].name}</h3>
-              <p className="text-sm text-gray-600">{topMomentOffer[0].description}</p>
+              <h3 className="font-bold text-[#0A2004] mb-3 text-lg">{topMomentOffer[0].name}</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">{topMomentOffer[0].description}</p>
+              {topMomentOffer[0].discount && (
+                <div className="mt-4 text-center">
+                  <span className="inline-block bg-[#7DBD07] text-white text-sm px-4 py-2 rounded-full font-bold">
+                    -{topMomentOffer[0].discount}% de réduction
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* Offres en cours */}
         <div>
-          <h2 className="text-lg font-bold text-[#0A2004] mb-3">Offres disponibles</h2>
+          <h2 className="text-lg font-bold text-[#0A2004] mb-4 text-center">Offres disponibles</h2>
           <div className="space-y-3">
             {(showAllOffers ? otherOffers : otherOffers.slice(0, 3)).map((offer) => (
               <div
                 key={offer.id}
-                className="bg-white rounded-2xl p-4 border border-gray-200 cursor-pointer hover:shadow-md transition-all duration-300"
+                className="bg-white rounded-2xl p-5 border border-gray-200 cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:scale-102"
                 onClick={() => openOfferModal(offer)}
               >
-                <div className="flex items-start space-x-3">
-                  <span className="text-xl">{getEmojiForCategory(offer.type)}</span>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-[#0A2004] mb-1">{offer.name}</h3>
-                    <p className="text-sm text-gray-600">{offer.description}</p>
-                    {offer.discount && (
-                      <span className="inline-block mt-2 bg-[#7DBD07] text-white text-xs px-2 py-1 rounded-full font-bold">
-                        -{offer.discount}%
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold text-[#0A2004] text-lg">{offer.name}</h3>
+                  {offer.discount && (
+                    <span className="bg-[#7DBD07] text-white text-xs px-3 py-1 rounded-full font-bold">
+                      -{offer.discount}%
+                    </span>
+                  )}
                 </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{offer.description}</p>
               </div>
             ))}
           </div>
@@ -255,24 +261,31 @@ const CustomerDashboard = () => {
             </button>
             
             <div className="text-center pt-4">
-              <span className="text-4xl mb-4 block">{getEmojiForCategory(selectedOffer.type)}</span>
               <h3 className="text-xl font-bold text-[#0A2004] mb-2">{selectedOffer.name}</h3>
               <p className="text-gray-600 mb-4">{selectedOffer.description}</p>
               
               {selectedOffer.discount && (
-                <div className="bg-[#7DBD07] text-white rounded-2xl p-3 mb-4">
+                <div className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white rounded-2xl p-4 mb-4">
                   <div className="text-2xl font-bold">-{selectedOffer.discount}%</div>
                   <div className="text-sm">de réduction</div>
+                </div>
+              )}
+              
+              {selectedOffer.duration && (
+                <div className="bg-gray-100 rounded-xl p-3 mb-4">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Durée :</span> {selectedOffer.duration} mois
+                  </p>
                 </div>
               )}
               
               <button
                 onClick={() => addOfferToCustomer(selectedOffer.id)}
                 disabled={hasAddedOffer(selectedOffer.id)}
-                className={`w-full py-3 rounded-2xl font-bold transition-all ${
+                className={`w-full py-4 rounded-2xl font-bold transition-all ${
                   hasAddedOffer(selectedOffer.id)
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-[#7DBD07] text-white hover:bg-[#6ba006] active:scale-95"
+                    : "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white hover:from-[#6ba006] hover:to-[#7DBD07] active:scale-95 shadow-lg"
                 }`}
               >
                 {hasAddedOffer(selectedOffer.id) ? "Déjà dans mes offres" : "Ajouter à mes offres"}

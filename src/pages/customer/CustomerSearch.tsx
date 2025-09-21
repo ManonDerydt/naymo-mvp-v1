@@ -37,7 +37,7 @@ const CustomerSearch = () => {
                             shortDescription: doc.data().shortDescription || "Aucune description",
                             logo: doc.data().logo || "/default-logo.png",
                             hasOffers: false,
-                            address: doc.data().address || "Adresse inconnue",
+                            address: doc.data().address && doc.data().address !== "Adresse inconnue" ? doc.data().address : "",
                         };
 
                         const offerQuery = query(

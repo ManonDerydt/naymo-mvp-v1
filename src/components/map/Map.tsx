@@ -33,7 +33,11 @@ const Map = ({ stores }: { stores: any[] }) => {
               )
             );
           } else {
-            console.error(`Géocodage échoué pour ${store.name}: ${status}`);
+            if (status === 'ZERO_RESULTS') {
+              console.warn(`Adresse non trouvée pour ${store.name}: ${status}`);
+            } else {
+              console.error(`Géocodage échoué pour ${store.name}: ${status}`);
+            }
           }
         });
       }

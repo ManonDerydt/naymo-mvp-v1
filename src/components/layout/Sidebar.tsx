@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Store, LayoutDashboard, Tag, Users, Settings } from 'lucide-react'
+import { Store, LayoutDashboard, Tag, Users, Settings, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '../firebase/useAuth'
+import { useState } from 'react'
 import Logo from "../../assets/Logo.png" // Correction ici
 
 const navigation = [
@@ -14,11 +15,36 @@ const navigation = [
 
 const Sidebar = () => {
   const location = useLocation()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const { merchant, merchantData } = useAuth()
 
   return (
-    <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+    <>
+      {/* Menu burger mobile */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 rounded-md bg-[#c9eaad] text-[#032313] shadow-lg"
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Overlay mobile */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={cn(
+        "fixed inset-y-0 flex w-64 flex-col transition-transform duration-300 ease-in-out z-40",
+        "lg:translate-x-0 lg:static lg:inset-0",
+        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      )}>
       <div className="flex flex-col flex-grow border-r border-gray-200 bg-[#c9eaad]">
         <div className="flex items-center h-16 flex-shrink-0">
          {merchant && merchantData ? 
@@ -48,6 +74,7 @@ const Sidebar = () => {
                 <Link
                   key={item.name}
                   to={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
                     'mt-6 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200',
                     location.pathname === item.href
@@ -87,7 +114,7 @@ const Sidebar = () => {
           
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

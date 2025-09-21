@@ -235,15 +235,15 @@ const CustomerDashboard = () => {
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed">{offer.description}</p>
               </div>
-        <section className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30">
+            ))}
           </div>
           
           {otherOffers.length > 3 && (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="text-center mt-4">
               <button
-            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#7DBD07]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Points</p>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
+                onClick={toggleOffers}
+                className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white px-6 py-3 rounded-2xl font-bold hover:from-[#6ba006] hover:to-[#7DBD07] transition-all"
+              >
                 {showAllOffers ? "Voir moins" : `Voir ${otherOffers.length - 3} offres de plus`}
               </button>
             </div>
@@ -255,44 +255,44 @@ const CustomerDashboard = () => {
       {isModalOpen && selectedOffer && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-4 sm:p-6 relative mx-4">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons</p>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
+            <button
+              onClick={closeOfferModal}
               className="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
             >
               ✕
             </button>
             
-            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#589507]/20">
+            <div className="mb-4">
               <h3 className="text-lg sm:text-xl font-bold text-[#0A2004] mb-2">{selectedOffer.name}</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
+              <p className="text-sm text-gray-600 leading-relaxed">{selectedOffer.description}</p>
+            </div>
               
-              {selectedOffer.discount && (
-                <div className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white rounded-2xl p-3 sm:p-4 mb-4">
-                  <div className="text-xl sm:text-2xl font-bold">-{selectedOffer.discount}%</div>
-                  <div className="text-sm">de réduction</div>
-            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#396F04]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Commerçant préféré</p>
+            {selectedOffer.discount && (
+              <div className="bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white rounded-2xl p-3 sm:p-4 mb-4">
+                <div className="text-xl sm:text-2xl font-bold">-{selectedOffer.discount}%</div>
+                <div className="text-sm">de réduction</div>
+              </div>
+            )}
               
-              {selectedOffer.duration && (
-                  <p className="text-base sm:text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Durée :</span> {selectedOffer.duration} mois
-                  </p>
-                </div>
-              )}
+            {selectedOffer.duration && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Durée :</span> {selectedOffer.duration} mois
+                </p>
+              </div>
+            )}
               
-              <button
-                onClick={() => addOfferToCustomer(selectedOffer.id)}
-                disabled={hasAddedOffer(selectedOffer.id)}
-                className={`w-full py-3 sm:py-4 rounded-2xl font-bold transition-all text-sm sm:text-base ${
-                  hasAddedOffer(selectedOffer.id)
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white hover:from-[#6ba006] hover:to-[#7DBD07] active:scale-95 shadow-lg"
-                }`}
-              >
-          <div className="inline-block bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-xl">
-              </button>
-            <p className="text-2xl sm:text-3xl font-bold text-white tracking-wider">{customerData.code}</p>
+            <button
+              onClick={() => addOfferToCustomer(selectedOffer.id)}
+              disabled={hasAddedOffer(selectedOffer.id)}
+              className={`w-full py-3 sm:py-4 rounded-2xl font-bold transition-all text-sm sm:text-base ${
+                hasAddedOffer(selectedOffer.id)
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] text-white hover:from-[#6ba006] hover:to-[#7DBD07] active:scale-95 shadow-lg"
+              }`}
+            >
+              {hasAddedOffer(selectedOffer.id) ? "Offre déjà ajoutée" : "Ajouter cette offre"}
+            </button>
           </div>
         </div>
       )}

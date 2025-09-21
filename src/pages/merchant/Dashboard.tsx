@@ -213,15 +213,8 @@ const Dashboard = () => {
         {/* Layout principal optimisé */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Générateur de code - plus large */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <CodeGenerator />
-          </div>
-
-          {/* Tutoriels - hauteur adaptée */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-              <DailyTip />
-            </div>
           </div>
         </div>
 

@@ -181,9 +181,9 @@ const Dashboard = () => {
 
   const stats = [
     {
-      icon: <Users className="w-6 h-6 text-blue-500" />,
-      title: "Clients fidèles",
-      value: clientsFideles.toString() || "0",
+      icon: <Activity className="w-6 h-6 text-green-500" />,
+      title: "Chiffre d'affaires",
+      value: `${formatCurrency(totalRevenue)} €`,
       trend: "+0%"
     },
     {
@@ -191,12 +191,6 @@ const Dashboard = () => {
       title: "Note moyenne",
       value: `${averageRating.toFixed(1)}/5`,
       trend: "+0"
-    },
-    {
-      icon: <Gift className="w-6 h-6 text-purple-500" />,
-      title: "Points distribués",
-      value: totalPoints ? totalPoints.toLocaleString() : "0",
-      trend: "+0%"
     }
   ]
 
@@ -209,19 +203,19 @@ const Dashboard = () => {
         </p>
       </div>
     <div className="space-y-6 bg-gray-50 min-h-screen p-4 -m-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {stats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-1">
           <CodeGenerator />
         </div>
 
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-80">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-72">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -231,7 +225,7 @@ const Dashboard = () => {
                 <span>Semaine précédente</span>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -243,10 +237,8 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-80">
+          <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-72">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">Répartition des clients par âge</h2>
               <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
@@ -255,7 +247,7 @@ const Dashboard = () => {
                 </svg>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart data={[
                 { name: '18-25', clients: 15 },
                 { name: '26-35', clients: 45 },
@@ -270,8 +262,10 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-64 overflow-y-auto">
+        </div>
+
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[600px] overflow-y-auto">
             <DailyTip />
           </div>
         </div>

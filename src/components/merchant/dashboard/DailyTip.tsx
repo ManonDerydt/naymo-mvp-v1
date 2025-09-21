@@ -72,13 +72,13 @@ const DailyTip = () => {
       {/* Liste des vidéos filtrées */}
       <div className="space-y-3">
         {filteredTutorials.map((tuto) => (
-          <div key={tuto.id} className="p-3 bg-gradient-to-br from-[#c9eaad]/10 to-[#7ebd07]/10 rounded-xl border border-[#c9eaad]/20">
+          <div key={tuto.id} className="p-2 bg-gradient-to-br from-[#c9eaad]/10 to-[#7ebd07]/10 rounded-xl border border-[#c9eaad]/20">
             <h3 className="font-semibold text-[#032313] capitalize mb-2 flex items-center text-sm">
               <span className="w-2 h-2 bg-[#7ebd07] rounded-full mr-2"></span>
               {tuto.category}
             </h3>
             <iframe
-              className="w-full h-32 rounded-xl shadow-sm"
+              className="w-full h-24 rounded-xl shadow-sm"
               src={tuto.url.replace("watch?v=", "embed/")}
               title={`Vidéo ${tuto.category}`}
               allowFullScreen

@@ -187,6 +187,12 @@ const Dashboard = () => {
       trend: "+0%"
     },
     {
+      icon: <Activity className="w-6 h-6 text-green-500" />,
+      title: "Chiffre d'affaires",
+      value: `${formatCurrency(totalRevenue)} €`,
+      trend: "+0%"
+    },
+    {
       icon: <Star className="w-6 h-6 text-yellow-500" />,
       title: "Note moyenne",
       value: `${averageRating.toFixed(1)}/5`,

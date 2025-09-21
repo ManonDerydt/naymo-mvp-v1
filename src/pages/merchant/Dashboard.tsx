@@ -246,32 +246,27 @@ const Dashboard = () => {
 
           <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 h-72">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Répartition des clients par âge</h2>
+              <h2 className="text-xl font-semibold text-gray-900">Points distribués par jour</h2>
               <div className="p-2 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
                 <svg className="w-5 h-5 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                 </svg>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={[
-                { name: '18-25', clients: 15 },
-                { name: '26-35', clients: 45 },
-                { name: '36-50', clients: 25 },
-                { name: '50+', clients: 15 }
-              ]}>
+              <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="clients" fill="#7fbd07" name="Nombre de clients" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="semaineActuelle" fill="#7fbd07" name="Points distribués" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[600px] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-[600px]">
             <DailyTip />
           </div>
         </div>

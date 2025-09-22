@@ -4,6 +4,7 @@ import { useAuth } from "@/components/firebase/useAuth"
 import { useEffect, useState } from "react"
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore"
 import { db } from "@/components/firebase/firebaseConfig"
+import { TrendingUp, Users, Star, Award } from 'lucide-react'
 
 const CustomerMyNaymo = () => {
   const { customer, customerData } = useAuth()
@@ -36,14 +37,12 @@ const CustomerMyNaymo = () => {
       if (!customer?.uid) return;
 
       try {
-        // Requête pour récupérer les documents de pointsHistory pour le client
         const q = query(
           collection(db, "pointsHistory"),
           where("customerId", "==", customer.uid)
         );
         const snap = await getDocs(q);
 
-        // Cumuler les pointsAdded par merchantId
         const pointsByMerchant: Record<string, number> = {};
 
         snap.forEach((doc) => {
@@ -54,25 +53,21 @@ const CustomerMyNaymo = () => {
           pointsByMerchant[merchantId] = (pointsByMerchant[merchantId] || 0) + pointsAdded;
         });
 
-        // Si aucun point n'a été trouvé, définir favMerchant à null
         const entries = Object.entries(pointsByMerchant);
         if (entries.length === 0) {
           setFavMerchant(null);
           return;
         }
 
-        // Trouver le commerçant avec le plus de points
         const [topMerchantId, topPoints] = entries.reduce((acc, curr) =>
           curr[1] > acc[1] ? curr : acc
         );
 
-        // Récupérer le nom du commerçant
         const merchantDoc = await getDoc(doc(db, "merchant", topMerchantId));
         const merchantName = merchantDoc.exists()
-          ? merchantDoc.data().owner_name || "Commerçant inconnu"
+          ? merchantDoc.data().company_name || "Commerçant inconnu"
           : "Commerçant inconnu";
 
-        // Mettre à jour l'état favMerchant
         setFavMerchant({ id: topMerchantId, name: merchantName, points: topPoints });
       } catch (error) {
         console.error("Erreur lors de la récupération du commerçant préféré :", error);
@@ -109,61 +104,79 @@ const CustomerMyNaymo = () => {
   }, [customer])
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8fdf4] to-[#ebffbc] pb-28 px-2 sm:px-0">
-      {/* Titre principal */}
-      <div className="px-4 sm:px-6 pt-8 pb-6">
-        <h1 className="text-3xl font-bold text-[#0A2004] text-center mb-2">Mon Profil</h1>
-        <p className="text-[#589507] text-center">Gérez vos informations et vos offres</p>
-      </div>
-
-      {/* Contenu principal */}
-      <div className="px-2 sm:px-4 space-y-6 max-w-md mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         
-        {/* Section Points */}
-        <section className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 border border-[#c9eaad]/30">
-          <h2 className="text-2xl font-bold text-[#0A2004] text-center mb-6">Mes Points</h2>
-          
-          <div className="grid grid-cols-2 gap-3 sm:gap-4">
-            {/* Carte Points */}
-            <div className="bg-gradient-to-br from-[#7DBD07]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#7DBD07]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Points</p>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
-                {points !== null ? points : "Chargement..."}
-              </p>
+        {/* Carte principale des points */}
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-green-600" />
             </div>
-
-            {/* Carte Bons Restants */}
-            <div className="bg-gradient-to-br from-[#FFCD29]/10 to-[#B7DB25]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#FFCD29]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons</p>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
-                {bonsRestants}
-              </p>
-            </div>
-
-            {/* Carte Bons utilisés */}
-            <div className="bg-gradient-to-br from-[#589507]/10 to-[#396F04]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#589507]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Bons utilisés</p>
-              <p className="text-2xl sm:text-3xl font-bold text-[#0A2004]">
-                {usedBons}
-              </p>
-            </div>
-
-            {/* Carte Commerçant préféré */}
-            <div className="col-span-2 bg-gradient-to-br from-[#396F04]/10 to-[#0A2004]/10 rounded-2xl p-3 sm:p-4 text-center border border-[#396F04]/20">
-              <p className="text-[#589507] font-semibold text-xs sm:text-sm mb-2">Commerçant préféré</p>
-              {favMerchant ? (
-                <>
-                  <p className="text-base sm:text-lg font-bold text-[#0A2004]">{favMerchant.name}</p>
-                  <p className="text-sm text-[#589507] mt-1">
-                    {favMerchant.points} points cumulés
-                  </p>
-                </>
-              ) : (
-                <p className="text-[#589507] italic">Aucun favori</p>
-              )}
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                {points !== null ? points : "..."} points
+              </h1>
+              <p className="text-gray-500">Mes points fidélité</p>
             </div>
           </div>
-        </section>
+          
+          <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+            • Temps réel
+          </div>
+        </div>
+
+        {/* Statistiques en grille */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Bons disponibles */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Users className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">{bonsRestants}</div>
+                <div className="text-gray-500 text-sm">Bons disponibles</div>
+              </div>
+            </div>
+            <div className="text-blue-600 text-sm font-medium">
+              {bonsRestants} réductions utilisables
+            </div>
+          </div>
+
+          {/* Bons utilisés */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                <Star className="w-5 h-5 text-yellow-600" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">{usedBons}</div>
+                <div className="text-gray-500 text-sm">Bons utilisés</div>
+              </div>
+            </div>
+            <div className="text-yellow-600 text-sm font-medium">
+              Économies réalisées
+            </div>
+          </div>
+        </div>
+
+        {/* Commerçant préféré */}
+        {favMerchant && (
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center">
+                <Award className="w-4 h-4 text-purple-600" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Mon commerçant préféré</h2>
+            </div>
+            
+            <div className="bg-gray-50 rounded-2xl p-4">
+              <div className="text-lg font-bold text-gray-900 mb-1">{favMerchant.name}</div>
+              <div className="text-gray-500 text-sm">{favMerchant.points} points cumulés</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

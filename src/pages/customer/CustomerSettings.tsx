@@ -198,12 +198,17 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28 pt-4 px-2 sm:px-4">
+    <div className="min-h-screen bg-gray-50 px-2 sm:px-4">
       {/* ID Client en haut */}
       {customerData?.code && (
-        <div className="text-center pb-6">
-          <div className="inline-block bg-gradient-to-br from-white to-gray-50 px-6 sm:px-10 py-4 sm:py-6 rounded-3xl shadow-xl border-2 border-[#c9eaad]/30 mx-4 relative overflow-hidden">
+        <div className="text-center py-6">
+          <div className="inline-block bg-gradient-to-br from-white to-gray-50 px-6 sm:px-10 py-4 sm:py-6 rounded-3xl shadow-xl border border-gray-100 mx-4 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25]"></div>
+            <div className="absolute top-2 right-2 w-6 h-6 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
             <div className="flex items-center justify-center space-x-3 mb-2">
               <div className="w-6 h-6 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -220,7 +225,7 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
         </div>
       )}
 
-      <div className="max-w-2xl mx-auto space-y-6 sm:space-y-8">
+      <div className="max-w-2xl mx-auto space-y-6 sm:space-y-8 pb-6">
 
         {/* Profil */}
         <section>

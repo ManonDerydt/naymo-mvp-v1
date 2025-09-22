@@ -105,7 +105,33 @@ const CustomerMyNaymo = () => {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      {/* ID Client en haut */}
+      {customerData?.code && (
+        <div className="text-center py-6">
+          <div className="inline-block bg-gradient-to-br from-white to-gray-50 px-6 sm:px-10 py-4 sm:py-6 rounded-3xl shadow-xl border border-gray-100 mx-4 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25]"></div>
+            <div className="absolute top-2 right-2 w-6 h-6 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="flex items-center justify-center space-x-3 mb-2">
+              <div className="w-6 h-6 bg-gradient-to-br from-[#7DBD07] to-[#B7DB25] rounded-full flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <p className="text-xs sm:text-sm font-bold text-[#396F04] uppercase tracking-wide">Votre ID Client</p>
+            </div>
+            <p className="text-2xl sm:text-3xl font-black text-[#0A2004] tracking-widest font-mono bg-gradient-to-r from-[#0A2004] to-[#396F04] bg-clip-text text-transparent">
+              {customerData.code}
+            </p>
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-[#B7DB25]/20 to-[#7DBD07]/20 rounded-full"></div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
         
         {/* Carte principale des points */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">

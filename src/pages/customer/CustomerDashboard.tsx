@@ -109,10 +109,10 @@ const CustomerDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-4">
+    <div className="min-h-screen bg-gray-50">
       {/* ID Client en haut */}
       {customerData?.code && (
-        <div className="text-center pb-6">
+        <div className="text-center py-6">
           <div className="inline-block bg-gradient-to-br from-white to-gray-50 px-6 sm:px-10 py-4 sm:py-6 rounded-3xl shadow-xl border-2 border-[#c9eaad]/30 mx-4 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#7DBD07] to-[#B7DB25]"></div>
             <div className="flex items-center justify-center space-x-3 mb-2">
@@ -131,7 +131,7 @@ const CustomerDashboard = () => {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
         
         {/* Carte principale des points - Style moderne */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">

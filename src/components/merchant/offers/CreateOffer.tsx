@@ -166,16 +166,16 @@ const CreateOffer = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-4 lg:space-y-6">
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm lg:text-base font-medium text-gray-700">
           Type d'offre
         </label>
         <select
           value={formData.type}
           onChange={(e) => setFormData({ ...formData, type: e.target.value })}
           required
-          className="block w-full rounded-xl border border-[#7ebd07]/30 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent p-4"
+          className="block w-full rounded-xl border border-[#7ebd07]/30 shadow-sm focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent p-3 lg:p-4 text-sm lg:text-base"
         >
           <option value="">-- Sélectionner un type --</option>
           {OFFER_TYPES.map((t) => (
@@ -225,14 +225,14 @@ const CreateOffer = () => {
       />
       
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm lg:text-base font-medium text-gray-700">
           Description
         </label>
         <textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          rows={4}
-          className="block w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          rows={3}
+          className="block w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent p-3 lg:p-4 text-sm lg:text-base"
           placeholder="Décrivez votre offre en détail..."
           required
         />
@@ -254,8 +254,8 @@ const CreateOffer = () => {
         max={100}
       />
 
-      <div className="flex justify-end">
-        <Button type="submit">
+      <div className="flex justify-end pt-4">
+        <Button type="submit" className="w-full sm:w-auto px-6 lg:px-8 py-3 text-sm lg:text-base">
           Suivant
         </Button>
       </div>

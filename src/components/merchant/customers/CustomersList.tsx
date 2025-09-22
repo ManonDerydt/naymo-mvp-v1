@@ -129,51 +129,51 @@ const CustomersList = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">Liste des clients</h2>
-        <span className="text-sm text-gray-500">{customers.length} client{customers.length > 1 ? 's' : ''}</span>
+        <h2 className="text-lg lg:text-xl font-bold text-gray-900">Liste des clients</h2>
+        <span className="text-xs lg:text-sm text-gray-500">{customers.length} client{customers.length > 1 ? 's' : ''}</span>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 lg:space-y-4">
         {customers.map((customer) => (
-          <div key={customer.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+          <div key={customer.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               {/* Informations principales */}
-              <div className="flex items-start space-x-4">
+              <div className="flex items-start space-x-3 lg:space-x-4 flex-1 min-w-0">
                 {/* Avatar */}
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <User className="w-8 h-8 text-[#6366f1]" />
+                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 lg:w-8 lg:h-8 text-[#6366f1]" />
                 </div>
 
                 {/* Détails du client */}
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-bold text-gray-900">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-3 mb-2">
+                    <h3 className="text-base lg:text-lg font-bold text-gray-900 truncate">
                       {customer.first_name} {customer.last_name}
                     </h3>
                   </div>
                   
-                  <p className="text-gray-600 mb-3">{customer.email}</p>
+                  <p className="text-sm lg:text-base text-gray-600 mb-2 lg:mb-3 truncate">{customer.email}</p>
 
                   {/* Informations détaillées */}
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                  <div className="flex flex-col lg:flex-row lg:flex-wrap items-start lg:items-center gap-1 lg:gap-4 text-xs lg:text-sm text-gray-500">
                     {customer.age && (
                       <div className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-3 h-3 lg:w-4 lg:h-4" />
                         <span>{customer.age} ans</span>
                       </div>
                     )}
                     
                     {customer.city && (
                       <div className="flex items-center space-x-1">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-3 h-3 lg:w-4 lg:h-4" />
                         <span>{customer.city} {customer.zip_code && `(${customer.zip_code})`}</span>
                       </div>
                     )}
 
                     <div className="flex items-center space-x-1">
-                      <ShoppingCart className="w-4 h-4" />
+                      <ShoppingCart className="w-3 h-3 lg:w-4 lg:h-4" />
                       <span>Panier moyen: {customer.averageBasket.toFixed(2)} €</span>
                     </div>
                   </div>
@@ -181,14 +181,14 @@ const CustomersList = () => {
               </div>
 
               {/* Statistiques */}
-              <div className="text-right">
-                <div className="text-2xl font-bold text-[#13b981] mb-1">
+              <div className="text-right flex-shrink-0 ml-2">
+                <div className="text-lg lg:text-2xl font-bold text-[#13b981] mb-1">
                   {customer.totalSpent.toFixed(2)} €
                 </div>
-                <div className="text-sm text-gray-500 mb-2">
+                <div className="text-xs lg:text-sm text-gray-500 mb-2">
                   {customer.purchaseCount} achat{customer.purchaseCount > 1 ? 's' : ''}
                 </div>
-                <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#7fbd07]/10 text-[#7fbd07]">
+                <div className="inline-flex items-center px-2 lg:px-3 py-1 rounded-full text-xs font-medium bg-[#7fbd07]/10 text-[#7fbd07]">
                   {customer.points} points
                 </div>
               </div>

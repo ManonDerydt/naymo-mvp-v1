@@ -320,18 +320,18 @@ const Store = () => {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6 p-4 lg:p-0">
       {/* En-tête avec titre et boutons de vue */}
-      <div className="mb-8 px-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Aperçu de votre magasin</h1>
-        <p className="text-gray-600 mb-6">Voici comment vos clients verront votre magasin sur différents appareils</p>
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-3 lg:mb-4">Aperçu de votre magasin</h1>
+        <p className="text-sm lg:text-base text-gray-600 mb-4 lg:mb-6">Voici comment vos clients verront votre magasin sur différents appareils</p>
         
         {/* Sélecteur de vue responsive - seulement sur desktop */}
         {!isMobileDevice && (
-          <div className="flex justify-center space-x-4 mb-6">
+          <div className="flex flex-wrap justify-center gap-2 lg:gap-4 mb-4 lg:mb-6">
             <button
               onClick={() => setViewMode('desktop')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+              className={`px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                 viewMode === 'desktop'
                   ? 'bg-[#7fbd07] text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
@@ -341,7 +341,7 @@ const Store = () => {
             </button>
             <button
               onClick={() => setViewMode('tablet')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+              className={`px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                 viewMode === 'tablet'
                   ? 'bg-[#7fbd07] text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
@@ -351,7 +351,7 @@ const Store = () => {
             </button>
             <button
               onClick={() => setViewMode('mobile')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+              className={`px-4 lg:px-6 py-2 lg:py-3 rounded-lg font-medium transition-colors text-sm lg:text-base ${
                 viewMode === 'mobile'
                   ? 'bg-[#7fbd07] text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
@@ -364,9 +364,9 @@ const Store = () => {
 
         {/* Message pour les utilisateurs mobiles */}
         {isMobileDevice && (
-          <div className="text-center mb-6">
+          <div className="text-center mb-4 lg:mb-6">
             <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg border border-blue-200">
-              <span className="text-sm font-medium">📱 Vue mobile automatique</span>
+              <span className="text-xs lg:text-sm font-medium">📱 Vue mobile automatique</span>
             </div>
           </div>
         )}
@@ -381,14 +381,14 @@ const Store = () => {
           </div>
         ) : viewMode === 'tablet' && !isMobileDevice ? (
           // Vue tablette - conteneur simulé
-          <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl">
-            <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '768px', height: '1024px' }}>
+          <div className="bg-gray-800 rounded-2xl lg:rounded-3xl p-3 lg:p-6 shadow-2xl">
+            <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '320px', height: '480px' }}>
               <div className="h-full overflow-y-auto">
                 <StoreContent isPreview={true} />
               </div>
             </div>
-            <div className="text-center mt-4">
-              <span className="text-white text-sm font-medium">iPad - 768 × 1024</span>
+            <div className="text-center mt-2 lg:mt-4">
+              <span className="text-white text-xs lg:text-sm font-medium">Tablette</span>
             </div>
           </div>
         ) : (
@@ -400,14 +400,14 @@ const Store = () => {
             </div>
           ) : (
             // Vue mobile simulée pour desktop
-            <div className="bg-gray-800 rounded-3xl p-4 shadow-2xl">
-              <div className="bg-white rounded-2xl overflow-hidden" style={{ width: '375px', height: '667px' }}>
+            <div className="bg-gray-800 rounded-2xl lg:rounded-3xl p-3 lg:p-4 shadow-2xl">
+              <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '280px', height: '500px' }}>
                 <div className="h-full overflow-y-auto">
                   <StoreContent isPreview={true} />
                 </div>
               </div>
-              <div className="text-center mt-4">
-                <span className="text-white text-sm font-medium">iPhone - 375 × 667</span>
+              <div className="text-center mt-2 lg:mt-4">
+                <span className="text-white text-xs lg:text-sm font-medium">Mobile</span>
               </div>
             </div>
           )
@@ -416,12 +416,12 @@ const Store = () => {
 
       {/* Bouton d'édition globale pour desktop seulement */}
       {(viewMode === 'desktop' || isMobileDevice) && (
-        <div className="fixed bottom-8 right-8">
+        <div className="fixed bottom-6 lg:bottom-8 right-4 lg:right-8">
           <Button 
             onClick={() => setShowEditModal(true)}
-            className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2"
+            className="bg-[#7fbd07] hover:bg-[#6ba006] text-white px-4 lg:px-6 py-2 lg:py-3 rounded-full shadow-lg flex items-center gap-2 text-sm lg:text-base"
           >
-            <Edit className="w-5 h-5" />
+            <Edit className="w-4 h-4 lg:w-5 lg:h-5" />
             Modifier tout
           </Button>
         </div>

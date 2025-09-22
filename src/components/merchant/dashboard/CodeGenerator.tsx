@@ -251,30 +251,30 @@ export default function CodeGenerator() {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 lg:p-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-4 lg:mb-6 gap-2">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-1">Générer un code client</h2>
-          <p className="text-sm text-gray-500">Recherchez et ajoutez des points à vos clients</p>
+          <h2 className="text-lg lg:text-xl font-bold text-gray-900 mb-1">Générer un code client</h2>
+          <p className="text-xs lg:text-sm text-gray-500">Recherchez et ajoutez des points à vos clients</p>
         </div>
-        <div className="p-3 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
-          <svg className="w-6 h-6 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="p-2 lg:p-3 rounded-xl bg-gradient-to-br from-[#c9eaad]/20 to-[#7ebd07]/20">
+          <svg className="w-5 h-5 lg:w-6 lg:h-6 text-[#7ebd07]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
         </div>
       </div>
 
       <div>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 lg:gap-4">
           <input
             type="tel"
             placeholder="Numéro de téléphone"
             value={clientCode}
             onChange={e => setClientCode(e.target.value)}
-            className="flex-1 px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent transition-all"
+            className="flex-1 px-3 lg:px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ebd07] focus:border-transparent transition-all text-sm lg:text-base"
           />
           <button
-            className="md:w-auto w-full py-3 px-6 rounded-xl text-white font-medium bg-[#7fbd07] hover:bg-[#6ba006] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="sm:w-auto w-full py-3 px-4 lg:px-6 rounded-xl text-white font-medium bg-[#7fbd07] hover:bg-[#6ba006] disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md text-sm lg:text-base"
             onClick={handleOpenModal}
             disabled={loading}
           >

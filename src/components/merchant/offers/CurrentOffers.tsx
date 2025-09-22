@@ -122,76 +122,76 @@ const CurrentOffers = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
       {offers.map((offer) => (
         <div
           key={offer.id}
-          className="bg-white border border-gray-200 rounded-lg p-6 space-y-4"
+          className="bg-white border border-gray-200 rounded-2xl p-4 lg:p-6 space-y-3 lg:space-y-4"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
             <div>
               {offer.isBoosted && (
-                <div className="inline-flex items-center justify-center bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-lg w-8 h-8 rounded-full mb-2 shadow-md">
+                <div className="inline-flex items-center justify-center bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-sm lg:text-lg w-6 h-6 lg:w-8 lg:h-8 rounded-full mb-2 shadow-md">
                   ⭐
                 </div>
               )}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 lg:gap-3 w-full lg:w-auto">
               <Button 
                 onClick={() => {
                   setSelectedOffer(offer)  // Définir l'offre sélectionnée
                   setShowEditModal(true)
                 }}
-                className="flex items-center space-x-2 bg-[#7fbd07] hover:bg-[#6ba006] text-white px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+                className="flex items-center space-x-1 lg:space-x-2 bg-[#7fbd07] hover:bg-[#6ba006] text-white px-3 lg:px-4 py-2 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md text-sm lg:text-base w-full sm:w-auto justify-center"
               >
-                <Pencil className="w-4 h-4" />
+                <Pencil className="w-3 h-3 lg:w-4 lg:h-4" />
                 <span>Modifier</span>
               </Button>
               <Button 
                 onClick={() => handleDeleteConfirm(offer.id)}  // Suppression de l'offre
-                className="flex items-center space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-xl font-medium transition-all duration-200 border border-red-200 hover:border-red-300"
+                className="flex items-center space-x-1 lg:space-x-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-3 lg:px-4 py-2 rounded-xl font-medium transition-all duration-200 border border-red-200 hover:border-red-300 text-sm lg:text-base w-full sm:w-auto justify-center"
               >
-                <Trash className="w-4 h-4" />  {/* Icône de suppression */}
+                <Trash className="w-3 h-3 lg:w-4 lg:h-4" />  {/* Icône de suppression */}
                 <span>Supprimer</span>
               </Button>
             </div>
           </div>
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-3">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{offer.name}</h3>
-              <h4 className="text-lg font-semibold text-gray-900">{offer.duration + " mois"}</h4>
-              <p className="mt-1 text-sm text-gray-500">{offer.description}</p>
+              <h3 className="text-base lg:text-lg font-semibold text-gray-900">{offer.name}</h3>
+              <h4 className="text-base lg:text-lg font-semibold text-gray-900">{offer.duration + " mois"}</h4>
+              <p className="mt-1 text-xs lg:text-sm text-gray-500">{offer.description}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Eye className="w-5 h-5 text-blue-500" />
+              <div className="p-2 bg-blue-50 rounded-lg flex-shrink-0">
+                <Eye className="w-4 h-4 lg:w-5 lg:h-5 text-blue-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Vues</p>
-                <p className="text-lg font-semibold">{offer.views || 0}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-500">Vues</p>
+                <p className="text-base lg:text-lg font-semibold">{offer.views || 0}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-green-500" />
+              <div className="p-2 bg-green-50 rounded-lg flex-shrink-0">
+                <TrendingUp className="w-4 h-4 lg:w-5 lg:h-5 text-green-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">CA généré</p>
-                <p className="text-lg font-semibold">{offer.revenue || "0 €"}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-500">CA généré</p>
+                <p className="text-base lg:text-lg font-semibold">{offer.revenue || "0 €"}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-50 rounded-lg">
-                <ShoppingBag className="w-5 h-5 text-purple-500" />
+              <div className="p-2 bg-purple-50 rounded-lg flex-shrink-0">
+                <ShoppingBag className="w-4 h-4 lg:w-5 lg:h-5 text-purple-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Achats</p>
-                <p className="text-lg font-semibold">{offer.purchases || 0}</p>
+                <p className="text-xs lg:text-sm font-medium text-gray-500">Achats</p>
+                <p className="text-base lg:text-lg font-semibold">{offer.purchases || 0}</p>
               </div>
             </div>
           </div>

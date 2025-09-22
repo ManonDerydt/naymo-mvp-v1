@@ -109,7 +109,17 @@ const CustomerDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-4">
+      {/* ID Client en haut */}
+      {customerData?.code && (
+        <div className="text-center pb-6">
+          <div className="inline-block bg-white px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-lg border border-gray-200 mx-4">
+            <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Votre ID Client</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 tracking-wider">{customerData.code}</p>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         
         {/* Carte principale des points - Style moderne */}

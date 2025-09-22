@@ -198,11 +198,16 @@ Ces CGU constituent un contrat entre vous et Naymo. En utilisant notre plateform
   ];
 
   return (
-    <div className="min-h-screen bg-white pb-28 pt-10 px-2 sm:px-4">
-      {/* Titre principal */}
-      <div className="px-4 sm:px-6 pt-8 pb-6">
-        <h1 className="text-2xl font-bold text-[#0A2004] text-center">Paramètres</h1>
-      </div>
+    <div className="min-h-screen bg-gray-50 pb-28 pt-4 px-2 sm:px-4">
+      {/* ID Client en haut */}
+      {customerData?.code && (
+        <div className="text-center pb-6">
+          <div className="inline-block bg-white px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-lg border border-gray-200 mx-4">
+            <p className="text-xs sm:text-sm font-medium text-gray-500 mb-1">Votre ID Client</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-900 tracking-wider">{customerData.code}</p>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-2xl mx-auto space-y-6 sm:space-y-8">
 

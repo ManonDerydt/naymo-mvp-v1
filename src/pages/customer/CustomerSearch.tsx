@@ -140,13 +140,8 @@ const CustomerSearch = () => {
                 </div>
             )}
 
-            {/* Titre principal */}
-            <div className="px-4 sm:px-6 pt-8 pb-6">
-                <h1 className="text-2xl font-bold text-[#0A2004] text-center">Découvrir</h1>
-            </div>
-
             {/* Contenu principal */}
-            <div className="px-4 space-y-8">
+            <div className="px-4 space-y-8 pt-8">
 
                 {/* Barre de recherche */}
                 <div className="relative max-w-md mx-auto px-2">

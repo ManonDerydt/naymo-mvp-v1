@@ -37,29 +37,29 @@ const CustomerLayout = () => {
             {/* Barre de navigation mobile */}
             <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t-2 border-[#c9eaad]/30 shadow-2xl z-50 lg:hidden safe-area-inset-bottom">
                 <div className="bg-gradient-to-r from-[#c9eaad]/10 to-[#ebffbc]/10 h-1"></div>
-                <ul className="flex justify-around py-2 sm:py-3">
+                <ul className="flex justify-center items-center py-2 sm:py-3 px-2">
                     {navItems.map((item, index) => {
                         const isActive = location.pathname === item.path
                         return (
-                            <li key={index} className="flex-1 text-center">
+                            <li key={index} className="flex-1 text-center max-w-[80px]">
                                 <Link
                                     to={item.path}
-                                    className={`flex flex-col items-center text-xs transition-all duration-200 px-1 ${
+                                    className={`flex flex-col items-center justify-center text-xs transition-all duration-200 px-1 ${
                                         isActive 
                                             ? 'text-[#396F04] font-bold transform scale-110' 
                                             : 'text-[#589507] hover:text-[#396F04]'
                                     }`}
                                 >
-                                    <div className={`p-2 sm:p-3 rounded-2xl transition-all duration-200 ${
+                                    <div className={`p-2 sm:p-2.5 rounded-2xl transition-all duration-200 ${
                                         isActive 
                                             ? 'bg-[#7fbd07] text-white shadow-lg transform -translate-y-1' 
                                             : 'hover:bg-[#ebffbc] hover:shadow-md'
                                     }`}>
-                                        <div className="w-5 h-5 sm:w-6 sm:h-6">
+                                        <div className="w-5 h-5 sm:w-5 sm:h-5">
                                             {item.icon}
                                         </div>
                                     </div>
-                                    <span className="mt-1 font-medium text-xs leading-tight">{item.label}</span>
+                                    <span className="mt-1 font-medium text-xs leading-tight text-center">{item.label}</span>
                                     {isActive && (
                                         <div className="w-1 h-1 bg-[#7fbd07] rounded-full mt-1"></div>
                                     )}

@@ -104,17 +104,27 @@ const CustomerDashboard = () => {
   }
 
   const hasAddedOffer = (offerId: string) => {
-    return customerData?.offers?.includes(offerId)
+    return customerData?.offers?.includes(offerId) || false
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Header avec titre */}
       <div className="px-6 pt-8 pb-6">
         <h1 className="text-2xl font-bold text-[#0A2004] text-center">Accueil</h1>
       </div>
 
       <div className="px-4 space-y-6 max-w-md mx-auto">
+        
+        {/* ID Client en haut */}
+        {customerData?.code && (
+          <div className="text-center">
+            <div className="inline-block bg-gradient-to-r from-[#7DBD07] to-[#B7DB25] px-8 py-4 rounded-3xl shadow-xl">
+              <p className="text-sm font-medium text-white/90 mb-1">Votre ID Client</p>
+              <p className="text-3xl font-bold text-white tracking-wider">{customerData.code}</p>
+            </div>
+          </div>
+        )}
         
         {/* ID Client en haut */}
         {customerData?.code && (

@@ -130,15 +130,7 @@ const CustomerSearch = () => {
 
     return (
         <div className="min-h-screen bg-white pb-10">
-            {/* ID Client en haut */}
-            {customerData?.code && (
-                <div className="text-center pt-6 pb-4">
-                    <div className="inline-block bg-white px-4 sm:px-8 py-3 sm:py-4 rounded-3xl shadow-xl border-2 border-[#c9eaad]">
-                        <p className="text-sm font-medium text-[#589507] mb-1">Votre ID Client</p>
-                        <p className="text-2xl sm:text-3xl font-bold text-[#0A2004] tracking-wider">{customerData.code}</p>
-                    </div>
-                </div>
-            )}
+         
 
             {/* Contenu principal */}
             <div className="px-4 space-y-8 pt-8">

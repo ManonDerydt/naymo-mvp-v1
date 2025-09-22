@@ -246,7 +246,7 @@ const Dashboard = () => {
         </div>
 
         {/* Graphiques en dessous */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
           <div className="bg-white p-4 lg:p-6 rounded-2xl shadow-sm border border-gray-100">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 gap-2">
                 <h2 className="text-lg lg:text-xl font-semibold text-gray-900">Comparaison des points attribués</h2>
@@ -257,7 +257,7 @@ const Dashboard = () => {
                   <span>Semaine précédente</span>
                 </div>
               </div>
-              <div className="h-64 lg:h-80">
+              <div className="h-80 lg:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -281,7 +281,7 @@ const Dashboard = () => {
                   </svg>
                 </div>
               </div>
-              <div className="h-64 lg:h-80">
+              <div className="h-80 lg:h-80">
                 <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barChartData}>
                   <CartesianGrid strokeDasharray="3 3" />

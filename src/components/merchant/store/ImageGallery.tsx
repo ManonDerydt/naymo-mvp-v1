@@ -8,9 +8,10 @@ interface Image {
 
 interface ImageGalleryProps {
   images: Image[]
+  isPreview?: boolean
 }
 
-const ImageGallery = ({ images }: ImageGalleryProps) => {
+const ImageGallery = ({ images, isPreview = false }: ImageGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
   const handlePrevious = () => {
@@ -27,19 +28,19 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className={`grid ${isPreview ? 'grid-cols-2 gap-1 sm:gap-2' : 'grid-cols-2 md:grid-cols-3 gap-4'}`}>
         {images.map((image, index) => (
           <img
             key={index}
             src={image.src}
             alt={image.alt}
-            className="rounded-lg aspect-square object-cover cursor-pointer hover:opacity-90 transition-opacity"
+            className={`${isPreview ? 'rounded aspect-square' : 'rounded-lg aspect-square'} object-cover cursor-pointer hover:opacity-90 transition-opacity`}
             onClick={() => setSelectedImage(index)}
           />
         ))}
       </div>
 
-      {selectedImage !== null && (
+      {selectedImage !== null && !isPreview && (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
           <button
             onClick={() => setSelectedImage(null)}

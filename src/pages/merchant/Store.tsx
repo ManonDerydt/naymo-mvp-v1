@@ -78,9 +78,9 @@ const Store = () => {
 
   // Contenu de la page magasin
   const StoreContent = ({ isPreview = false }: { isPreview?: boolean }) => (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`${isPreview ? 'min-h-full' : 'min-h-screen'} bg-gray-50`}>
       {/* Header avec photo de couverture */}
-      <div className="relative h-48 md:h-64 lg:h-80 bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden">
+      <div className={`relative ${isPreview ? 'h-32 sm:h-40' : 'h-48 md:h-64 lg:h-80'} bg-gradient-to-r from-blue-500 to-purple-600 overflow-hidden`}>
         <img
           src={merchant && merchantData ? merchantData.cover_photo : "https://images.unsplash.com/photo-1441986300917-64674bd600d8"}
           alt="Cover"
@@ -90,22 +90,22 @@ const Store = () => {
       </div>
 
       {/* Profil principal */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 -mt-16">
-        <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 lg:p-8 mb-6">
-          <div className="flex flex-col md:flex-row items-start gap-4 md:gap-6">
+      <div className={`${isPreview ? 'px-2 sm:px-3' : 'max-w-7xl mx-auto px-4 md:px-6'} relative z-10 ${isPreview ? '-mt-8 sm:-mt-12' : '-mt-16'}`}>
+        <div className={`bg-white rounded-2xl shadow-xl ${isPreview ? 'p-2 sm:p-3 mb-3' : 'p-4 md:p-6 lg:p-8 mb-6'}`}>
+          <div className={`flex flex-col ${isPreview ? 'items-center text-center' : 'md:flex-row'} items-start gap-2 ${isPreview ? 'sm:gap-3' : 'md:gap-6'}`}>
             {/* Logo de l'entreprise */}
-            <div className="flex-shrink-0 mx-auto md:mx-0">
+            <div className={`flex-shrink-0 ${isPreview ? 'mx-auto' : 'mx-auto md:mx-0'}`}>
               <img
                 src={merchant && merchantData ? merchantData.logo : "https://images.unsplash.com/photo-1560472354-b33ff0c44a43"}
                 alt="Logo"
-                className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                className={`${isPreview ? 'w-12 h-12 sm:w-16 sm:h-16' : 'w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32'} rounded-full object-cover border-4 border-white shadow-lg`}
               />
             </div>
 
             {/* Informations principales */}
-            <div className="flex-1 text-center md:text-left">
-              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 mb-2">
-                <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+            <div className={`flex-1 ${isPreview ? 'text-center' : 'text-center md:text-left'}`}>
+              <div className={`flex flex-col ${isPreview ? 'items-center' : 'md:flex-row items-center'} gap-1 ${isPreview ? 'sm:gap-2' : 'md:gap-3'} mb-1 ${isPreview ? 'sm:mb-2' : 'mb-2'}`}>
+                <h1 className={`${isPreview ? 'text-sm sm:text-base' : 'text-xl md:text-2xl lg:text-3xl'} font-bold text-gray-900`}>
                   {merchant && merchantData ? merchantData.company_name : initialStoreData.company_name}
                 </h1>
                 {!isPreview && (
@@ -117,8 +117,8 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 mb-3">
-                <p className="text-base md:text-lg lg:text-lg text-[#7fbd07] font-semibold">
+              <div className={`flex flex-col ${isPreview ? 'items-center' : 'md:flex-row items-center'} gap-1 ${isPreview ? 'sm:gap-2' : 'md:gap-3'} mb-2 ${isPreview ? 'sm:mb-3' : 'mb-3'}`}>
+                <p className={`${isPreview ? 'text-xs sm:text-sm' : 'text-base md:text-lg lg:text-lg'} text-[#7fbd07] font-semibold`}>
                   {merchant && merchantData ? merchantData.business_type : initialStoreData.business_type}
                 </p>
                 {!isPreview && (
@@ -130,10 +130,10 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <div className="flex flex-col md:flex-row items-center text-gray-600 mb-4">
+              <div className={`flex flex-col ${isPreview ? 'items-center' : 'md:flex-row items-center'} text-gray-600 ${isPreview ? 'mb-2' : 'mb-4'}`}>
                 <div className="flex items-center">
-                  <MapPin className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                  <span className="text-sm md:text-base">{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
+                  <MapPin className={`${isPreview ? 'w-3 h-3 mr-1' : 'w-4 h-4 md:w-5 md:h-5 mr-2'}`} />
+                  <span className={`${isPreview ? 'text-xs' : 'text-sm md:text-base'}`}>{merchant && merchantData ? merchantData.address : initialStoreData.address}</span>
                 </div>
                 {!isPreview && (
                   <button
@@ -162,13 +162,13 @@ const Store = () => {
         </div>
 
         {/* Contenu principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className={`grid grid-cols-1 ${isPreview ? 'gap-2 sm:gap-3' : 'lg:grid-cols-3 gap-4 md:gap-6'}`}>
           {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-4 md:space-y-6">
+          <div className={`${isPreview ? 'space-y-2 sm:space-y-3' : 'lg:col-span-2 space-y-4 md:space-y-6'}`}>
             {/* Description */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900">Description</h2>
+            <div className={`bg-white rounded-2xl shadow-sm ${isPreview ? 'p-2 sm:p-3' : 'p-4 md:p-6'}`}>
+              <div className={`flex items-center justify-between ${isPreview ? 'mb-2' : 'mb-4'}`}>
+                <h2 className={`${isPreview ? 'text-sm sm:text-base' : 'text-lg md:text-xl'} font-bold text-gray-900`}>Description</h2>
                 {!isPreview && (
                   <button
                     onClick={() => setEditingField('description')}
@@ -178,7 +178,7 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+              <p className={`${isPreview ? 'text-xs leading-relaxed' : 'text-sm md:text-base text-gray-700 leading-relaxed'}`}>
                 {merchant && merchantData ? 
                   (merchantData.longDescription || merchantData.shortDescription) : 
                   initialStoreData.longDescription
@@ -187,9 +187,9 @@ const Store = () => {
             </div>
 
             {/* Mots-clés */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900">Mots-clés</h2>
+            <div className={`bg-white rounded-2xl shadow-sm ${isPreview ? 'p-2 sm:p-3' : 'p-4 md:p-6'}`}>
+              <div className={`flex items-center justify-between ${isPreview ? 'mb-2' : 'mb-4'}`}>
+                <h2 className={`${isPreview ? 'text-sm sm:text-base' : 'text-lg md:text-xl'} font-bold text-gray-900`}>Mots-clés</h2>
                 {!isPreview && (
                   <button
                     onClick={() => setEditingField('keywords')}
@@ -199,11 +199,11 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 md:gap-3">
+              <div className={`flex flex-wrap ${isPreview ? 'gap-1 sm:gap-2' : 'gap-2 md:gap-3'}`}>
                 {(merchant && merchantData && merchantData.keywords ? merchantData.keywords : initialStoreData.keywords).map((keyword: string, index: number) => (
                   <span 
                     key={index} 
-                    className="px-3 md:px-4 py-1 md:py-2 bg-blue-100 text-blue-800 rounded-full font-medium text-xs md:text-sm"
+                    className={`${isPreview ? 'px-2 py-1 text-xs' : 'px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm'} bg-blue-100 text-blue-800 rounded-full font-medium`}
                   >
                     {keyword}
                   </span>
@@ -212,9 +212,9 @@ const Store = () => {
             </div>
 
             {/* Engagements */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900">Engagements</h2>
+            <div className={`bg-white rounded-2xl shadow-sm ${isPreview ? 'p-2 sm:p-3' : 'p-4 md:p-6'}`}>
+              <div className={`flex items-center justify-between ${isPreview ? 'mb-2' : 'mb-4'}`}>
+                <h2 className={`${isPreview ? 'text-sm sm:text-base' : 'text-lg md:text-xl'} font-bold text-gray-900`}>Engagements</h2>
                 {!isPreview && (
                   <button
                     onClick={() => setEditingField('commitments')}
@@ -224,11 +224,11 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 md:gap-3">
+              <div className={`flex flex-wrap ${isPreview ? 'gap-1 sm:gap-2' : 'gap-2 md:gap-3'}`}>
                 {(merchant && merchantData && merchantData.commitments ? merchantData.commitments : initialStoreData.commitments).map((commitment: string, index: number) => (
                   <span 
                     key={index} 
-                    className="px-3 md:px-4 py-1 md:py-2 bg-green-100 text-green-800 rounded-full font-medium text-xs md:text-sm"
+                    className={`${isPreview ? 'px-2 py-1 text-xs' : 'px-3 md:px-4 py-1 md:py-2 text-xs md:text-sm'} bg-green-100 text-green-800 rounded-full font-medium`}
                   >
                     {commitment}
                   </span>
@@ -237,9 +237,9 @@ const Store = () => {
             </div>
 
             {/* Galerie photos */}
-            <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg md:text-xl font-bold text-gray-900">Galerie photos</h2>
+            <div className={`bg-white rounded-2xl shadow-sm ${isPreview ? 'p-2 sm:p-3' : 'p-4 md:p-6'}`}>
+              <div className={`flex items-center justify-between ${isPreview ? 'mb-2' : 'mb-4'}`}>
+                <h2 className={`${isPreview ? 'text-sm sm:text-base' : 'text-lg md:text-xl'} font-bold text-gray-900`}>Galerie photos</h2>
                 {!isPreview && (
                   <button
                     onClick={() => setEditingField('gallery')}
@@ -249,12 +249,12 @@ const Store = () => {
                   </button>
                 )}
               </div>
-              <ImageGallery images={storeImages} />
+              <ImageGallery images={storeImages} isPreview={isPreview} />
             </div>
           </div>
 
           {/* Sidebar - masquée en mobile */}
-          <div className="hidden lg:block space-y-4 md:space-y-6">
+          <div className={`${isPreview ? 'hidden' : 'hidden lg:block'} space-y-4 md:space-y-6`}>
             {/* Informations rapides */}
             <div className="bg-white rounded-2xl shadow-sm p-4 md:p-6">
               <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">Informations</h3>
@@ -382,7 +382,7 @@ const Store = () => {
         ) : viewMode === 'tablet' && !isMobileDevice ? (
           // Vue tablette - conteneur simulé
           <div className="bg-gray-800 rounded-2xl lg:rounded-3xl p-3 lg:p-6 shadow-2xl">
-            <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '320px', height: '480px' }}>
+            <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '380px', height: '600px' }}>
               <div className="h-full overflow-y-auto">
                 <StoreContent isPreview={true} />
               </div>
@@ -401,7 +401,7 @@ const Store = () => {
           ) : (
             // Vue mobile simulée pour desktop
             <div className="bg-gray-800 rounded-2xl lg:rounded-3xl p-3 lg:p-4 shadow-2xl">
-              <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '280px', height: '500px' }}>
+              <div className="bg-white rounded-xl lg:rounded-2xl overflow-hidden" style={{ width: '320px', height: '600px' }}>
                 <div className="h-full overflow-y-auto">
                   <StoreContent isPreview={true} />
                 </div>
